@@ -45,7 +45,7 @@ with DAG(
     slack_channel='#dv-team-familie-varslinger'
     )
     
-    dbt_run >> insert_to_fam_ef_stonad_arena
+dbt_run >> insert_to_fam_ef_stonad_arena
 
 
 
