@@ -5,7 +5,7 @@ from airflow.operators.dummy_operator import DummyOperator
 
 with DAG(
     dag_id = 'test_dag', 
-    start_date = datetime(2022, 9, 1), # start date for the dag
+    start_date = datetime(2022, 8, 1), # start date for the dag
     schedule_interval = None, #'@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
 ) as dag:
 
