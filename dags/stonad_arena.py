@@ -19,8 +19,8 @@ with DAG(
         branch = 'main',
         do_xcom_push = True,
         extra_envs={
-            'DBT_COMMAND': 'run', # 'samme som i dbt terminal med uten dbt ex) dbt run -model blabla'
-            'LOG_LEVEL': 'INFO',
+            'DBT_COMMAND': 'run', # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
+            'LOG_LEVEL': 'DEBUG',
             'DB_SCHEMA': 'dvh_fam_ef'
         },
         slack_channel='#dv-team-familie-varslinger'
@@ -38,5 +38,3 @@ with DAG(
     )
     
 dbt_run >> insert_to_fam_ef_stonad_arena
-
-
