@@ -26,9 +26,9 @@ with DAG(
         slack_channel='#dv-team-familie-varslinger'
     )
 
-    insert_into_fam_ef_stonad_arena = create_knada_python_pod_operator(
+    insert_into_stonad_arena = create_knada_python_pod_operator(
         dag = dag,
-        name = "insert_into_fam_ef_stonad_arena",
+        name = "insert_into_stonad_arena",
         repo = 'navikt/dvh_familie_dbt',
         script_path = "airflow/insert_into_ef_stonad_arena.py",
         namespace = Variable.get("NAMESPACE"),
@@ -37,4 +37,4 @@ with DAG(
         slack_channel='#dv-team-familie-varslinger'
     )
     
-dbt_run >> insert_into_fam_ef_stonad_arena
+dbt_run >> insert_into_stonad_arena
