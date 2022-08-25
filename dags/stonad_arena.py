@@ -30,7 +30,7 @@ with DAG(
         dag = dag,
         name = "insert_to_fam_ef_stonad_arena",
         repo = 'navikt/dvh_familie_dbt',
-        script_path = "airflow/insert_into_script.py",
+        script_path = "insert_into_ef_stonad_arena.py",
         namespace = Variable.get("NAMESPACE"),
         branch = 'main',
         do_xcom_push = True,
