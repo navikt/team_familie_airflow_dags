@@ -33,7 +33,7 @@ with DAG(
         script_path = "airflow/insert_into_ef_stonad_arena.py",
         namespace = Variable.get("NAMESPACE"),
         branch = 'main',
-        do_xcom_push = True,
+        #do_xcom_push = True,
         slack_channel='#dv-team-familie-varslinger'
     )
     
