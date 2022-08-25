@@ -26,15 +26,15 @@ with DAG(
         slack_channel='#dv-team-familie-varslinger'
     )
 
-    insert_to_fam_ef_stonad_arena = create_knada_python_pod_operator(
+    insert_into_fam_ef_stonad_arena = create_knada_python_pod_operator(
         dag = dag,
-        name = "insert_to_fam_ef_stonad_arena",
+        name = "insert_into_fam_ef_stonad_arena",
         repo = 'navikt/dvh_familie_dbt',
-        script_path = "insert_into_ef_stonad_arena.py",
+        script_path = "airflow/insert_into_ef_stonad_arena.py",
         namespace = Variable.get("NAMESPACE"),
         branch = 'main',
         do_xcom_push = True,
         slack_channel='#dv-team-familie-varslinger'
     )
     
-dbt_run >> insert_to_fam_ef_stonad_arena
+dbt_run >> insert_into_fam_ef_stonad_arena
