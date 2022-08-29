@@ -28,3 +28,7 @@ def oracle_conn():
         return conn, cur
     except cx_Oracle.Error as error:
         print(error)
+
+def oracle_conn_close(conn):
+    conn.close()
+    print('Connection to the database was successfuly closed')
