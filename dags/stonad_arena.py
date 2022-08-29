@@ -17,7 +17,7 @@ op_kwargs = {
 
 
 with DAG(
-    dag_id = 'dbt_dag', 
+    dag_id = 'Sas_erstatning', 
     description = 'An Airflow DAG to invoke dbt stonad_arena project and a Python script to insert into fam_ef_stonad_arena ',
     default_args = default_args,
     start_date = datetime(2022, 8, 28), # start date for the dag
@@ -56,6 +56,11 @@ with DAG(
         python_callable=fam_ef_stonad_arena_methods.insert_data,
         op_kwargs = op_kwargs)
 
+    close_db_conn = PythonOperator(
+        task_id='close_db_conn', 
+        python_callable = oracle_conn.oracle_conn_close,
+        op_kwargs = {'conn': conn})
+
     # insert_into_stonad_arena = create_knada_python_pod_operator(
     #     dag = dag,
     #     name = "insert_into_stonad_arena",
@@ -67,4 +72,4 @@ with DAG(
     #     slack_channel='#dv-team-familie-varslinger'
     # )
     
-dbt_run >> send_context_information >> delete_periode_fra_fam_e_stonad_arena >> insert_periode_into_fam_e_stonad_arena
+dbt_run >> send_context_information >> delete_periode_fra_fam_e_stonad_arena >> insert_periode_into_fam_e_stonad_arena >> close_db_conn
