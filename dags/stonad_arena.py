@@ -20,7 +20,7 @@ with DAG(
     dag_id = 'dbt_dag', 
     description = 'An Airflow DAG to invoke dbt stonad_arena project and a Python script to insert into fam_ef_stonad_arena ',
     default_args = default_args,
-    start_date = datetime(2022, 8, 1), # start date for the dag
+    start_date = datetime(2022, 8, 28), # start date for the dag
     schedule_interval = '@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running)
 ) as dag:
@@ -41,9 +41,19 @@ with DAG(
         slack_channel='#dv-team-familie-varslinger'
     )
 
-    delete_data_test =  PythonOperator(
-        task_id='delete_data_test', 
+    send_context_information =  PythonOperator(
+        task_id='send_context', 
+        python_callable=fam_ef_stonad_arena_methods.send_context,
+        op_kwargs = op_kwargs)
+
+    delete_periode_fra_fam_e_stonad_arena =  PythonOperator(
+        task_id='delete_periode', 
         python_callable=fam_ef_stonad_arena_methods.delete_data,
+        op_kwargs = op_kwargs)
+
+    insert_periode_into_fam_e_stonad_arena =  PythonOperator(
+        task_id='insert_periode', 
+        python_callable=fam_ef_stonad_arena_methods.insert_data,
         op_kwargs = op_kwargs)
 
     # insert_into_stonad_arena = create_knada_python_pod_operator(
@@ -57,4 +67,4 @@ with DAG(
     #     slack_channel='#dv-team-familie-varslinger'
     # )
     
-dbt_run >> delete_data_test
+dbt_run >> send_context_information >> delete_periode_fra_fam_e_stonad_arena >> insert_periode_into_fam_e_stonad_arena
