@@ -1,9 +1,20 @@
-from datetime import datetime, timedelta
+#from datetime import datetime, timedelta
 from airflow.models import DAG, Variable
-#from airflow.utils.dates import datetime
+from airflow.utils.dates import datetime, timedelta
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+from airflow.operators.python import PythonOperator
+from utils.db import oracle_conn
+from Oracle_python import fam_ef_stonad_arena_methods
 
 default_args = {'owner': 'Team-Familie', 'retries': 3, 'retry_delay': timedelta(minutes=1)}
+
+conn, cur = oracle_conn.oracle_conn()
+
+op_kwargs = {
+    'conn': conn,
+    'cur': cur
+}
+
 
 with DAG(
     dag_id = 'dbt_dag', 
@@ -30,15 +41,20 @@ with DAG(
         slack_channel='#dv-team-familie-varslinger'
     )
 
-    insert_into_stonad_arena = create_knada_python_pod_operator(
-        dag = dag,
-        name = "insert_into_stonad_arena",
-        repo = 'navikt/dvh_familie_dbt',
-        script_path = "airflow/insert_into_ef_stonad_arena.py",
-        namespace = Variable.get("NAMESPACE"),
-        branch = 'main',
-        #do_xcom_push = True,
-        slack_channel='#dv-team-familie-varslinger'
-    )
+    delete_data_test =  PythonOperator(
+        task_id='delete_data_test', 
+        python_callable=fam_ef_stonad_arena_methods.delete_data,
+        op_kwargs = op_kwargs)
+
+    # insert_into_stonad_arena = create_knada_python_pod_operator(
+    #     dag = dag,
+    #     name = "insert_into_stonad_arena",
+    #     repo = 'navikt/dvh_familie_dbt',
+    #     script_path = "airflow/insert_into_ef_stonad_arena.py",
+    #     namespace = Variable.get("NAMESPACE"),
+    #     branch = 'main',
+    #     #do_xcom_push = True,
+    #     slack_channel='#dv-team-familie-varslinger'
+    # )
     
-dbt_run >> insert_into_stonad_arena
+dbt_run >> delete_data_test
