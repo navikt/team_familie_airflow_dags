@@ -1,12 +1,16 @@
+from datetime import datetime, timedelta
 from airflow.models import DAG, Variable
-from airflow.utils.dates import datetime
+#from airflow.utils.dates import datetime
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+
+default_args = {'owner': 'Team-Familie', 'retries': 3, 'retry_delay': timedelta(minutes=1)}
 
 with DAG(
     dag_id = 'dbt_dag', 
-    start_date = datetime(2022, 8, 1), # start date for the dag
     description = 'An Airflow DAG to invoke dbt stonad_arena project and a Python script to insert into fam_ef_stonad_arena ',
-    schedule_interval = None, #'@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
+    default_args = default_args,
+    start_date = datetime(2022, 8, 1), # start date for the dag
+    schedule_interval = '@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running)
 ) as dag:
 
