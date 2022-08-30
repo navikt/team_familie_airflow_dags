@@ -35,7 +35,7 @@ with DAG(
         branch = 'main',
         do_xcom_push = True,
         extra_envs={
-            'DBT_COMMAND': 'run', # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
+            'DBT_COMMAND': 'run --vars "{periode: periode_}"', # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
             'LOG_LEVEL': 'DEBUG',
             'DB_SCHEMA': 'dvh_fam_ef'
         },
@@ -73,4 +73,5 @@ with DAG(
     #     slack_channel='#dv-team-familie-varslinger'
     # )
     
-dbt_run >> [send_context_information, delete_periode_fra_fam_e_stonad_arena] >> insert_periode_into_fam_e_stonad_arena >> close_db_conn
+dbt_run >> send_context_information
+dbt_run >> delete_periode_fra_fam_e_stonad_arena >> insert_periode_into_fam_e_stonad_arena >> close_db_conn
