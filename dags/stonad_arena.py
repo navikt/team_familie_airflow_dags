@@ -26,7 +26,7 @@ with DAG(
 ) as dag:
 
     dbt_run = create_knada_python_pod_operator(
-        dag = dag,
+        dag = dag, 
         name = 'dbt-run',
         repo = 'navikt/dvh_familie_dbt',
         script_path = 'airflow/dbt_run.py',
