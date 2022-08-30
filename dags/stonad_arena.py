@@ -33,9 +33,9 @@ with DAG(
         script_path = 'airflow/dbt_run.py',
         namespace = Variable.get("NAMESPACE"),
         branch = 'main',
-        do_xcom_push = True,
+        do_xcom_push = True, 
         extra_envs={
-            'DBT_COMMAND': f"""run --vars '{{"periode":"{periode}"}}'""", # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
+            'DBT_COMMAND': """run --vars '{{"periode":"{}}}'""".format(periode), # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
             'LOG_LEVEL': 'DEBUG',
             'DB_SCHEMA': 'dvh_fam_ef'
         },
