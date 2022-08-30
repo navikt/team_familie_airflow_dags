@@ -10,7 +10,7 @@ def get_periode():
     first = today.replace(day=1) # dato for første dag i måneden 2022-04-01
     lastMonth = first - datetime.timedelta(days=1) # dato for siste dag i tidligere måneden
 
-    return lastMonth.strftime("%Y%m") # henter bare aar og maaned
+    return int(lastMonth.strftime("%Y%m")) # henter bare aar og maaned
 
 def send_context(conn, cur):
     sql = ('''
