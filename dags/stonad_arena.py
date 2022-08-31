@@ -51,7 +51,7 @@ with DAG(
     delete_periode_fra_fam_e_stonad_arena =  PythonOperator(
         task_id='delete_periode', 
         python_callable=fam_ef_stonad_arena_methods.delete_data,
-        op_kwargs = op_kwargs)
+        op_kwargs = {**op_kwargs, 'periode':periode})
 
     insert_periode_into_fam_e_stonad_arena =  PythonOperator(
         task_id='insert_periode', 
