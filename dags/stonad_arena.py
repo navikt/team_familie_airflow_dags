@@ -8,7 +8,7 @@ from Oracle_python import fam_ef_stonad_arena_methods
 
 default_args = {'owner': 'Team-Familie', 'retries': 3, 'retry_delay': timedelta(minutes=1)}
 conn, cur = oracle_conn.oracle_conn()
-periode =  """'{{"periode":{}}}'""".format(fam_ef_stonad_arena_methods.get_periode())
+periode = fam_ef_stonad_arena_methods.get_periode() #"""'{{"periode":{}}}'""".format(fam_ef_stonad_arena_methods.get_periode())
 
 
 op_kwargs = {
@@ -35,7 +35,7 @@ with DAG(
         branch = 'main',
         do_xcom_push = True, 
         extra_envs={
-            'DBT_COMMAND': 'run --vars {}'.format(periode), #"""run --vars '{{"periode":{}}}'""".format(periode), #"""run --vars '{{"periode":"{}}}'""".format(periode), # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
+            'DBT_COMMAND': """run --vars '{{"periode":{}}}'""".format(periode), #"""run --vars '{{"periode":"{}}}'""".format(periode), #'run --vars {}'.format(periode), # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
             'LOG_LEVEL': 'DEBUG',
             'DB_SCHEMA': 'dvh_fam_ef'
         },
