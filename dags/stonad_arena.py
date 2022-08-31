@@ -39,45 +39,50 @@ with DAG(
             'LOG_LEVEL': 'DEBUG',
             'DB_SCHEMA': 'dvh_fam_ef'
         },
-        slack_channel='#dv-team-familie-varslinger'
-        
+        slack_channel='#dv-team-familie-varslinger'   
     )
 
     send_context_information =  PythonOperator(
         task_id='send_context', 
         python_callable=fam_ef_stonad_arena_methods.send_context,
         op_kwargs = op_kwargs,
-        slack_channel='#dv-team-familie-varslinger')
+        slack_channel='#dv-team-familie-varslinger'
+        )
 
     delete_periode_fra_fam_ef_stonad_arena =  PythonOperator(
         task_id='delete_periode_stonad_arena', 
         python_callable=fam_ef_stonad_arena_methods.delete_data,
         op_kwargs = {**op_kwargs, 'periode':periode},
-        slack_channel='#dv-team-familie-varslinger')
+        slack_channel='#dv-team-familie-varslinger'
+        )
 
     insert_periode_into_fam_ef_stonad_arena =  PythonOperator(
         task_id='insert_periode_stonad_arena', 
         python_callable=fam_ef_stonad_arena_methods.insert_data,
         op_kwargs = op_kwargs,
-        slack_channel='#dv-team-familie-varslinger')
+        slack_channel='#dv-team-familie-varslinger'
+        )
 
     delete_periode_fra_fam_ef_vedtak_arena =  PythonOperator(
         task_id='delete_periode_vedtak_arena', 
         python_callable=fam_ef_vedtak_arena_methods.delete_data,
         op_kwargs = {**op_kwargs, 'periode':periode},
-        slack_channel='#dv-team-familie-varslinger')
+        slack_channel='#dv-team-familie-varslinger'
+        )
 
     insert_periode_into_fam_ef_vedtak_arena =  PythonOperator(
         task_id='insert_periode_vedtak_arena', 
         python_callable=fam_ef_vedtak_arena_methods.insert_data,
         op_kwargs = op_kwargs,
-        slack_channel='#dv-team-familie-varslinger')
+        slack_channel='#dv-team-familie-varslinger'
+        )
 
     close_db_conn = PythonOperator(
         task_id='close_db_conn', 
         python_callable = oracle_conn.oracle_conn_close,
         op_kwargs = {'conn': conn},
-        slack_channel='#dv-team-familie-varslinger')
+        slack_channel='#dv-team-familie-varslinger'
+        )
     
 dbt_run >> delete_periode_fra_fam_ef_stonad_arena >> insert_periode_into_fam_ef_stonad_arena 
 dbt_run >> delete_periode_fra_fam_ef_vedtak_arena >> insert_periode_into_fam_ef_vedtak_arena >> close_db_conn 
