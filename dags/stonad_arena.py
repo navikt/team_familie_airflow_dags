@@ -5,6 +5,7 @@ from dataverk_airflow.knada_operators import create_knada_python_pod_operator
 from airflow.operators.python import PythonOperator
 from utils.db import oracle_conn
 from Oracle_python import fam_ef_stonad_arena_methods
+from Oracle_python import fam_ef_vedtak_arena_methods
 
 default_args = {'owner': 'Team-Familie', 'retries': 3, 'retry_delay': timedelta(minutes=1)}
 conn, cur = oracle_conn.oracle_conn()
@@ -48,14 +49,24 @@ with DAG(
         python_callable=fam_ef_stonad_arena_methods.send_context,
         op_kwargs = op_kwargs)
 
-    delete_periode_fra_fam_e_stonad_arena =  PythonOperator(
-        task_id='delete_periode', 
+    delete_periode_fra_fam_ef_stonad_arena =  PythonOperator(
+        task_id='delete_periode_stonad_arena', 
         python_callable=fam_ef_stonad_arena_methods.delete_data,
         op_kwargs = {**op_kwargs, 'periode':periode})
 
-    insert_periode_into_fam_e_stonad_arena =  PythonOperator(
-        task_id='insert_periode', 
+    insert_periode_into_fam_ef_stonad_arena =  PythonOperator(
+        task_id='insert_periode_stonad_arena', 
         python_callable=fam_ef_stonad_arena_methods.insert_data,
+        op_kwargs = op_kwargs)
+
+    delete_periode_fra_fam_ef_vedtak_arena =  PythonOperator(
+        task_id='delete_periode_vedtak_arena', 
+        python_callable=fam_ef_vedtak_arena_methods.delete_data,
+        op_kwargs = {**op_kwargs, 'periode':periode})
+
+    insert_periode_into_fam_ef_vedtak_arena =  PythonOperator(
+        task_id='insert_periode_vedtak_arena', 
+        python_callable=fam_ef_vedtak_arena_methods.insert_data,
         op_kwargs = op_kwargs)
 
     close_db_conn = PythonOperator(
@@ -75,4 +86,6 @@ with DAG(
     # )
     
 dbt_run >> send_context_information
-dbt_run >> delete_periode_fra_fam_e_stonad_arena >> insert_periode_into_fam_e_stonad_arena >> close_db_conn
+dbt_run >> delete_periode_fra_fam_ef_stonad_arena >> insert_periode_into_fam_ef_stonad_arena 
+dbt_run >> delete_periode_fra_fam_ef_vedtak_arena >> insert_periode_into_fam_ef_vedtak_arena 
+close_db_conn
