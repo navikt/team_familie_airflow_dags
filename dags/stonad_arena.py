@@ -1,4 +1,3 @@
-#from datetime import datetime, timedelta
 from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime, timedelta
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
