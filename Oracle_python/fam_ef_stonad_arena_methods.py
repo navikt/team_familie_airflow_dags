@@ -17,7 +17,7 @@ def send_context(conn, cur):
         begin
             dbms_application_info.set_client_info( client_info => 'Klient_info Familie-Airflow');
             dbms_application_info.set_module( module_name => 'Kjører Team-familie Airflow applikasjon'
-                                            , action_name => 'delete/insert into dvh_fam_ef.fam_ef_stonad_arena' );
+                                            , action_name => 'delete/insert into dvh_fam_ef.fam_ef_stonad_arena & dvh_fam_ef.fam_ef_vedtak_arena' );
         end;
     ''')
     cur.execute(sql)
@@ -38,7 +38,7 @@ def delete_data(conn, cur, periode):
     :param periode:
     :return:
     """
-    sql = ('delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {}'.format(periode))
+    sql = ('delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {} and kildesystem = "DBT_ARENA"'.format(periode))
     cur.execute(sql)
     conn.commit()
 
