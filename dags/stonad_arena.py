@@ -85,7 +85,7 @@ with DAG(
     #     slack_channel='#dv-team-familie-varslinger'
     # )
     
-dbt_run >> send_context_information
-dbt_run >> delete_periode_fra_fam_ef_stonad_arena >> insert_periode_into_fam_ef_stonad_arena 
-dbt_run >> delete_periode_fra_fam_ef_vedtak_arena >> insert_periode_into_fam_ef_vedtak_arena 
-close_db_conn
+dbt_run >> [send_context_information, delete_periode_fra_fam_ef_stonad_arena, delete_periode_fra_fam_ef_vedtak_arena] >> [insert_periode_into_fam_ef_stonad_arena, insert_periode_into_fam_ef_vedtak_arena] >> close_db_conn 
+#dbt_run >> delete_periode_fra_fam_ef_stonad_arena >> insert_periode_into_fam_ef_stonad_arena 
+#dbt_run >> delete_periode_fra_fam_ef_vedtak_arena >> insert_periode_into_fam_ef_vedtak_arena >> close_db_conn 
+
