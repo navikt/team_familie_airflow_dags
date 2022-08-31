@@ -13,7 +13,7 @@ def delete_data(conn, cur, periode):
     :param periode:
     :return:
     """
-    sql = ('delete from dvh_fam_ef.fam_ef_vedtak_arena where periode = {} and kildesystem = "DBT_ARENA"'.format(periode))
+    sql = ("delete from dvh_fam_ef.fam_ef_vedtak_arena where periode = {} and kildesystem = 'DBT_ARENA'".format(periode))
     cur.execute(sql)
     conn.commit()
 
