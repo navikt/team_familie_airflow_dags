@@ -21,7 +21,7 @@ with DAG(
     dag_id = 'Sas_erstatning', 
     description = 'An Airflow DAG to invoke dbt stonad_arena project and a Python script to insert into fam_ef_stonad_arena ',
     default_args = default_args,
-    start_date = datetime(2022, 8, 28), # start date for the dag
+    start_date = datetime(2022, 8, 1), # start date for the dag
     schedule_interval = '@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running)
 ) as dag:
