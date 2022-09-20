@@ -2,14 +2,22 @@ from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime, timedelta
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
 from airflow.operators.python import PythonOperator
+#from asyncio import taskgroups
 from utils.db import oracle_conn
 from Oracle_python import fam_ef_stonad_arena_methods
 from Oracle_python import fam_ef_vedtak_arena_methods
+from operators.slack_operator import slack_info, slack_error
+from airflow.decorators import task
 
-default_args = {'owner': 'Team-Familie', 'retries': 3, 'retry_delay': timedelta(minutes=1)}
+default_args = {
+    'owner': 'Team-Familie', 
+    'retries': 2, 
+    'retry_delay': timedelta(minutes=1),
+    'on_failure_callback': slack_error
+    }
+
 conn, cur = oracle_conn.oracle_conn()
 periode = fam_ef_stonad_arena_methods.get_periode() 
-
 
 op_kwargs = {
     'conn': conn,
@@ -23,8 +31,16 @@ with DAG(
     default_args = default_args,
     start_date = datetime(2022, 8, 28), # start date for the dag
     schedule_interval = '@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
-    catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running)
+    catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
+
+    @task
+    def notification_start():
+        slack_info(
+            message = 'Lasting av data til både fam_ef_arena_stonad og fam_ef_arena_vedtak starter nå ved hjelp av Airflow'
+        )
+
+    start_alert = notification_start()
 
     dbt_run = create_knada_python_pod_operator(
         dag = dag, 
@@ -78,6 +94,13 @@ with DAG(
         op_kwargs = {'conn': conn}
         )
     
-dbt_run >> delete_periode_fra_fam_ef_stonad_arena >> insert_periode_into_fam_ef_stonad_arena 
-dbt_run >> delete_periode_fra_fam_ef_vedtak_arena >> insert_periode_into_fam_ef_vedtak_arena >> close_db_conn 
-dbt_run >> send_context_information
+    @task
+    def notification_end():
+        slack_info(
+            message = "Data er feridg lastet til fam_ef_arena_stonad og fam_ef_arena_vedtak!"
+        )
+    slutt_alert = notification_end()
+    
+start_alert >> dbt_run >> delete_periode_fra_fam_ef_stonad_arena >> insert_periode_into_fam_ef_stonad_arena 
+start_alert >> dbt_run >> delete_periode_fra_fam_ef_vedtak_arena >> insert_periode_into_fam_ef_vedtak_arena >> close_db_conn >> slutt_alert
+start_alert >> dbt_run >> send_context_information
