@@ -23,22 +23,13 @@ def send_context(conn, cur):
     cur.execute(sql)
     conn.commit()
 
-# def delete_data(periode):
-#     """
-#     sletter data fra fam_ef_stonad_arena med periode som kriteriea.
-#     :param periode:
-#     :return:
-#     """
-#     sql = ('delete from dvh_fam_ef.fam_ef_stonad_arena where periode =: periode')
-#     connection(sql)
-
 def delete_data(conn, cur, periode):
     """
     sletter data fra fam_ef_stonad_arena med periode som kriteriea.
     :param periode:
     :return:
     """
-    sql = ("delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {} and kildesystem = 'DBT_ARENA'".format(periode))
+    sql = ("delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {}".format(periode))
     cur.execute(sql)
     conn.commit()
 
