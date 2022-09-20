@@ -37,7 +37,7 @@ with DAG(
     @task
     def notification_start():
         slack_info(
-            message = 'Lasting av data til både fam_ef_arena_stonad og fam_ef_arena_vedtak starter nå ved hjelp av Airflow :rocket:'
+            message = "Lasting av data til både fam_ef_arena_stonad og fam_ef_arena_vedtak starter nå ved hjelp av Airflow! :rocket:"
         )
 
     start_alert = notification_start()
