@@ -1,5 +1,3 @@
-
-import datetime
 import cx_Oracle
 from os import getenv
 from dataverk_vault.api import set_secrets_as_envs
