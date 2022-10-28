@@ -27,7 +27,7 @@ with DAG(
     dag_id = 'Fam_EF_patching_ybarn_arena', 
     description = 'An Airflow DAG that invokes "FAM_EF.fam_ef_patch_infotrygd_arena" stored procedure',
     default_args = default_args,
-    start_date = datetime(2022, 9, 1), # start date for the dag
+    start_date = datetime(2022, 10, 1), # start date for the dag
     schedule_interval = '0 0 5 * *' , # 5te hver måned,
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
