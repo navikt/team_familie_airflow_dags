@@ -53,11 +53,6 @@ with DAG(
         op_kwargs = {**op_kwargs, 'periode':periode}
         )
 
-    or_conn = PythonOperator(
-        task_id = 'orac_conn',
-        python_callable=oracle_conn.oracle_conn,
-        )
-
     @task
     def notification_end():
         slack_info(
@@ -65,4 +60,6 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-or_conn >> start_alert >> send_context_information >> patch_ybarn_arena >> slutt_alert
+send_context_information >> patch_ybarn_arena
+
+#start_alert >> send_context_information >> patch_ybarn_arena >> slutt_alert
