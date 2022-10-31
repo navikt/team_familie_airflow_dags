@@ -32,6 +32,7 @@ with DAG(
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
+
     @task
     def notification_start():
         slack_info(
@@ -52,6 +53,11 @@ with DAG(
         op_kwargs = {**op_kwargs, 'periode':periode}
         )
 
+    or_conn = PythonOperator(
+        task_id = 'orac_conn',
+        python_callable=oracle_conn.oracle_conn,
+        )
+
     @task
     def notification_end():
         slack_info(
@@ -59,4 +65,4 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> send_context_information >> patch_ybarn_arena >> slutt_alert
+or_conn >> start_alert >> send_context_information >> patch_ybarn_arena >> slutt_alert
