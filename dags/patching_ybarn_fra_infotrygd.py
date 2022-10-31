@@ -47,6 +47,7 @@ with DAG(
         op_kwargs = op_kwargs
         )
 
+    # husk at DVH_FAM_AIRFLOW skal ha grant til procedure og tabeller
     patch_ybarn_arena =  PythonOperator(
         task_id='fam_ef_patch_ybarn_infotrygd_arena', 
         python_callable=fam_ef_patch_ybarn.patch_ybarn_arena,
