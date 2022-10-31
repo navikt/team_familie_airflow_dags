@@ -51,3 +51,5 @@ with DAG(
         python_callable=fam_ef_patch_ybarn.patch_ybarn_arena,
         op_kwargs = {**op_kwargs, 'periode':periode}
     )
+
+start_alert >> send_context_information >> patch_ybarn_arena
