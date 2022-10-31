@@ -23,6 +23,7 @@ def oracle_conn():
     try:
         conn = cx_Oracle.connect(user = oracle_secrets['user'], password = oracle_secrets['password'], dsn = dsn_tns)
         cur = conn.cursor()
+        print(conn, cur)
         return conn, cur
     except cx_Oracle.Error as error:
         print(error)
