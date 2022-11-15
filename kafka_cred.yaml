@@ -1,0 +1,11 @@
+---
+apiVersion: aiven.nais.io/v1
+kind: AivenApplication
+metadata:
+  name: dvh-familie-konsument # skal gis til prosjektet
+  namespace: dv-familie
+spec:
+  kafka:
+    pool: nav-prod
+  secretName: dvh-familie-konsument-creds
+  protected: true
