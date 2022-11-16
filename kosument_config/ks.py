@@ -3,12 +3,12 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamsykefravr.isdialogmote-dialogmote-statusendring
-  schema: avro
+  topic: teamfamilie.aapen-ensligforsorger-vedtak-v1
+  schema: DVH_FAM_EF
 target:
   type: oracle
   skip-duplicates-with: kafka_hash
-  table: dvh_syfo.raw_isdialogmote
+  table: DVH_FAM_EF.KAFKA_NY_LØSNING_TEST
   k6-filter:
     filter-table: dt_person.dvh_person_ident_off_id
     filter-col: off_id
