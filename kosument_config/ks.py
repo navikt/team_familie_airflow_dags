@@ -4,16 +4,11 @@ source:
   batch-size: 50
   batch-interval: 5
   topic: teamfamilie.aapen-ensligforsorger-vedtak-v1
-  schema: DVH_FAM_EF
+  schema: avro
 target:
   type: oracle
-  skip-duplicates-with: kafka_hash
+  skip-duplicates-with: kafka_offset
   table: DVH_FAM_EF.KAFKA_NY_LØSNING_TEST
-  k6-filter:
-    filter-table: dt_person.dvh_person_ident_off_id
-    filter-col: off_id
-    timestamp: kafka_timestamp
-    col: personIdent
 transform:
   - src: kafka_message
     dst: kafka_message
@@ -32,12 +27,8 @@ transform:
     dst: kafka_partisjon
   - src: kafka_hash
     dst: kafka_hash
-  - src: kafka_schema_id
-    dst: kafka_schema_id
   - src: $$$BATCH_TIME
     dst: lastet_dato
   - src: $$$BATCH_TIME
     dst: oppdatert_dato
-  - src: $MODIA
-    dst: kildesystem
 """
