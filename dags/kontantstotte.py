@@ -19,7 +19,7 @@ with DAG(
     task_id = "ef-kafka-consumer_test",
     config = ks.config,
     #data_interval_start_timestamp_milli="1634688000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    #data_interval_end_timestamp_milli="1668470400000",
+    #data_interval_end_timestamp_milli="1668470400000",   # from first day we got data until 15.11.2022 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
