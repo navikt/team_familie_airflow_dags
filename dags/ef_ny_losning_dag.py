@@ -44,7 +44,7 @@ with DAG('test_data_lasting',
         repo = 'navikt/dvh_familie_dbt',
         script_path = 'airflow/dbt_run.py',
         namespace = Variable.get("NAMESPACE"),
-        do_xcom_push = True, 
+        #do_xcom_push = True, 
         extra_envs={
             'DBT_COMMAND': "run --select test.ef_ny_consument_test",
             'DB_SCHEMA': 'dvh_fam_ef'
