@@ -18,7 +18,7 @@ def create_dbt_operator(
     dag=dag,
     name=name,
     repo='navikt/dvh_familie_dbt',
-    script_path='airflow/dbt_run.py',
+    script_path='airflow/dbt_run_test.py',
     namespace=Variable.get("NAMESPACE"),
     branch=branch,
     do_xcom_push=True,
