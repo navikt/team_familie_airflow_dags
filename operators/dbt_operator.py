@@ -21,7 +21,7 @@ def create_dbt_operator(
     script_path='airflow/dbt_run_test.py',
     namespace=Variable.get("NAMESPACE"),
     branch=branch,
-    #do_xcom_push=True,
+    do_xcom_push=True,
     extra_envs={
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
