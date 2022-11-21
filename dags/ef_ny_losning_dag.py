@@ -18,7 +18,7 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 
-with DAG('dmx_lasting', 
+with DAG('test_data_lasting', 
         default_args=default_args,
         schedule_interval = '0 10 * * *', #hver dag kl 06:00 om morgenene   
         start_date = datetime(2022, 11, 20),
