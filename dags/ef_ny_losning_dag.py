@@ -32,7 +32,7 @@ with DAG('test_data_lasting',
         dag=dag,
         name="unpack_all_new_kafka_løsning",
         branch=v_branch,
-        dbt_command="run --select +tag:ef_kafka_test",
+        dbt_command="run -m tag:ef_kafka_test",
         db_schema=v_schema
     )
 
