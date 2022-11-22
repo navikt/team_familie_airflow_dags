@@ -24,7 +24,7 @@ def create_dbt_operator(
     do_xcom_push=True,
     extra_envs={
       'DBT_COMMAND': dbt_command,
-      'LOG_LEVEL': 'INFO',
+      'LOG_LEVEL': 'DEBUG',
       'DB_SCHEMA': db_schema
     },
     #slack_channel=Variable.get("slack_error_channel")
