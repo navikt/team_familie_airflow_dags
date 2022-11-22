@@ -27,5 +27,5 @@ def create_dbt_operator(
       'LOG_LEVEL': 'DEBUG',
       'DB_SCHEMA': db_schema
     },
-    slack_channel=Variable.get("slack_error_channel")
+    #slack_channel=Variable.get("slack_error_channel")
   )
