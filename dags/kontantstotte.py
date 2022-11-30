@@ -1,8 +1,6 @@
 from datetime import datetime
-
 from airflow.models import DAG
 from airflow.models import Variable
-
 from kosument_config import ks
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 
