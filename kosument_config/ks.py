@@ -4,7 +4,7 @@ source:
   batch-size: 50
   batch-interval: 5
   topic: aapen-kontantstotte-vedtak-v1
-  schema: avro
+  schema: json
 target:
   type: oracle
   skip-duplicates-with: kafka_offset
