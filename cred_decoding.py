@@ -22,5 +22,5 @@ def convert_encode_to_decode(file_path):
 
 
 if __name__ == "__main__":
-    path = 'cred_encoded.txt' # change to ur file_path
+    path = 'cred.text' # change to ur file_path
     convert_encode_to_decode(path)

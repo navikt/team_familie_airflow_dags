@@ -20,7 +20,7 @@ v_schema = settings["schema"]
 
 with DAG('test_data_lasting', 
         default_args=default_args,
-        schedule_interval = '*/10 * * * *', #'0 10 * * *',   
+        schedule_interval = '@hourly',  
         start_date = datetime(2022, 11, 21),
         catchup = False
         ) as dag:
@@ -32,7 +32,7 @@ with DAG('test_data_lasting',
         dag=dag,
         name="unpack_all_new_kafka_løsning",
         branch=v_branch,
-        dbt_command="run --select /dvh_familie_dbt/models/test/ef_ny_consument_test.sql",
+        dbt_command="run -m tag:ef_kafka_test",
         db_schema=v_schema
     )
 
