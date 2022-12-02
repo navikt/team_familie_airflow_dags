@@ -30,7 +30,7 @@ with DAG('test_data_lasting',
 
     t_run_dbt = create_dbt_operator(
         dag=dag,
-        name="unpack_all_new_kafka_løsning",
+        name="unpack_all_new_kafka_losning",
         branch=v_branch,
         dbt_command="run -m tag:ef_kafka_test",
         db_schema=v_schema
