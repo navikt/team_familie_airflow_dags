@@ -60,7 +60,7 @@ def kafka_consumer_kubernetes_pod_operator(
         #"VKS_VAULT_ADDR": os.environ["VKS_VAULT_ADDR"],
         #"VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
         #"VKS_KV_PATH": os.environ["VKS_KV_PATH"],
-        "K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
+        #"K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
         "CONSUMER_CONFIG": config,
         "KAFKA_TIMESTAMP_START": data_interval_start_timestamp_milli,
         "KAFKA_TIMESTAMP_STOP": data_interval_end_timestamp_milli
