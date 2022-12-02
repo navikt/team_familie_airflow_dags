@@ -1,7 +1,6 @@
 import os
 from typing import Optional
 from airflow.models import Variable
-
 from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
 from airflow.operators.python import get_current_context
 
@@ -37,11 +36,11 @@ def __slack_message(
   SlackWebhookOperator(
     http_conn_id=None,
     task_id="slack-message",
-    webhook_token=os.environ["SLACK_WEBHOOK_TOKEN"],
+    webhook_token=os.environ["SLACK_TOKEN"],
     message=message,
     channel=channel,
     link_names=True,
     icon_emoji=emoji,
-    proxy=os.environ["HTTPS_PROXY"],
+    #proxy=os.environ["HTTPS_PROXY"],
     attachments=attachments
   ).execute(context)
