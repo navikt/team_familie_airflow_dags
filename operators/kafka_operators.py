@@ -51,8 +51,8 @@ def kafka_consumer_kubernetes_pod_operator(
     """
 
     env_vars = {
-        "HTTPS_PROXY": os.environ["HTTPS_PROXY"],
-        "https_proxy": os.environ["HTTPS_PROXY"],
+        #"HTTPS_PROXY": os.environ["HTTPS_PROXY"],
+        #"https_proxy": os.environ["HTTPS_PROXY"],
         "NO_PROXY": os.environ["NO_PROXY"],
         "no_proxy": os.environ["NO_PROXY"],
         "TZ": os.environ["TZ"],
