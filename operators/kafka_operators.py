@@ -19,7 +19,7 @@ def kafka_consumer_kubernetes_pod_operator(
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
     kafka_consumer_image: str = "ghcr.io/navikt/dvh-kafka-airflow-consumer:0.3.9",
-    namespace: str = Variable.get("NAMESPACE"),
+    #namespace: str = Variable.get("NAMESPACE"),
     email: str = None,
     slack_channel: str = None,
     retries: int = 3,
