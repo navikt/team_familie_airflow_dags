@@ -20,7 +20,7 @@ v_schema = settings["schema"]
 
 with DAG('test_data_lasting', 
         default_args=default_args,
-        schedule_interval = '@hourly',  
+        schedule_interval = None, #'@hourly',  
         start_date = datetime(2022, 11, 21),
         catchup = False
         ) as dag:
