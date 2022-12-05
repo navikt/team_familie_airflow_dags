@@ -19,7 +19,7 @@ def create_dbt_operator(
     name=name,
     repo='navikt/dvh_familie_dbt',
     script_path='airflow/dbt_run_test.py',
-    namespace=Variable.get("NAMESPACE"),
+    #namespace=Variable.get("NAMESPACE"), # Namespacet det kjører i vil automatisk plukkes opp av biblioteket og derfor trenger man ikke å definere den.
     branch=branch,
     do_xcom_push=True,
     extra_envs={
