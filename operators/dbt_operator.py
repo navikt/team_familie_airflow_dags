@@ -44,7 +44,8 @@ def create_dbt_operator(
     extra_envs={
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
-      'DB_SCHEMA': db_schema
+      'DB_SCHEMA': db_schema,
+      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
     },
     #slack_channel=Variable.get("slack_error_channel")
   )
