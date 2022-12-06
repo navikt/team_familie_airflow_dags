@@ -149,7 +149,7 @@ def create_knada_python_pod_operator(
                 }
             ),
         ],
-        container_resources=k8s_models.V1ResourceRequirements(limits={"memory": "5000M"}),
+        resources=resources,
         retries=retries,
         retry_delay=retry_delay,
         do_xcom_push=do_xcom_push,
