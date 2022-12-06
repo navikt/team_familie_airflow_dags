@@ -2,6 +2,7 @@ import os
 
 from datetime import timedelta
 from pathlib import Path
+from typing import Callable
 
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
@@ -46,6 +47,7 @@ def create_knada_python_pod_operator(
     name: str,
     repo: str,
     script_path: str,
+    namespace: str = None,
     email: str = None,
     slack_channel: str = None,
     branch: str = "master",
@@ -89,7 +91,7 @@ def create_knada_python_pod_operator(
     }
     
 
-    #namespace = namespace if namespace else os.getenv("NAMESPACE")
+    namespace = namespace if namespace else os.getenv("NAMESPACE")
 
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
@@ -110,7 +112,7 @@ def create_knada_python_pod_operator(
         startup_timeout_seconds=startup_timeout_seconds,
         name=name,
         cmds=["/bin/bash", "/execute_python.sh"],
-        #namespace=namespace,
+        namespace=namespace,
         task_id=name,
         is_delete_operator_pod=delete_on_finish,
         image=os.getenv("KNADA_PYTHON_POD_OP_IMAGE",
