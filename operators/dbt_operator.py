@@ -4,6 +4,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Callable
 from airflow.models import Variable
+from kubernetes import client
 
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
@@ -36,6 +37,10 @@ def create_dbt_operator(
     script_path='airflow/dbt_run_test.py',
     branch=branch,
     do_xcom_push=True,
+    resources=client.V1ResourceRequirements(
+        requests={"memory": "4G"},
+        limits={"memory": "4G"}
+        ),
     extra_envs={
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
