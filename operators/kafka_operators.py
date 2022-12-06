@@ -18,8 +18,8 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-kafka-airflow-consumer:0.3.9",
-    #namespace: str = Variable.get("NAMESPACE"),
+    kafka_consumer_image: str = "ghcr.io/navikt/dvh-kafka-airflow-consumer-gcp:0.4.0",
+    namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
     retries: int = 3,
@@ -51,17 +51,10 @@ def kafka_consumer_kubernetes_pod_operator(
     """
 
     env_vars = {
-        #"HTTPS_PROXY": os.environ["HTTPS_PROXY"],
-        #"https_proxy": os.environ["HTTPS_PROXY"],
-        #"NO_PROXY": os.environ["NO_PROXY"],
-        #"no_proxy": os.environ["NO_PROXY"],
         "TZ": os.environ["TZ"],
         "NLS_LANG": nls_lang,
-        #"VKS_VAULT_ADDR": os.environ["VKS_VAULT_ADDR"],
-        #"VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
-        #"VKS_KV_PATH": os.environ["VKS_KV_PATH"],
-        #"K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
         "CONSUMER_CONFIG": config,
+        "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         "KAFKA_TIMESTAMP_START": data_interval_start_timestamp_milli,
         "KAFKA_TIMESTAMP_STOP": data_interval_end_timestamp_milli
     }
@@ -70,16 +63,11 @@ def kafka_consumer_kubernetes_pod_operator(
         env_vars = dict(env_vars, **extra_envs)
 
     def on_failure(context):
-        if email:
-            send_email = create_email_notification(email, task_id, namespace, dag)
-            send_email.execute(context)
-
         if slack_channel:
             slack_notification = create_slack_notification(slack_channel, task_id, namespace)
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
-        init_containers=[vault_init_container(namespace=namespace, application_name=application_name)],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
@@ -92,7 +80,7 @@ def kafka_consumer_kubernetes_pod_operator(
         env_vars=env_vars,
         volumes=[vault_volume()],
         volume_mounts=[vault_volume_mount()],
-        service_account_name="airflow",
+        service_account_name=os.getenv('TEAM'),
         annotations={"sidecar.istio.io/inject": "false"},
         retries=retries,
         retry_delay=retry_delay,
