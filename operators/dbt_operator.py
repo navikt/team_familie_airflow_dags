@@ -3,6 +3,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from typing import Callable
+from airflow.models import Variable
 
 from airflow import DAG
 from airflow.kubernetes.volume import Volume
