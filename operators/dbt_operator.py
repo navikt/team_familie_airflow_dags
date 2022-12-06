@@ -91,7 +91,7 @@ def create_knada_python_pod_operator(
     }
     
 
-    namespace = os.getenv("NAMESPACE") 
+    namespace = Variable.get("NAMESPACE") #os.getenv("NAMESPACE") 
 
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
