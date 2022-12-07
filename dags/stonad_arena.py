@@ -2,12 +2,12 @@ from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime, timedelta
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
 from airflow.operators.python import PythonOperator
-#from asyncio import taskgroups
 from utils.db import oracle_conn
 from Oracle_python import fam_ef_stonad_arena_methods
 from Oracle_python import fam_ef_vedtak_arena_methods
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
+import os
 
 default_args = {
     'owner': 'Team-Familie', 
@@ -47,7 +47,7 @@ with DAG(
         name = 'dbt-run',
         repo = 'navikt/dvh_familie_dbt',
         script_path = 'airflow/dbt_run.py',
-        namespace = Variable.get("NAMESPACE"),
+        namespace = os.getenv('NAMESPACE'),
         branch = 'main',
         do_xcom_push = True, 
         extra_envs={
