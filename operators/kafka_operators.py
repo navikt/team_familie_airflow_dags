@@ -11,7 +11,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 import kubernetes.client as k8s
 
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
-from operators.vault import vault_init_container, vault_volume, vault_volume_mount
+#from operators.vault import vault_init_container, vault_volume, vault_volume_mount
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -80,8 +80,8 @@ def kafka_consumer_kubernetes_pod_operator(
         image=kafka_consumer_image,
         image_pull_secrets=[k8s.V1LocalObjectReference('ghcr-credentials')],
         env_vars=env_vars,
-        volumes=[vault_volume()],
-        volume_mounts=[vault_volume_mount()],
+        #volumes=[vault_volume()],
+        #volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
         annotations={"sidecar.istio.io/inject": "false"},
         resources=client.V1ResourceRequirements(
