@@ -1,17 +1,24 @@
 import cx_Oracle
 from os import getenv
-from dataverk_vault.api import set_secrets_as_envs
+import os, json
+from google.cloud import secretmanager
 
 def oracle_secrets():
-  set_secrets_as_envs()
-  return dict(
-    user=getenv("AIRFLOW_ORCL_USER"),
-    password=getenv("AIRFLOW_ORCL_PASS"),
-    host = getenv("DBT_ORCL_HOST"),
-    service = getenv("DBT_ORCL_SERVICE"),
-    encoding="UTF-8",
-    nencoding="UTF-8"
-  )
+  secrets = secretmanager.SecretManagerServiceClient()
+  resource_name = f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest"
+  secret = secrets.access_secret_version(name=resource_name)
+  secret_str = secret.payload.data.decode('UTF-8')
+  secrets = json.loads(secret_str)
+  return secrets
+  # set_secrets_as_envs()
+  # return dict(
+  #   user=getenv("AIRFLOW_ORCL_USER"),
+  #   password=getenv("AIRFLOW_ORCL_PASS"),
+  #   host = getenv("DBT_ORCL_HOST"),
+  #   service = getenv("DBT_ORCL_SERVICE"),
+  #   encoding="UTF-8",
+  #   nencoding="UTF-8"
+  # )
 
 oracle_secrets = oracle_secrets()
 
