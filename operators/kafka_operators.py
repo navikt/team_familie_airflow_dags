@@ -3,15 +3,12 @@ import os
 from datetime import timedelta
 from kubernetes import client
 
-
 from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 
 import kubernetes.client as k8s
-
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
-
 from operators.vault import vault_init_container, vault_volume, vault_volume_mount
 
 def kafka_consumer_kubernetes_pod_operator(
@@ -56,6 +53,10 @@ def kafka_consumer_kubernetes_pod_operator(
     env_vars = {
         "TZ": os.environ["TZ"],
         "NLS_LANG": nls_lang,
+        #"VKS_VAULT_ADDR": os.environ["VKS_VAULT_ADDR"],
+        #"VKS_AUTH_PATH": os.environ["VKS_AUTH_PATH"],
+        #"VKS_KV_PATH": os.environ["VKS_KV_PATH"],
+        #"K8S_SERVICEACCOUNT_PATH": os.environ["K8S_SERVICEACCOUNT_PATH"],
         "CONSUMER_CONFIG": config,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         "KAFKA_TIMESTAMP_START": data_interval_start_timestamp_milli,
@@ -71,6 +72,7 @@ def kafka_consumer_kubernetes_pod_operator(
             slack_notification.execute(context)
 
     return KubernetesPodOperator(
+        init_containers=[vault_init_container(namespace=namespace, application_name=application_name)],
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
