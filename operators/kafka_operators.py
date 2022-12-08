@@ -11,7 +11,8 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 import kubernetes.client as k8s
 
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
-#from operators.vault import vault_init_container, vault_volume, vault_volume_mount
+
+from operators.vault import vault_init_container, vault_volume, vault_volume_mount
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -20,7 +21,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-kafka-airflow-consumer-gcp:0.4.1",
+    kafka_consumer_image: str = "ghcr.io/navikt/dvh-kafka-airflow-consumer-gcp:0.4.2",
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
