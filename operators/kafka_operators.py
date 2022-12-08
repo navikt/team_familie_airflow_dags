@@ -79,7 +79,7 @@ def kafka_consumer_kubernetes_pod_operator(
         name=task_id,
         namespace=namespace,
         task_id=task_id,
-        is_delete_operator_pod=delete_on_finish,
+        is_delete_operator_pod=False,
         image=kafka_consumer_image,
         image_pull_secrets=[k8s.V1LocalObjectReference('ghcr-credentials')],
         env_vars=env_vars,
