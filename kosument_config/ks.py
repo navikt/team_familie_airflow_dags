@@ -3,12 +3,12 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamfamilie.aapen-ensligforsorger-vedtak-test
+  topic: teamfamilie.aapen-kontantstotte-vedtak-v1
   schema: json
 target:
   type: oracle
   skip-duplicates-with: kafka_offset
-  table: DVH_FAM_EF.KAFKA_NY_LOSNING_TEST
+  table: DVH_FAM_KS.FAM_KS_META_DATA
   k6-filter:
     filter-table: dt_person.dvh_person_ident_off_id
     filter-col: off_id
@@ -16,7 +16,7 @@ target:
     col: personIdent
 transform:
   - src: kafka_message
-    dst: kafka_message
+    dst: melding
   - src: kafka_topic
     dst: kafka_topic
   - src: kafka_offset
