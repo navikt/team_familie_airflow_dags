@@ -9,7 +9,7 @@ from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOpera
 
 import kubernetes.client as k8s
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
-from operators.vault import vault_init_container, vault_volume, vault_volume_mount
+from operators.vault import vault_volume, vault_volume_mount
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
