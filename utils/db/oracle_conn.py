@@ -9,7 +9,9 @@ def oracle_secrets():
   secret = secrets.access_secret_version(name=resource_name)
   secret_str = secret.payload.data.decode('UTF-8')
   secrets = json.loads(secret_str)
-  return secrets
+  os.environ.update(secrets)
+
+  
   # set_secrets_as_envs()
   # return dict(
   #   user=getenv("AIRFLOW_ORCL_USER"),
