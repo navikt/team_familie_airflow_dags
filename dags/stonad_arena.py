@@ -47,13 +47,14 @@ with DAG(
         name = 'dbt-run',
         repo = 'navikt/dvh_familie_dbt',
         script_path = 'airflow/dbt_run.py',
-        namespace = os.getenv('NAMESPACE'),
+        #namespace = os.getenv('NAMESPACE'),
         branch = 'main',
         do_xcom_push = True, 
         extra_envs={
             'DBT_COMMAND': """run --vars '{{"periode":{}}}'""".format(periode), #"""run --vars '{{"periode":"{}}}'""".format(periode), #'run --vars {}'.format(periode), # 'samme som i dbt terminalen men uten dbt. ex) dbt run -model blabla'
             'LOG_LEVEL': 'DEBUG',
-            'DB_SCHEMA': 'dvh_fam_ef'
+            'DB_SCHEMA': 'dvh_fam_ef',
+            'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
         },
         slack_channel='#dv-team-familie-varslinger'   
     )
