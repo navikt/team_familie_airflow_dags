@@ -34,7 +34,7 @@ with DAG(
     patch_ybarn_arena = create_knada_python_pod_operator(
         dag=dag,
         name="fam_ef_patch_ybarn_infotrygd_arena",
-        repo="navikt/team_familie_airflow_dags",
+        repo="navikt/dvh_familie_dbt",
         script_path="Oracle_python/fam_ef_patch_ybarn.py",
         branch="main",
         resources=client.V1ResourceRequirements(
