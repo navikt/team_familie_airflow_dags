@@ -54,7 +54,7 @@ def send_context(conn, cur):
 
 
 if __name__ == "__main__":
-
+    set_secrets_as_envs()
     periode = get_periode()
     conn, cur = oracle_conn.oracle_conn()
     send_context(conn, cur)
