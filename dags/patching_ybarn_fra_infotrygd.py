@@ -50,6 +50,6 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-patch_ybarn_arena
+start_alert >> patch_ybarn_arena >> slutt_alert
 
 #start_alert >> send_context_information >> patch_ybarn_arena >> slutt_alert
