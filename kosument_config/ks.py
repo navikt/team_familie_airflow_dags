@@ -9,11 +9,6 @@ target:
   type: oracle
   skip-duplicates-with: kafka_offset
   table: dvh_fam_ks.fam_ks_meta_data
-  k6-filter:
-    filter-table: dt_person.dvh_person_ident_off_id
-    filter-col: off_id
-    timestamp: kafka_timestamp
-    col: person.personIdent
 transform:
   - src: kafka_message
     dst: melding
