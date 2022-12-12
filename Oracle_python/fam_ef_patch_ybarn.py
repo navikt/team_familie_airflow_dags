@@ -1,5 +1,5 @@
 import datetime, os, json
-from utils.db import oracle_conn
+import utils.db.oracle_conn as or_conn
 from google.cloud import secretmanager
 
 
@@ -56,6 +56,6 @@ def send_context(conn, cur):
 if __name__ == "__main__":
     set_secrets_as_envs()
     periode = get_periode()
-    conn, cur = oracle_conn.oracle_conn()
+    conn, cur = or_conn.oracle_conn()
     send_context(conn, cur)
     patch_ybarn_arena(conn, cur, periode)
