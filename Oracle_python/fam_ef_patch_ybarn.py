@@ -1,4 +1,16 @@
-import datetime
+import datetime, os, json
+from utils.db import oracle_conn
+from google.cloud import secretmanager
+
+
+
+def set_secrets_as_envs():
+  secrets = secretmanager.SecretManagerServiceClient()
+  resource_name = f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest"
+  secret = secrets.access_secret_version(name=resource_name)
+  secret_str = secret.payload.data.decode('UTF-8')
+  secrets = json.loads(secret_str)
+  os.environ.update(secrets)
 
 def get_periode():
     """
@@ -39,3 +51,11 @@ def send_context(conn, cur):
     ''')
     cur.execute(sql)
     conn.commit()
+
+
+if __name__ == "__main__":
+
+    periode = get_periode()
+    conn, cur = oracle_conn.oracle_conn()
+    send_context(conn, cur)
+    patch_ybarn_arena(conn, cur, periode)
