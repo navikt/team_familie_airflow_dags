@@ -40,9 +40,6 @@ with DAG(
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
-        extra_envs={
-            'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
-            },
     slack_channel=Variable.get("slack_error_channel")
     )
 
