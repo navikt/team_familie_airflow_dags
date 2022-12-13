@@ -1,6 +1,6 @@
 from utils.db.oracle_conn import oracle_conn, oracle_conn_close
 from felles_metoder import set_secrets_as_envs, get_periode, send_context
-from fam_ef_stonad_arena_methods import conn, cur
+from fam_ef_stonad_arena import conn, cur
 
 def delete_data(conn, cur, periode):
     """
