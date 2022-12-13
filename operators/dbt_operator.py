@@ -25,6 +25,7 @@ def create_dbt_operator(
   branch: str,
   dbt_command: str,
   db_schema: str,
+  script_path:str,
   *args,
   **kwargs):
 
@@ -34,7 +35,7 @@ def create_dbt_operator(
     dag=dag,
     name=name,
     repo='navikt/dvh_familie_dbt',
-    script_path='airflow/dbt_run_test.py',
+    script_path=script_path,#'airflow/dbt_run_test.py',
     branch=branch,
     do_xcom_push=True,
     resources=client.V1ResourceRequirements(

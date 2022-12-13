@@ -1,27 +1,5 @@
-import datetime
-
-def get_periode():
-    """
-    henter periode for the tidligere måneden eksample--> i dag er 19.04.2022, metoden vil kalkulerer periode aarMaaned eks) '202203'
-    :param periode:
-    :return: periode
-    """
-    today = datetime.date.today() # dato for idag 2022-04-19
-    first = today.replace(day=1) # dato for første dag i måneden 2022-04-01
-    lastMonth = first - datetime.timedelta(days=1) # dato for siste dag i tidligere måneden
-
-    return lastMonth.strftime("%Y%m") # henter bare aar og maaned
-
-def send_context(conn, cur):
-    sql = ('''
-        begin
-            dbms_application_info.set_client_info( client_info => 'Klient_info Familie-Airflow');
-            dbms_application_info.set_module( module_name => 'Kjører Team-familie Airflow applikasjon'
-                                            , action_name => 'delete/insert into dvh_fam_ef.fam_ef_stonad_arena & dvh_fam_ef.fam_ef_vedtak_arena' );
-        end;
-    ''')
-    cur.execute(sql)
-    conn.commit()
+from felles_metoder import set_secrets_as_envs, get_periode, send_context
+from utils.db.oracle_conn import oracle_conn, oracle_conn_close
 
 def delete_data(conn, cur, periode):
     """
@@ -29,7 +7,7 @@ def delete_data(conn, cur, periode):
     :param periode:
     :return:
     """
-    sql = ("delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {}".format(periode))
+    sql = (f"delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {periode}")
     cur.execute(sql)
     conn.commit()
 
@@ -52,3 +30,14 @@ def insert_data(conn, cur):
         ''')
     cur.execute(sql)
     conn.commit()
+
+if __name__ == "__main__":
+    set_secrets_as_envs()
+    periode = get_periode()
+    conn, cur = oracle_conn()
+    action_name = 'delete/insert into dvh_fam_ef.fam_ef_stonad_arena'
+    send_context(conn, cur, action_name)
+    delete_data(conn, cur, periode)
+    insert_data(conn, cur)
+    oracle_conn_close()
+

@@ -31,6 +31,7 @@ with DAG('test_data_lasting',
     t_run_dbt = create_dbt_operator(
         dag=dag,
         name="unpack_all_new_kafka_losning",
+        script_path = 'airflow/dbt_run_test.py',
         branch=v_branch,
         dbt_command="run -m tag:ef_kafka_test",
         db_schema=v_schema
