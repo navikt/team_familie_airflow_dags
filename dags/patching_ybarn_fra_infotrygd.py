@@ -6,6 +6,7 @@ from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
 
+
 default_args = {
     'owner': 'Team-Familie', 
     'retries': 2, 
