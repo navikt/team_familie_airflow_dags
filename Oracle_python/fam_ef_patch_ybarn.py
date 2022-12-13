@@ -1,3 +1,4 @@
+import sys
 from felles_metoder import set_secrets_as_envs, get_periode, send_context
 from utils.db.oracle_conn import oracle_conn, oracle_conn_close
 
@@ -17,6 +18,7 @@ def patch_ybarn_arena(conn, cur, periode):
     conn.commit()
 
 if __name__ == "__main__":
+    sys.path.append("/workspace")
     set_secrets_as_envs()
     periode = get_periode()
     conn, cur = oracle_conn()
