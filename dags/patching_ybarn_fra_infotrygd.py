@@ -1,3 +1,4 @@
+import sys
 from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime, timedelta
 from kubernetes import client
@@ -12,6 +13,8 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
     'on_failure_callback': slack_error
     }
+
+sys.path.append("/workspace")
 
 with DAG(
     dag_id = 'Fam_EF_patching_ybarn_arena', 
