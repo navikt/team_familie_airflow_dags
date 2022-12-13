@@ -30,6 +30,7 @@ with DAG('hans-datalast',
         dag=dag,
         name="unpack_all_new_kafka_ko",
         branch=v_branch,
+        script_path='airflow/dbt_run_test.py',
         dbt_command="run -m tag:ef_kafka_test",
         db_schema=v_schema
     )
