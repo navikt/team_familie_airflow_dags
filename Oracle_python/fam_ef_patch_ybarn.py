@@ -18,7 +18,7 @@ def patch_ybarn_arena(conn, cur, periode):
     conn.commit()
 
 if __name__ == "__main__":
-    os.environ.update(sys.path.append("/workspace"))
+    os.environ.update(sys.path.append("/TEAM_FAMILIE_AIRFLOW_DAGS"))
     set_secrets_as_envs()
     periode = get_periode()
     conn, cur = oracle_conn()
