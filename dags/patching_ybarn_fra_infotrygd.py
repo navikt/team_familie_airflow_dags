@@ -5,6 +5,8 @@ import os
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+from felles_metoder import set_secrets_as_envs, get_periode, send_context
+from utils.db.oracle_conn import oracle_conn, oracle_conn_close
 
 
 default_args = {
@@ -32,17 +34,30 @@ with DAG(
 
     start_alert = notification_start()
 
-    patch_ybarn_arena = create_knada_python_pod_operator(
-        dag=dag,
-        name="fam_ef_patch_ybarn_infotrygd_arena",
-        repo="navikt/team_familie_airflow_dags",
-        script_path="Oracle_python/fam_ef_patch_ybarn.py",
-        branch="main",
-        resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel")
-    )
+    @task
+    def patch_ybarn():
+        set_secrets_as_envs()
+        periode = get_periode()
+        conn, cur = oracle_conn()
+        action_name = 'Patcher ybarn til fam_ef_stonad'
+        send_context(conn, cur, action_name)
+        sql = (f"""
+            DECLARE
+                P_IN_PERIODE_YYYYMM NUMBER;
+                P_OUT_ERROR VARCHAR2(200);
+    
+            BEGIN
+            P_IN_PERIODE_YYYYMM := {periode};
+            P_OUT_ERROR := NULL;
+            FAM_EF.fam_ef_patch_infotrygd_arena (  P_IN_PERIODE_YYYYMM => P_IN_PERIODE_YYYYMM,P_OUT_ERROR => P_OUT_ERROR) ;  
+            END;
+        """)
+        cur.execute(sql)
+        conn.commit()
+        oracle_conn_close()
+ 
+    patch_ybarn_arena = patch_ybarn()
+ 
 
     @task
     def notification_end():
