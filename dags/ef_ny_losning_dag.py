@@ -13,7 +13,7 @@ default_args = {
 }
 
 # Bygger parameter med logging, modeller og miljø
-settings = Variable.get("dbt_ef_schema", deserialize_json=True)
+settings = Variable.get("dbt_ks_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
