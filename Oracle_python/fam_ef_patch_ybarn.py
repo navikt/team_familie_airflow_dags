@@ -18,9 +18,6 @@ def patch_ybarn_arena(conn, cur, periode):
     conn.commit()
 
 if __name__ == "__main__":
-    ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-    os.environ.update(sys.path.append(ROOT_DIR))
-    print(f"Root til prosjektet is {ROOT_DIR}")
     set_secrets_as_envs()
     periode = get_periode()
     conn, cur = oracle_conn()
