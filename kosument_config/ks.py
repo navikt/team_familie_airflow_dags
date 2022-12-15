@@ -8,7 +8,7 @@ source:
 target:
   type: oracle
   skip-duplicates-with: kafka_offset
-  table: dvh_fam_ks.fam_ks_meta_data
+  table: dvh_fam_ks.fam_ks_meta_data_test
 transform:
   - src: kafka_message
     dst: melding
