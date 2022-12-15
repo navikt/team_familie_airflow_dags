@@ -6,7 +6,7 @@ from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 
 with DAG(
   dag_id="kontantstotte_read_kafka_topic",
-  start_date=datetime(2022, 12, 13),
+  start_date=datetime(2022, 12, 15),
   schedule_interval= None,#"@hourly",
   max_active_runs=1
 ) as dag:
@@ -20,3 +20,4 @@ with DAG(
   )
 
 consumer
+
