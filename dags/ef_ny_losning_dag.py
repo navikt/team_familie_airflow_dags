@@ -20,8 +20,8 @@ v_schema = settings["schema"]
 
 with DAG('test_data_lasting', 
         default_args=default_args,
-        schedule_interval = None, #'@hourly',  
-        start_date = datetime(2022, 11, 21),
+        schedule_interval = '@hourly',  
+        start_date = datetime(2022, 12, 15),
         catchup = False
         ) as dag:
 
@@ -33,7 +33,7 @@ with DAG('test_data_lasting',
         name="unpack_all_new_kafka_losning",
         script_path = 'airflow/dbt_run_test.py',
         branch=v_branch,
-        dbt_command="run -m tag:ks_kafka_test",
+        dbt_command="run --select KS_transformasjon.*",
         db_schema=v_schema
     )
 
