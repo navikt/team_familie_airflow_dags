@@ -1,6 +1,9 @@
 from felles_metoder import set_secrets_as_envs, get_periode, send_context
 from utils.db.oracle_conn import oracle_conn, oracle_conn_close
 
+conn = None
+cur = None
+
 def delete_data(conn, cur, periode):
     """
     sletter data fra fam_ef_stonad_arena med periode som kriteriea.
@@ -35,9 +38,10 @@ if __name__ == "__main__":
     set_secrets_as_envs()
     periode = get_periode()
     conn, cur = oracle_conn()
+
     action_name = 'delete/insert into dvh_fam_ef.fam_ef_stonad_arena'
     send_context(conn, cur, action_name)
     delete_data(conn, cur, periode)
     insert_data(conn, cur)
-    oracle_conn_close()
+    #oracle_conn_close(conn)
 

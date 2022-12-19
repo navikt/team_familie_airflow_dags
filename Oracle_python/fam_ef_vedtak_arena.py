@@ -38,5 +38,5 @@ if __name__ == "__main__":
     send_context(conn, cur, action_name)
     delete_data(conn, cur, periode)
     insert_data(conn, cur)
-    oracle_conn_close()
+    oracle_conn_close(conn)
 

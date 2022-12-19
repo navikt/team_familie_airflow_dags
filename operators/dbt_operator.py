@@ -16,8 +16,6 @@ from dataverk_airflow.init_containers import create_git_clone_init_container
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 
 
-#POD_WORKSPACE_DIR = "/workspace"
-#CA_BUNDLE_PATH = "/etc/pki/tls/certs/ca-bundle.crt"
 
 def create_dbt_operator(
   dag: DAG,
