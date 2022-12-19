@@ -23,4 +23,4 @@ if __name__ == "__main__":
     action_name = 'Patcher ybarn til fam_ef_stonad'
     send_context(conn, cur, action_name)
     patch_ybarn_arena(conn, cur, periode)
-    oracle_conn_close()
+    oracle_conn_close(conn)
