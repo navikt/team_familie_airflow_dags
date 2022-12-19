@@ -1,6 +1,5 @@
 from utils.db.oracle_conn import oracle_conn, oracle_conn_close
-from felles_metoder import set_secrets_as_envs, get_periode, send_context
-from fam_ef_stonad_arena import conn, cur
+from felles_metoder import get_periode, send_context
 
 def delete_data(conn, cur, periode):
     """
@@ -31,9 +30,8 @@ def insert_data(conn, cur):
     conn.commit()
 
 if __name__ == "__main__":
-    #set_secrets_as_envs()
     periode = get_periode()
-    #conn, cur = oracle_conn()
+    conn, cur = oracle_conn()
     action_name = 'delete/insert into dvh_fam_ef.fam_ef_vedtak_arena'
     send_context(conn, cur, action_name)
     delete_data(conn, cur, periode)
