@@ -1,15 +1,4 @@
-import datetime, os, json
-from google.cloud import secretmanager
-
-
-def set_secrets_as_envs():
-  secrets = secretmanager.SecretManagerServiceClient()
-  resource_name = f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest"
-  secret = secrets.access_secret_version(name=resource_name)
-  secret_str = secret.payload.data.decode('UTF-8')
-  secrets = json.loads(secret_str)
-  os.environ.update(secrets)
-
+import datetime
 
 def get_periode():
     """
