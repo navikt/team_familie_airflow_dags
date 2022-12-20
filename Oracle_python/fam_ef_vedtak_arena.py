@@ -1,5 +1,5 @@
 from utils.db.oracle_conn import oracle_conn
-from felles_metoder import get_periode, send_context
+from felles_metoder import get_periode
 
 # def delete_data(conn, cur, periode):
 #     """

@@ -1,4 +1,4 @@
-from felles_metoder import set_secrets_as_envs, get_periode, send_context
+from felles_metoder import get_periode
 from utils.db.oracle_conn import oracle_conn
 
 # def delete_data(conn, cur, periode):
