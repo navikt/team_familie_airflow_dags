@@ -33,7 +33,7 @@ from utils.db.oracle_conn import oracle_conn
 
 
 def stonad_arena_delete_insert():
-    periode = get_periode
+    periode = get_periode()
 
     send_context_sql = (f'''
         begin

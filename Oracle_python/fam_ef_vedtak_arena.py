@@ -31,7 +31,7 @@ from felles_metoder import get_periode
 
 
 def vedtak_arena_delete_insert():
-    periode = get_periode
+    periode = get_periode()
 
     send_context_sql = (f'''
         begin
