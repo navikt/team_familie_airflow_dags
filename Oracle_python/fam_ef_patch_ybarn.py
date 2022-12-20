@@ -31,6 +31,4 @@ def patch_ybarn_arena():
 
 if __name__ == "__main__":
     patch_ybarn_arena()
-    #conn, cur = oracle_conn()
-    #action_name = 'Patcher ybarn til fam_ef_stonad'
-    #send_context(conn, cur, action_name)
+
