@@ -1,4 +1,4 @@
-from utils.db.oracle_conn import oracle_conn, oracle_conn_close
+from utils.db.oracle_conn import oracle_conn
 from felles_metoder import get_periode, send_context
 
 # def delete_data(conn, cur, periode):
