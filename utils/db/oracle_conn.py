@@ -23,20 +23,17 @@ def oracle_secrets():
     nencoding="UTF-8"
   )
 
-oracle_secrets = oracle_secrets()
-
 def oracle_conn():
-    conn = None
-    cur = None
-    dsn_tns = cx_Oracle.makedsn(oracle_secrets['host'], 1521, service_name = oracle_secrets['service'])
 
+    oracle_secrets = oracle_secrets()
+
+    dsn_tns = cx_Oracle.makedsn(oracle_secrets['host'], 1521, service_name = oracle_secrets['service'])
     try:
         conn = cx_Oracle.connect(user = oracle_secrets['user'], password = oracle_secrets['password'], dsn = dsn_tns)
-        cur = conn.cursor()
-        return conn, cur
+        #cur = conn.cursor()
+        return conn #, cur
     except cx_Oracle.Error as error:
         print(error)
 
-def oracle_conn_close(conn):
-    conn.close()
-    print('Connection to the database was successfuly closed')
+# def oracle_conn_close(conn):
+#     conn.close()

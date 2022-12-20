@@ -1,7 +1,18 @@
 from felles_metoder import set_secrets_as_envs, get_periode, send_context
 from utils.db.oracle_conn import oracle_conn, oracle_conn_close
 
-def patch_ybarn_arena(conn, cur, periode):
+def patch_ybarn_arena():
+    set_secrets_as_envs()
+    periode = get_periode()
+
+    send_context_sql = (f'''
+        begin
+            dbms_application_info.set_client_info( client_info => 'Klient_info Familie-Airflow');
+            dbms_application_info.set_module( module_name => 'Kjører Team-familie Airflow applikasjon'
+                                            , action_name => 'Patcher ybarn til fam_ef_stonad' );
+        end;
+    ''')
+
     sql = (f"""
             DECLARE
                 P_IN_PERIODE_YYYYMM NUMBER;
@@ -13,14 +24,13 @@ def patch_ybarn_arena(conn, cur, periode):
             FAM_EF.fam_ef_patch_infotrygd_arena (  P_IN_PERIODE_YYYYMM => P_IN_PERIODE_YYYYMM,P_OUT_ERROR => P_OUT_ERROR) ;  
             END;
         """)
-    cur.execute(sql)
-    conn.commit()
+
+    with oracle_conn.cursor() as cur:
+        cur.execute(send_context_sql)
+        cur.execute(sql)
 
 if __name__ == "__main__":
-    set_secrets_as_envs()
-    periode = get_periode()
-    conn, cur = oracle_conn()
-    action_name = 'Patcher ybarn til fam_ef_stonad'
-    send_context(conn, cur, action_name)
-    patch_ybarn_arena(conn, cur, periode)
-    oracle_conn_close(conn)
+    patch_ybarn_arena()
+    #conn, cur = oracle_conn()
+    #action_name = 'Patcher ybarn til fam_ef_stonad'
+    #send_context(conn, cur, action_name)
