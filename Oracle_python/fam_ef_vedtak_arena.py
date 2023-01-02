@@ -24,11 +24,12 @@ def vedtak_arena_delete_insert():
             FROM dvh_fam_ef.ef_vedtak_arena
         ''')
 
-    with oracle_conn().cursor() as cur:
-        cur.execute(send_context_sql)
-        cur.execute(delete_periode_sql)
-        cur.execute(insert_data_sql)   
-
+    with oracle_conn():
+        with oracle_conn().cursor() as cur:
+            cur.execute(send_context_sql)
+            cur.execute(delete_periode_sql)
+            cur.execute(insert_data_sql)   
+    oracle_conn().close()
 
 if __name__ == "__main__":
     vedtak_arena_delete_insert()
