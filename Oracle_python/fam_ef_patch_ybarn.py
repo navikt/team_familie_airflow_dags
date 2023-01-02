@@ -24,10 +24,11 @@ def patch_ybarn_arena():
             FAM_EF.fam_ef_patch_infotrygd_arena (  P_IN_PERIODE_YYYYMM => P_IN_PERIODE_YYYYMM,P_OUT_ERROR => P_OUT_ERROR) ;  
             END;
         """)
-
-    with oracle_conn.cursor() as cur:
-        cur.execute(send_context_sql)
-        cur.execute(sql)
+    with oracle_conn():
+        with oracle_conn.cursor() as cur:
+            cur.execute(send_context_sql)
+            cur.execute(sql)
+    oracle_conn().close()       
 
 if __name__ == "__main__":
     patch_ybarn_arena()
