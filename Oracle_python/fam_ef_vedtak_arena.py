@@ -29,6 +29,7 @@ def vedtak_arena_delete_insert():
             cur.execute(send_context_sql)
             cur.execute(delete_periode_sql)
             cur.execute(insert_data_sql)   
+    oracle_conn().commit()
     oracle_conn().close()
 
 if __name__ == "__main__":

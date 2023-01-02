@@ -28,6 +28,7 @@ def patch_ybarn_arena():
         with oracle_conn.cursor() as cur:
             cur.execute(send_context_sql)
             cur.execute(sql)
+    oracle_conn().commit()
     oracle_conn().close()       
 
 if __name__ == "__main__":
