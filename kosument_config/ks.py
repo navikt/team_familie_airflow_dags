@@ -7,7 +7,10 @@ source:
   schema: json
 target:
   type: oracle
-  skip-duplicates-with: kafka_offset
+  skip-duplicates-with: 
+    - kafka_offset
+    - kafka_partisjon
+    - kafka_topic
   table: dvh_fam_ks.fam_ks_meta_data
 transform:
   - src: kafka_message
