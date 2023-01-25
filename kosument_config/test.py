@@ -28,6 +28,4 @@ transform:
     dst: kafka_hash
   - src: $$$BATCH_TIME
     dst: lastet_dato
-  - src: $$$BATCH_TIME
-    dst: oppdatert_dato
 """
