@@ -26,4 +26,6 @@ transform:
     dst: kafka_partisjon
   - src: kafka_hash
     dst: kafka_hash
+  - src: $$$BATCH_TIME
+    dst: lastet_dato
 """
