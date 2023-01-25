@@ -14,8 +14,8 @@ with DAG(
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "hent_data_fra_topic",
     config = test.config,
-    data_interval_start_timestamp_milli="1627776000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1635724800000",   # from first day we got data until 15.11.2022 (todays before todays date)
+    data_interval_start_timestamp_milli="1671494400000", # 20.12.2022
+    data_interval_end_timestamp_milli="1674172800000",   # 20.01.2023
     slack_channel = Variable.get("slack_error_channel")
   )
 
