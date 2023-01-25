@@ -3,7 +3,7 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamfamilie.aapen-ensligforsorger-vedtak-v1
+  topic: teamfamilie.aapen-ensligforsorger-vedtak-test
   schema: json
 target:
   type: oracle
