@@ -5,12 +5,11 @@ source:
   batch-interval: 5
   topic: teamfamilie.aapen-kontantstotte-vedtak-v1
   schema: json
+  keypath-seperator: /
 target:
   type: oracle
   skip-duplicates-with: 
     - kafka_offset
-    - kafka_partisjon
-    - kafka_topic
   table: dvh_fam_ks.fam_ks_meta_data
 transform:
   - src: kafka_message
