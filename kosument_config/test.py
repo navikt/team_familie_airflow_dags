@@ -5,12 +5,11 @@ source:
   batch-interval: 5
   topic: teamfamilie.aapen-ensligforsorger-vedtak-test
   schema: json
+  keypath-seperator: /
 target:
   type: oracle
   skip-duplicates-with: 
     - kafka_offset
-    - kafka_partisjon
-    - kafka_topic
   table: dvh_fam_ef.fam_ef_meta_data_test
 transform:
   - src: kafka_message
