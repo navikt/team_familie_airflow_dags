@@ -8,8 +8,7 @@ source:
   keypath-seperator: /
 target:
   type: oracle
-  skip-duplicates-with: 
-    - kafka_offset
+  skip-duplicates-with: kafka_offset
   table: dvh_fam_ef.fam_ef_meta_data_test
 transform:
   - src: kafka_message
