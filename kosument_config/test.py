@@ -11,7 +11,7 @@ target:
     - kafka_offset
     - kafka_partisjon
     - kafka_topic
-  table: DVH_FAM_EF.FAM_EF_META_DATA_TEST
+  table: dvh_fam_ef.fam_ef_meta_data_test
 transform:
   - src: kafka_message
     dst: melding
@@ -31,5 +31,3 @@ transform:
   - src: $$$BATCH_TIME
     dst: oppdatert_dato
 """
-
-
