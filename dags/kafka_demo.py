@@ -18,5 +18,3 @@ with DAG(
     data_interval_end_timestamp_milli="1674228118000",   # 20.01.2023
     slack_channel = Variable.get("slack_error_channel")
   )
-
-consumer
