@@ -7,7 +7,8 @@ source:
   schema: json
 target:
   type: oracle
-  skip-duplicates-with: 
+  skip-duplicates-with:
+    - kafka_topic
     - kafka_offset
   table: dvh_fam_ef.fam_ef_meta_data_demo
 transform:
