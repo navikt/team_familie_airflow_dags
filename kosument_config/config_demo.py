@@ -9,6 +9,7 @@ target:
   type: oracle
   skip-duplicates-with:
     - kafka_offset
+    - kafka_topic
   table: dvh_fam_ef.fam_ef_meta_data_demo
 transform:
   - src: kafka_message
