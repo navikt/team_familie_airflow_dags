@@ -9,7 +9,7 @@ target:
   type: oracle
   custom-config:
     - method: oracledb.Cursor.setinputsizes
-      name: melding
+      name: kafka_message
       value: oracledb.BLOB
   skip-duplicates-with:
     - kafka_offset
@@ -17,7 +17,7 @@ target:
   table: dvh_fam_ef.fam_ef_meta_data_demo
 transform:
   - src: kafka_message
-    dst: melding
+    dst: kafka_message
   - src: kafka_topic
     dst: kafka_topic
   - src: kafka_offset
