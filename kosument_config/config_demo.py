@@ -23,8 +23,6 @@ transform:
     fun: int-unix-ms -> datetime-no
   - src: kafka_partition
     dst: kafka_partisjon
-  - src: kafka_hash
-    dst: kafka_hash
   - src: $$$BATCH_TIME
     dst: lastet_dato
 """
