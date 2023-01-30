@@ -13,7 +13,7 @@ target:
   table: dvh_fam_ef.fam_ef_meta_data_demo
 transform:
   - src: kafka_message
-    dst: melding
+    dst: kafka_message
   - src: kafka_topic
     dst: kafka_topic
   - src: kafka_offset
@@ -23,6 +23,8 @@ transform:
     fun: int-unix-ms -> datetime-no
   - src: kafka_partition
     dst: kafka_partisjon
+  - src: kafka_hash
+    dst: kafka_hash
   - src: $$$BATCH_TIME
     dst: lastet_dato
 """
