@@ -7,13 +7,17 @@ source:
   schema: json
 target:
   type: oracle
+  custom-config:
+    - method: oracledb.Cursor.setinputsizes
+      name: melding
+      value: oracledb.BLOB
   skip-duplicates-with:
     - kafka_offset
     - kafka_topic
   table: dvh_fam_ef.fam_ef_meta_data_demo
 transform:
   - src: kafka_message
-    dst: kafka_message
+    dst: melding
   - src: kafka_topic
     dst: kafka_topic
   - src: kafka_offset

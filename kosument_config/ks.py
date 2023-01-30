@@ -8,6 +8,10 @@ source:
   keypath-seperator: /
 target:
   type: oracle
+  custom-config:
+    - method: oracledb.Cursor.setinputsizes
+      name: melding
+      value: oracledb.BLOB
   skip-duplicates-with: 
     - kafka_offset
   table: dvh_fam_ks.fam_ks_meta_data
