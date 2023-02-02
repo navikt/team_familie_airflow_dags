@@ -18,7 +18,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-kafka-airflow-consumer:0.4.5",
+    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:27fba5e",
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
@@ -82,7 +82,7 @@ def kafka_consumer_kubernetes_pod_operator(
         volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
         annotations={"sidecar.istio.io/inject": "false"},
-        resources=client.V1ResourceRequirements(
+        container_resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}
         ),
