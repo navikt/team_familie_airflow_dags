@@ -3,22 +3,21 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamfamilie.aapen-kontantstotte-vedtak-v1
+  topic: teamfamilie.aapen-ensligforsorger-vedtak-test
   schema: json
-  keypath-seperator: /
 target:
   type: oracle
   custom-config:
     - method: oracledb.Cursor.setinputsizes
-      name: melding
+      name: kafka_message
       value: oracledb.BLOB
-  skip-duplicates-with: 
+  skip-duplicates-with:
     - kafka_offset
     - kafka_topic
-  table: dvh_fam_ks.fam_ks_meta_data
+  table: dvh_fam_ef.fam_ef_meta_data_demo
 transform:
   - src: kafka_message
-    dst: melding
+    dst: kafka_message
   - src: kafka_topic
     dst: kafka_topic
   - src: kafka_offset
@@ -32,8 +31,4 @@ transform:
     dst: kafka_hash
   - src: $$$BATCH_TIME
     dst: lastet_dato
-  - src: $$$BATCH_TIME
-    dst: oppdatert_dato
 """
-
-
