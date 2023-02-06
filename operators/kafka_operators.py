@@ -56,7 +56,9 @@ def kafka_consumer_kubernetes_pod_operator(
         "CONSUMER_CONFIG": config,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         "KAFKA_TIMESTAMP_START": data_interval_start_timestamp_milli,
-        "KAFKA_TIMESTAMP_STOP": data_interval_end_timestamp_milli
+        "KAFKA_TIMESTAMP_STOP": data_interval_end_timestamp_milli,
+        "DATA_INTERVAL_START":data_interval_start_timestamp_milli,
+        "DATA_INTERVAL_END":data_interval_end_timestamp_milli 
     }
 
     if extra_envs:
