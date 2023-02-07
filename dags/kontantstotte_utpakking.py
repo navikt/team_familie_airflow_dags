@@ -18,23 +18,25 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 
-with DAG('test_data_lasting', 
+with DAG(
+        dag_id ='kontantstøtte_utpakking', 
         default_args=default_args,
-        schedule_interval = '@hourly',  
         start_date = datetime(2022, 12, 15),
+        schedule_interval = None,#'@hourly',  
         catchup = False
         ) as dag:
 
     t_start = DummyOperator(task_id='start_task', dag=dag)
+
     t_stop_opp = DummyOperator(task_id='stop_task', dag=dag)
 
-    t_run_dbt = create_dbt_operator(
+    ks_utpakking_dbt = create_dbt_operator(
         dag=dag,
-        name="unpack_all_new_kafka_losning",
+        name="utpakking_ks",
         script_path = 'airflow/dbt_run_test.py',
         branch=v_branch,
         dbt_command="run --select KS_transformasjon.*",
         db_schema=v_schema
     )
 
-t_start >>  t_run_dbt >>  t_stop_opp
+t_start >>  ks_utpakking_dbt >>  t_stop_opp
