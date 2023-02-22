@@ -1,8 +1,8 @@
 import os
 from typing import Optional
 from airflow.models import Variable
-#from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
-from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
+from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
+#from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 
 from airflow.operators.python import get_current_context
 
