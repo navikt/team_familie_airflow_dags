@@ -6,7 +6,7 @@ from kubernetes import client
 from operators.slack_operator import slack_info
 
 with DAG(
-  dag_id = 'kopier_BS_data_fra_BQ_til_Oracle',
+  dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle',
   description = 'kopierer brillestonad data fra en tabell i BigQuery til en tabell i Oracle database',
   start_date=datetime(2023, 2, 21),
   schedule_interval= '@daily',
