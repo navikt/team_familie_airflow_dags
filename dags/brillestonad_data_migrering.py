@@ -5,6 +5,8 @@ from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
 
+miljo = Variable.get('miljo')
+
 with DAG(
   dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle',
   description = 'kopierer brillestonad data fra en tabell i BigQuery til en tabell i Oracle database',
@@ -17,7 +19,7 @@ with DAG(
     @task
     def notification_start():
         slack_info(
-            message = "Kopiering  av brillestønads data fra BigQuery til Oracle starter nå! :rocket:"
+            message = f'Kopiering  av brillestønads data fra BigQuery til Oracle i {miljo} database  starter nå! :rocket:'
         )
 
     start_alert = notification_start()
@@ -39,7 +41,7 @@ with DAG(
     @task
     def notification_end():
         slack_info(
-            message = "Kopiering av brillestønads data fra BigQuery til Oracle er vellykket! :tada: :tada:"
+            message = f'Kopiering av brillestønads data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
         )
     slutt_alert = notification_end()
 
