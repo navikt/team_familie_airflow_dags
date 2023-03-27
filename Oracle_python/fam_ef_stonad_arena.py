@@ -24,7 +24,7 @@ def stonad_arena_delete_insert():
         end;
     ''')
 
-    delete_periode_sql = (f"delete from dvh_fam_ef.fam_ef_stonad_arena where periode = 202302 and kildesystem = 'DBT_ARENA'")
+    delete_periode_sql = (f"delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {periode}")
 
     insert_data_sql = ('''
             INSERT INTO dvh_fam_ef.fam_ef_stonad_arena (FK_PERSON1,FK_DIM_PERSON,PERIODE,ALDER,KOMMUNE_NR,BYDEL_NR,KJONN_KODE,MAALGRUPPE_KODE
