@@ -24,22 +24,22 @@ def vedtak_arena_delete_insert():
         end;
     ''')
 
-    delete_periode_sql = (f"delete from dvh_fam_ef.fam_ef_vedtak_arena where periode = {periode}")
+    delete_periode_sql = (f"delete from dvh_fam_ef.fam_ef_vedtak_arena where periode = 202302 and kildesystem = 'DBT_ARENA'")
 
     insert_data_sql = ('''
-            INSERT INTO dvh_fam_ef.fam_ef_vedtak_arena (FK_PERSON1,PERIODE,LK_VEDTAK_ID,KOMMUNE_NR,BYDEL_NR,VEDTAK_SAK_RESULTAT_KODE,STONAD_KODE,STONADBERETT_AKTIVITET_FLAGG,AAR,SAK_STATUS_KODE,STONAD_NAVN
-            ,MAALGRUPPE_KODE,MAALGRUPPE_NAVN,VEDTAK_DATO,VILKAAR_KODE,VILKAAR_STATUS_KODE,VILKAAR_NAVN,VEDTAK_SAK_TYPE_KODE,VEDTAK_BEHANDLING_STATUS
-            ,GYLDIG_FRA_DATO,GYLDIG_TIL_DATO,KILDESYSTEM,LASTET_DATO)
+            INSERT INTO dvh_fam_ef.fam_ef_vedtak_arena (:1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23)
             SELECT FK_PERSON1,PERIODE,LK_VEDTAK_ID,KOMMUNE_NR,BYDEL_NR,VEDTAK_SAK_RESULTAT_KODE,STONAD_KODE,STONADBERETT_AKTIVITET_FLAGG,AAR,SAK_STATUS_KODE,STONAD_NAVN
             ,MAALGRUPPE_KODE,MAALGRUPPE_NAVN,VEDTAK_DATO,VILKAAR_KODE,VILKAAR_STATUS_KODE,VILKAAR_NAVN,VEDTAK_SAK_TYPE_KODE,VEDTAK_BEHANDLING_STATUS
             ,GYLDIG_FRA_DATO,GYLDIG_TIL_DATO,KILDESYSTEM,LASTET_DATO
             FROM dvh_fam_ef.ef_vedtak_arena
         ''')
-
-    cur = oracle_conn()
-    cur.execute(send_context_sql)
-    cur.execute(delete_periode_sql)
-    cur.execute(insert_data_sql)
+    
+    conn = oracle_conn()
+    with conn.cursor() as cur:
+        cur.execute(send_context_sql)
+        cur.execute(delete_periode_sql)
+        cur.execute(insert_data_sql)   
+        conn.commit()
 
 if __name__ == "__main__":
     vedtak_arena_delete_insert()

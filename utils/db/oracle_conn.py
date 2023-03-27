@@ -24,10 +24,10 @@ def oracle_secrets():
   )
 
 def oracle_conn():
-  user = oracle_secrets['user'] + '[DVH_FAM_HM]'
-  dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
-  with cx_Oracle.connect(user=oracle_secrets()['user'], password = oracle_secrets()['password'], dsn=dsn_tns) as conn:
-    with conn.cursor() as cursor:
-      return cursor
+    dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
+    try:
+        conn = cx_Oracle.connect(user = oracle_secrets()['user'], password = oracle_secrets()['password'], dsn = dsn_tns)
+        return conn
+    except cx_Oracle.Error as error:
+        print(error)
 
-       
