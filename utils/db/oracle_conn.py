@@ -1,4 +1,4 @@
-import oracledb
+import cx_Oracle
 from os import getenv
 import os, json
 from google.cloud import secretmanager
@@ -25,8 +25,8 @@ def oracle_secrets():
 
 def oracle_conn():
   user = oracle_secrets['user'] + '[DVH_FAM_HM]'
-  dsn_tns = oracledb.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
-  with oracledb.connect(user=oracle_secrets()['user'], password = oracle_secrets()['password'], dsn=dsn_tns) as conn:
+  dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
+  with cx_Oracle.connect(user=oracle_secrets()['user'], password = oracle_secrets()['password'], dsn=dsn_tns) as conn:
     with conn.cursor() as cursor:
       return cursor
 
