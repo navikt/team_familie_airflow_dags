@@ -35,13 +35,11 @@ def vedtak_arena_delete_insert():
             ,GYLDIG_FRA_DATO,GYLDIG_TIL_DATO,KILDESYSTEM,LASTET_DATO
             FROM dvh_fam_ef.ef_vedtak_arena
         ''')
-    
-    conn = oracle_conn()
-    with conn.cursor() as cur:
-        cur.execute(send_context_sql)
-        cur.execute(delete_periode_sql)
-        cur.execute(insert_data_sql)   
-        conn.commit()
+
+    cur = oracle_conn()
+    cur.execute(send_context_sql)
+    cur.execute(delete_periode_sql)
+    cur.execute(insert_data_sql)
 
 if __name__ == "__main__":
     vedtak_arena_delete_insert()
