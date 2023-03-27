@@ -24,7 +24,7 @@ def stonad_arena_delete_insert():
         end;
     ''')
 
-    delete_periode_sql = (f"delete from dvh_fam_ef.fam_ef_stonad_arena where periode = {periode}")
+    delete_periode_sql = (f"delete from dvh_fam_ef.fam_ef_stonad_arena where periode = 202302")
 
     insert_data_sql = ('''
             INSERT INTO dvh_fam_ef.fam_ef_stonad_arena (FK_PERSON1,FK_DIM_PERSON,PERIODE,ALDER,KOMMUNE_NR,BYDEL_NR,KJONN_KODE,MAALGRUPPE_KODE
@@ -38,12 +38,10 @@ def stonad_arena_delete_insert():
             FROM dvh_fam_ef.ef_stonad_arena_final
         ''')
 
-    conn = oracle_conn()
-    with conn.cursor() as cur:
-        cur.execute(send_context_sql)
-        cur.execute(delete_periode_sql)
-        cur.execute(insert_data_sql)
-        conn.commit()    
+    cur = oracle_conn()
+    cur.execute(send_context_sql)
+    cur.execute(delete_periode_sql)
+    cur.executemany(insert_data_sql)
  
 if __name__ == "__main__":
     stonad_arena_delete_insert()
