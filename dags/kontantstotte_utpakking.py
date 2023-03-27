@@ -21,8 +21,8 @@ v_schema = settings["schema"]
 with DAG(
         dag_id ='kontantstotte_meldinger_utpakking', 
         default_args=default_args,
-        start_date = datetime(2022, 12, 15),
-        schedule_interval = None,#'@hourly',  
+        start_date = datetime(2023, 3, 27),
+        schedule_interval = '@hourly',  
         catchup = False
         ) as dag:
 
