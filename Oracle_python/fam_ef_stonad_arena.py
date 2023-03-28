@@ -46,6 +46,7 @@ def stonad_arena_delete_insert():
         conn.commit()    
  
 if __name__ == "__main__":
-    stonad_arena_delete_insert()
+    #stonad_arena_delete_insert()
+    pass
 
 
