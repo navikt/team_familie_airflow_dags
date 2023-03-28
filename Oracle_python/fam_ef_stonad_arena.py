@@ -41,12 +41,11 @@ def stonad_arena_delete_insert():
     conn = oracle_conn()
     with conn.cursor() as cur:
         cur.execute(send_context_sql)
-        cur.execute(delete_periode_sql)
+        #cur.execute(delete_periode_sql)
         cur.execute(insert_data_sql)
         conn.commit()    
  
 if __name__ == "__main__":
-    #stonad_arena_delete_insert()
-    pass
+    stonad_arena_delete_insert()
 
 
