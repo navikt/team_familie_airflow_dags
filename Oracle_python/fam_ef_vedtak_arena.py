@@ -44,6 +44,7 @@ def vedtak_arena_delete_insert():
         conn.commit()
 
 if __name__ == "__main__":
-    vedtak_arena_delete_insert()
+    #vedtak_arena_delete_insert()
+    pass
 
 
