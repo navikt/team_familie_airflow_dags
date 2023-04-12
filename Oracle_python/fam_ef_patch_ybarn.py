@@ -1,18 +1,5 @@
-import datetime
-from utils.db.oracle_conn import oracle_conn
-
-
-def get_periode():
-    """
-    henter periode for the tidligere måneden eksample--> i dag er 19.04.2022, metoden vil kalkulerer periode aarMaaned eks) '202203'
-    :param periode:
-    :return: periode
-    """
-    today = datetime.date.today() # dato for idag 2022-04-19
-    first = today.replace(day=1) # dato for første dag i måneden 2022-04-01
-    lastMonth = first - datetime.timedelta(days=1) # dato for siste dag i tidligere måneden
-
-    return lastMonth.strftime("%Y%m") # henter bare aar og maaned
+import cx_Oracle
+from felles_metoder import oracle_secrets, get_periode
 
 def patch_ybarn_arena():
     periode = get_periode()
@@ -36,12 +23,15 @@ def patch_ybarn_arena():
             FAM_EF.fam_ef_patch_infotrygd_arena (  P_IN_PERIODE_YYYYMM => P_IN_PERIODE_YYYYMM,P_OUT_ERROR => P_OUT_ERROR) ;  
             END;
         """)
-
-    conn = oracle_conn()
-    with oracle_conn().cursor() as cur:
-        cur.execute(send_context_sql)
-        cur.execute(sql)
-        conn.commit()
+    
+    secrets = oracle_secrets()
+  
+    dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
+    with cx_Oracle.connect(user = secrets['user'], password = secrets['password'], dsn = dsn_tns) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(send_context_sql)
+            cursor.execute(sql)
+            connection.commit()
 
 if __name__ == "__main__":
     patch_ybarn_arena()

@@ -1,4 +1,4 @@
-import oracledb
+import cx_Oracle
 from felles_metoder import oracle_secrets, get_periode
 
 def vedtak_arena_delete_insert():
@@ -26,8 +26,8 @@ def vedtak_arena_delete_insert():
 
     secrets = oracle_secrets()
 
-    dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
-    with oracledb.connect(user = secrets['user'], password = secrets['password'], dsn = dsn_tns) as connection:
+    dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
+    with cx_Oracle.connect(user = secrets['user'], password = secrets['password'], dsn = dsn_tns) as connection:
         with connection.cursor() as cursor:
             cursor.execute(send_context_sql)
             #cursor.execute(delete_periode_sql)
