@@ -15,7 +15,7 @@ default_args = {
     'on_failure_callback': slack_error
     }
 
-periode = 202303 #get_periode() 
+periode = get_periode() 
 
 # Bygger parameter med logging, modeller og miljø
 settings = Variable.get("dbt_ef_schema", deserialize_json=True)
