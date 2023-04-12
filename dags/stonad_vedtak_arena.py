@@ -4,7 +4,7 @@ from dataverk_airflow.knada_operators import create_knada_python_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
-from Oracle_python.felles_metoder import get_periode
+from felles_metoder.felles_metoder import get_periode
 from kubernetes import client
 
 

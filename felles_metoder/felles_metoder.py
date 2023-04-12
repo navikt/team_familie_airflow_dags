@@ -1,6 +1,5 @@
-import datetime
+import datetime, os, json
 from os import getenv
-import os, json
 from google.cloud import secretmanager
 
 def get_periode():

@@ -1,5 +1,5 @@
 import cx_Oracle
-from felles_metoder import oracle_secrets, get_periode
+from felles_metoder.felles_metoder import oracle_secrets, get_periode
 
 def vedtak_arena_delete_insert():
     periode = get_periode()
