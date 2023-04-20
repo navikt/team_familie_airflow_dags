@@ -9,8 +9,8 @@ def opprett_oracle_tabell():
                         VALUES (1,  Kjell-Tore)
                         """)
 
-    dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
-    with cx_Oracle.connect(user = secrets['user'], password = secrets['password'], dsn = dsn_tns) as connection:
+    dsn_tns = cx_Oracle.makedsn(secrets['host']['dvh_fam_ef'], 1521, service_name = secrets['service'])
+    with cx_Oracle.connect(user = secrets['user']['dvh_fam_ef'], password = secrets['password'], dsn = dsn_tns) as connection:
         with connection.cursor() as cursor:
             cursor.execute(insert_data_sql)
             connection.commit()
