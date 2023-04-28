@@ -1,9 +1,9 @@
 import os
 from typing import Optional
 from airflow.models import Variable
-from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
+#from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
 #from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
-
+from airflow.providers.slack.operators.slack import SlackAPIPostOperator
 from airflow.operators.python import get_current_context
 
 def slack_info(
@@ -35,14 +35,11 @@ def __slack_message(
   attachments: Optional[list] = None
 ):
   if context is None: context = get_current_context()
-  SlackWebhookOperator(
-    http_conn_id=None,
+  SlackAPIPostOperator(
     task_id="slack-message",
-    webhook_token=os.environ["SLACK_TOKEN"],
-    message=message,
+    token=os.environ["SLACK_TOKEN"],
+    text=message,
     channel=channel,
-    link_names=True,
-    icon_emoji=emoji,
-    #proxy=os.environ["HTTPS_PROXY"],
-    attachments=attachments
+    #icon_emoji=emoji,
+    #attachments=attachments
   ).execute(context)
