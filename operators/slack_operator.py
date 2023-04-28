@@ -39,7 +39,7 @@ def __slack_message(
     task_id="slack-message",
     token=os.environ["SLACK_TOKEN"],
     text=message,
-    channel=channel,
+    channel=channel
     #icon_emoji=emoji,
     #attachments=attachments
   ).execute(context)
