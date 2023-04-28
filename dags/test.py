@@ -8,8 +8,8 @@ from airflow.decorators import task
 
 with DAG(
     dag_id = 'test_dag', 
-    start_date = datetime(2022, 8, 1), # start date for the dag
-    schedule_interval = None, #'@monthly' , #timedelta(days=1), schedule_interval='*/5 * * * *',
+    start_date = datetime(2023, 4, 1), # start date for the dag
+    schedule_interval = None, #'@monthly' , # schedule_interval='*/5 * * * *',
 ) as dag:
 
     @task
