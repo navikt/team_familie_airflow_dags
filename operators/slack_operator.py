@@ -6,14 +6,11 @@ from airflow.models import Variable
 from airflow.providers.slack.operators.slack import SlackAPIPostOperator
 from airflow.operators.python import get_current_context
 
-def slack_info(
-  message: str = None,
-  context = None,
-  channel: str = None,
-  emoji=":information_source:"
-):
-  if channel is None: channel = Variable.get("slack_info_channel")
-  if message is None: message = f"Airflow DAG: {context['dag'].dag_id} har kjørt ferdig."
+def slack_info(message: str = None, context = None, channel: str = None, emoji=":information_source:"):
+  if channel is None: 
+    channel = Variable.get("slack_info_channel")
+  if message is None: 
+    message = f"Airflow DAG: {context['dag'].dag_id} har kjørt ferdig."
   __slack_message(context, message, channel, emoji)
 
 
@@ -42,4 +39,4 @@ def __slack_message(
     channel=channel
     #icon_emoji=emoji,
     #attachments=attachments
-  ).execute(context)
+  ).execute()
