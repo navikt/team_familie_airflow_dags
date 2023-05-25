@@ -1,17 +1,5 @@
-import datetime
-from utils.db.oracle_conn import oracle_conn
-
-def get_periode():
-    """
-    henter periode for the tidligere måneden eksample--> i dag er 19.04.2022, metoden vil kalkulerer periode aarMaaned eks) '202203'
-    :param periode:
-    :return: periode
-    """
-    today = datetime.date.today() # dato for idag 2022-04-19
-    first = today.replace(day=1) # dato for første dag i måneden 2022-04-01
-    lastMonth = first - datetime.timedelta(days=1) # dato for siste dag i tidligere måneden
-
-    return lastMonth.strftime("%Y%m") # henter bare aar og maaned
+import cx_Oracle
+from felles_metoder.felles_metoder import oracle_secrets, get_periode
 
 def vedtak_arena_delete_insert():
     periode = get_periode()
@@ -34,16 +22,20 @@ def vedtak_arena_delete_insert():
             ,MAALGRUPPE_KODE,MAALGRUPPE_NAVN,VEDTAK_DATO,VILKAAR_KODE,VILKAAR_STATUS_KODE,VILKAAR_NAVN,VEDTAK_SAK_TYPE_KODE,VEDTAK_BEHANDLING_STATUS
             ,GYLDIG_FRA_DATO,GYLDIG_TIL_DATO,KILDESYSTEM,LASTET_DATO
             FROM dvh_fam_ef.ef_vedtak_arena
-        ''')
-    
-    conn = oracle_conn()
-    with conn.cursor() as cur:
-        cur.execute(send_context_sql)
-        cur.execute(delete_periode_sql)
-        cur.execute(insert_data_sql)   
-        conn.commit()
+            ''')
+
+    secrets = oracle_secrets()
+
+    dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
+    with cx_Oracle.connect(user = secrets['user'], password = secrets['password'], dsn = dsn_tns) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(send_context_sql)
+            cursor.execute(delete_periode_sql)
+            cursor.execute(insert_data_sql)
+            connection.commit()
 
 if __name__ == "__main__":
     vedtak_arena_delete_insert()
+    
 
 

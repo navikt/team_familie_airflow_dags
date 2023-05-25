@@ -3,15 +3,19 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamfamilie.aapen-ensligforsorger-vedtak-v1
+  topic: teamfamilie.aapen-barnetrygd-vedtak-v2
   schema: json
+  keypath-seperator: /
 target:
   type: oracle
+  custom-config:
+    - method: oracledb.Cursor.setinputsizes
+      name: melding
+      value: oracledb.BLOB
   skip-duplicates-with: 
     - kafka_offset
-    - kafka_partisjon
     - kafka_topic
-  table: dvh_fam_ef.fam_ef_meta_data_test
+  table: dvh_fam_bt.fam_bt_meta_data
 transform:
   - src: kafka_message
     dst: melding
@@ -23,9 +27,9 @@ transform:
     dst: kafka_mottatt_dato
     fun: int-unix-ms -> datetime-no
   - src: kafka_partition
-    dst: kafka_partisjon
-  - src: kafka_hash
-    dst: kafka_hash
+    dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
 """
+
+
