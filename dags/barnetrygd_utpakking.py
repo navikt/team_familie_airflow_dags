@@ -21,8 +21,8 @@ v_schema = settings["schema"]
 with DAG(
         dag_id ='barnetrygd_meldinger_utpakking', 
         default_args=default_args,
-        start_date = datetime(2023, 6, 6),
-        schedule_interval = None,#'@hourly',  
+        start_date = datetime(2023, 6, 7),
+        schedule_interval = '@hourly',  
         catchup = False
         ) as dag:
 
