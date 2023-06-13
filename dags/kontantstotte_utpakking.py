@@ -22,7 +22,7 @@ with DAG(
         dag_id ='kontantstotte_meldinger_utpakking', 
         default_args=default_args,
         start_date = datetime(2023, 3, 27),
-        schedule_interval = '15 * * * *',  
+        schedule_interval = '20 * * * *',  # at minute 20 every hour
         catchup = False
         ) as dag:
 
