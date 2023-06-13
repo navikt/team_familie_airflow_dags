@@ -22,7 +22,7 @@ with DAG(
         dag_id ='barnetrygd_meldinger_utpakking', 
         default_args=default_args,
         start_date = datetime(2023, 6, 7),
-        schedule_interval = '@hourly',  
+        schedule_interval = '10 * * * *',  # at minute 10 every hour 
         catchup = False
         ) as dag:
 
