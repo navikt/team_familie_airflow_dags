@@ -10,8 +10,8 @@ miljo = Variable.get('miljo')
 with DAG(
   dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle_test',
   description = 'kopierer brillestonad data fra en tabell i BigQuery til en tabell i Oracle database',
-  start_date=datetime(2023, 2, 21),
-  schedule_interval= None, #'@daily',
+  start_date=datetime(2023, 6, 13),
+  schedule_interval= '@daily',
   max_active_runs=1,
   catchup = False
 ) as dag:
