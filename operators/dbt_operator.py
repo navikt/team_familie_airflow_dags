@@ -24,8 +24,8 @@ def create_dbt_operator(
     branch=branch,
     do_xcom_push=True,
     resources=client.V1ResourceRequirements(
-        requests={"memory": "4G"},
-        limits={"memory": "4G"}
+        requests={"memory": "6G"},
+        limits={"memory": "6G"}
         ),
     extra_envs={
       'DBT_COMMAND': dbt_command,
