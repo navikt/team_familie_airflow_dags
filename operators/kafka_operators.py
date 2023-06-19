@@ -85,8 +85,8 @@ def kafka_consumer_kubernetes_pod_operator(
         service_account_name=os.getenv('TEAM'),
         annotations={"sidecar.istio.io/inject": "false"},
         container_resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}
+            requests={"memory": "8G"},
+            limits={"memory": "8G"}
         ),
         retries=retries,
         retry_delay=retry_delay,
