@@ -3,6 +3,19 @@ from airflow.models import DAG
 from airflow.models import Variable
 from kosument_config import barnetrygd
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
+from operators.dbt_operator import create_dbt_operator
+from operators.slack_operator import slack_error
+
+default_args = {
+    'owner': 'Team-Familie',
+    'retries': 1,
+    'on_failure_callback': slack_error
+}
+
+# Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_bt_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
 
 with DAG(
   dag_id="barnetrygd_read_kafka_topic",
@@ -19,5 +32,14 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-consumer
+  bt_utpakking_dbt = create_dbt_operator(
+      dag=dag,
+      name="utpakking_bt",
+      script_path = 'airflow/dbt_run.py',
+      branch=v_branch,
+      dbt_command= """run --select Barnetrygd_utpakking.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
+      db_schema=v_schema
+  )
+
+consumer >> bt_utpakking_dbt
 
