@@ -3,6 +3,20 @@ from airflow.models import DAG
 from airflow.models import Variable
 from kosument_config import ks
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
+from operators.dbt_operator import create_dbt_operator
+from operators.slack_operator import slack_error
+
+
+default_args = {
+    'owner': 'Team-Familie',
+    'retries': 1,
+    'on_failure_callback': slack_error
+}
+
+# Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_ks_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
 
 with DAG(
   dag_id="kontantstotte_read_kafka_topic",
@@ -19,5 +33,14 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-consumer
+  ks_utpakking_dbt = create_dbt_operator(
+    dag=dag,
+    name="utpakking_ks",
+    script_path = 'airflow/dbt_run.py',
+    branch=v_branch,
+    dbt_command="run --select KS_transformasjon.*",
+    db_schema=v_schema
+)
+
+consumer >> ks_utpakking_dbt
 
