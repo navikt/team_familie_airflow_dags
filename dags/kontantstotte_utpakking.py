@@ -22,7 +22,7 @@ with DAG(
         dag_id ='kontantstotte_meldinger_utpakking', 
         default_args=default_args,
         start_date = datetime(2023, 3, 27),
-        schedule_interval = '20 * * * *',  # at minute 20 every hour
+        schedule_interval = '15 * * * *',  
         catchup = False
         ) as dag:
 
@@ -35,7 +35,7 @@ with DAG(
         name="utpakking_ks",
         script_path = 'airflow/dbt_run_test.py',
         branch=v_branch,
-        dbt_command= """run --select KS_transformasjon.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
+        dbt_command="run --select KS_transformasjon.*",
         db_schema=v_schema
     )
 
