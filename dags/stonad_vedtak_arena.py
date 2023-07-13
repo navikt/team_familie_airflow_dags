@@ -44,7 +44,7 @@ with DAG(
         name="dbt-run_stonad_arena",
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select staging.* marts.*  --vars '{{"periode":{periode}}}' """, 
+        dbt_command=f"""run --select --select EF_arena.*  --vars '{{"periode":{periode}}}' """, 
         db_schema=v_schema
     )
 
