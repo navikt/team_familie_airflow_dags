@@ -37,7 +37,7 @@ with DAG(
       name="utpakking_bt",
       script_path = 'airflow/dbt_run.py',
       branch=v_branch,
-      dbt_command= """run --select Barnetrygd_utpakking.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
+      dbt_command= """run --select BT_utpakking.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
       db_schema=v_schema
   )
 
