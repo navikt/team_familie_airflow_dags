@@ -18,7 +18,7 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-  dag_id="BT_konsument",
+  dag_id="BT_konsumen",
   start_date=datetime(2023, 7, 10),
   schedule_interval= "@hourly",
   max_active_runs=1,
