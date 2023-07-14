@@ -18,7 +18,7 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-  dag_id="barnetrygd_read_kafka_topic",
+  dag_id="BT_konsument",
   start_date=datetime(2023, 5, 28),
   schedule_interval= "@hourly",
   max_active_runs=1

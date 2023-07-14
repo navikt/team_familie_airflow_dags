@@ -19,7 +19,7 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-  dag_id="kontantstotte_read_kafka_topic",
+  dag_id="KS_konsument",
   start_date=datetime(2023, 2, 2),
   schedule_interval= "@hourly",
   max_active_runs=1
