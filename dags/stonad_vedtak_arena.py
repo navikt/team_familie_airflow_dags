@@ -44,44 +44,16 @@ with DAG(
         name="dbt-run_stonad_arena",
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select staging.* marts.*  --vars '{{"periode":{periode}}}' """, 
+        dbt_command=f"""run --select EF_arena.*  --vars '{{"periode":{periode}}}' """, 
         db_schema=v_schema
     )
 
-    fam_ef_stonad_arena = create_knada_python_pod_operator(
-        dag=dag,
-        name="fam_ef_stonad_arena_insert",
-        repo="navikt/team_familie_airflow_dags",
-        script_path="Oracle_python/fam_ef_stonad_arena.py",
-        branch="main",
-        delete_on_finish= False,
-        resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel")
-    )
-
-    fam_ef_vedtak_arena = create_knada_python_pod_operator(
-        dag=dag,
-        name="fam_ef_stonad_vedtak_insert",
-        repo="navikt/team_familie_airflow_dags",
-        script_path="Oracle_python/fam_ef_vedtak_arena.py",
-        branch="main",
-        delete_on_finish= False,
-        resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel")
-    )
-    
     @task
     def notification_end():
         slack_info(
             message = "Data er feridg lastet til fam_ef_arena_stonad og fam_ef_arena_vedtak! :tada: :tada:"
         )
+
     slutt_alert = notification_end()
-
-
-    
-start_alert >> dbt_run_stonad_arena >> fam_ef_stonad_arena >> slutt_alert
-start_alert >> dbt_run_stonad_arena >> fam_ef_vedtak_arena >> slutt_alert
+   
+start_alert >> dbt_run_stonad_arena >> slutt_alert
