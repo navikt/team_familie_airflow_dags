@@ -18,10 +18,11 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-  dag_id="barnetrygd_read_kafka_topic",
-  start_date=datetime(2023, 5, 28),
+  dag_id="BT_konsument",
+  start_date=datetime(2023, 7, 17),
   schedule_interval= "@hourly",
-  max_active_runs=1
+  max_active_runs=1,
+  catchup = False
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
