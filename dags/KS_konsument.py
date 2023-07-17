@@ -19,10 +19,11 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-  dag_id="kontantstotte_read_kafka_topic",
-  start_date=datetime(2023, 2, 2),
+  dag_id="KS_konsument",
+  start_date=datetime(2023, 7, 17),
   schedule_interval= "@hourly",
-  max_active_runs=1
+  max_active_runs=1,
+  catchup = False
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
@@ -38,7 +39,7 @@ with DAG(
     name="utpakking_ks",
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    dbt_command= """run --select KS_transformasjon.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
+    dbt_command= """run --select KS_utpakking.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
     db_schema=v_schema
 )
 
