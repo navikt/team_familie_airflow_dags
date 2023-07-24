@@ -37,7 +37,6 @@ with DAG(
         name="fam_ef_patch_ybarn_infotrygd_arena",
         repo="navikt/team_familie_airflow_dags",
         script_path="Oracle_python/fam_ef_patch_ybarn.py",
-        branch="main",
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
