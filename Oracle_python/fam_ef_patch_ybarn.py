@@ -14,6 +14,9 @@ def patch_ybarn_arena():
     
     secrets = oracle_secrets()
     user = secrets['user']+'[dvh_fam_ef]'
+
+    print(user)
+    print(secrets['password'])
   
     dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
     with cx_Oracle.connect(user = user, password = secrets['password'], dsn = dsn_tns) as connection:
