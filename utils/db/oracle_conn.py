@@ -23,6 +23,7 @@ def oracle_secrets():
     nencoding="UTF-8"
   )
 
+
 def oracle_conn():
     dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
     try:
