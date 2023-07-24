@@ -11,18 +11,6 @@ def patch_ybarn_arena():
                                             , action_name => 'Patcher ybarn til fam_ef_stonad' );
         end;
     ''')
-
-    sql = (f"""
-            DECLARE
-                P_IN_PERIODE_YYYYMM NUMBER;
-                P_OUT_ERROR VARCHAR2(200);
-    
-            BEGIN
-            P_IN_PERIODE_YYYYMM := {periode};
-            P_OUT_ERROR := NULL;
-            FAM_EF.fam_ef_patch_infotrygd_arena (  P_IN_PERIODE_YYYYMM => P_IN_PERIODE_YYYYMM,P_OUT_ERROR => P_OUT_ERROR) ;  
-            END;
-        """)
     
     secrets = oracle_secrets()
   
@@ -30,7 +18,7 @@ def patch_ybarn_arena():
     with cx_Oracle.connect(user = secrets['user'], password = secrets['password'], dsn = dsn_tns) as connection:
         with connection.cursor() as cursor:
             cursor.execute(send_context_sql)
-            cursor.execute(sql)
+            cursor.callproc('FAM_EF.fam_ef_patch_infotrygd_arena', [periode])
             connection.commit()
 
 if __name__ == "__main__":
