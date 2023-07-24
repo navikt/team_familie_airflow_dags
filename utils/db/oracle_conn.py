@@ -15,14 +15,13 @@ def set_secrets_as_envs():
 def oracle_secrets():
   set_secrets_as_envs()
   return dict(
-    user=getenv("DBT_ORCL_USER"),
-    password=getenv("DBT_ORCL_PASS"),
+    user=getenv("AIRFLOW_ORCL_USER"),
+    password=getenv("AIRFLOW_ORCL_PASS"),
     host = getenv("DBT_ORCL_HOST"),
     service = getenv("DBT_ORCL_SERVICE"),
     encoding="UTF-8",
     nencoding="UTF-8"
   )
-
 
 def oracle_conn():
     dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
