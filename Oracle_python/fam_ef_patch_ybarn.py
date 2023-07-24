@@ -22,7 +22,7 @@ def patch_ybarn_arena():
     with cx_Oracle.connect(user = user, password = secrets['password'], dsn = dsn_tns) as connection:
         with connection.cursor() as cursor:
             cursor.execute(send_context_sql)
-            cursor.callproc('FAM_EF.fam_ef_patch_infotrygd_arena', [periode])
+            cursor.callproc('FAM_EF.fam_ef_patch_infotrygd_arena', [periode, None])
             connection.commit()
 
 if __name__ == "__main__":
