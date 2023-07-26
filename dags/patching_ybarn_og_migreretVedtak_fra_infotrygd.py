@@ -37,9 +37,9 @@ with DAG(
         repo="navikt/team_familie_airflow_dags",
         script_path="Oracle_python/fam_ef_patch_ybarn.py",
         branch=branch,
-        resources=client.V1ResourceRequirements(
-            requests={"memory": "6G"},
-            limits={"memory": "6G"}),
+        # resources=client.V1ResourceRequirements(
+        #     requests={"memory": "6G"},
+        #     limits={"memory": "6G"}),
         slack_channel=Variable.get("slack_error_channel")
     )
 
