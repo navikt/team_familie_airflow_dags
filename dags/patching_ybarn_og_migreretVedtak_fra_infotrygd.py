@@ -45,7 +45,7 @@ with DAG(
 
     patch_migrerte_vedtak = create_knada_python_pod_operator(
     dag=dag,
-    name="fam_ef_patch_migrerte_vedtak",
+    name="fam_ef_patch_migrert_vedtak",
     repo="navikt/team_familie_airflow_dags",
     script_path="Oracle_python/fam_ef_patch_migrerte_vedtak.py",
     branch=branch,
