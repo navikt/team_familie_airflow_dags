@@ -38,8 +38,8 @@ with DAG(
         script_path="Oracle_python/fam_ef_patch_ybarn.py",
         branch=branch,
         resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
+            requests={"memory": "6G"},
+            limits={"memory": "6G"}),
         slack_channel=Variable.get("slack_error_channel")
     )
 
@@ -50,8 +50,8 @@ with DAG(
     script_path="Oracle_python/fam_ef_patch_migrerte_vedtak.py",
     branch=branch,
     resources=client.V1ResourceRequirements(
-        requests={"memory": "4G"},
-        limits={"memory": "4G"}),
+        requests={"memory": "6G"},
+        limits={"memory": "6G"}),
     slack_channel=Variable.get("slack_error_channel")
     )
 
@@ -62,4 +62,4 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> patch_migrerte_vedtak >> patch_ybarn_arena >> slutt_alert
+start_alert >> patch_ybarn_arena >> patch_migrerte_vedtak >> slutt_alert
