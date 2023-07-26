@@ -6,6 +6,7 @@ from kubernetes import client
 from operators.slack_operator import slack_info
 
 miljo = Variable.get('miljo')
+branch = Variable.get("branch")
 
 with DAG(
   dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle',
@@ -29,7 +30,7 @@ with DAG(
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
-    branch = 'main',
+    branch = branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
         requests={'memory': '4G'},
