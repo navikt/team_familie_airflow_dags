@@ -38,21 +38,21 @@ with DAG(
         script_path="Oracle_python/fam_ef_patch_ybarn.py",
         branch=branch,
         resources=client.V1ResourceRequirements(
-            requests={"memory": "6G"},
-            limits={"memory": "6G"}),
+            requests={"memory": "4G"},
+            limits={"memory": "4G"}),
         slack_channel=Variable.get("slack_error_channel")
     )
 
     patch_migrerte_vedtak = create_knada_python_pod_operator(
-    dag=dag,
-    name="fam_ef_patch_migrerte_vedtak",
-    repo="navikt/team_familie_airflow_dags",
-    script_path="Oracle_python/fam_ef_patch_migrerte_vedtak.py",
-    branch=branch,
-    resources=client.V1ResourceRequirements(
-        requests={"memory": "6G"},
-        limits={"memory": "6G"}),
-    slack_channel=Variable.get("slack_error_channel")
+        dag=dag,
+        name="fam_ef_patch_migrert_vedtak",
+        repo="navikt/team_familie_airflow_dags",
+        script_path="Oracle_python/fam_ef_patch_migrerte_vedtak.py",
+        branch=branch,
+        resources=client.V1ResourceRequirements(
+            requests={"memory": "4G"},
+            limits={"memory": "4G"}),
+        slack_channel=Variable.get("slack_error_channel")
     )
 
     @task
@@ -62,4 +62,5 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> patch_ybarn_arena >> patch_migrerte_vedtak >> slutt_alert
+start_alert >> patch_migrerte_vedtak >> patch_ybarn_arena >> slutt_alert
+
