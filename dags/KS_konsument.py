@@ -21,7 +21,7 @@ v_schema = settings["schema"]
 with DAG(
   dag_id="KS_konsument",
   start_date=datetime(2023, 7, 17),
-  schedule_interval= None,#"@hourly",
+  schedule_interval= "@hourly",
   max_active_runs=1,
   catchup = False
 ) as dag:
@@ -29,8 +29,8 @@ with DAG(
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "kontantstotte_hent_kafka_data",
     config = ks.config,
-    data_interval_start_timestamp_milli="1690549200000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1690786800000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    #data_interval_start_timestamp_milli="1659312000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    #data_interval_end_timestamp_milli="1675209600000",   # from first day we got data until 15.11.2022 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
@@ -39,7 +39,7 @@ with DAG(
     name="utpakking_ks",
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    dbt_command= """run --select KS_utpakking.* --vars "{{dag_interval_start: '2023-07-28 14:00:00', dag_interval_end: '2023-07-31 09:00:00'}}" """,
+    dbt_command= """run --select KS_utpakking.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
     db_schema=v_schema
 )
 
