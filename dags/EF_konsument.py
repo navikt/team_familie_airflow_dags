@@ -35,13 +35,13 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-#  ef_utpakking_dbt = create_dbt_operator(
-#      dag=dag,
-#      name="utpakking_ef",
-#      script_path = 'airflow/dbt_run.py',
-#      branch=v_branch,
-#      dbt_command= """run --select EF_utpakking.* --vars "{{dag_interval_start: '{0}', dag_interval_end: '{1}'}}" """.format('{{ execution_date.in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}','{{ (execution_date + macros.timedelta(hours=1)).in_timezone("Europe/Amsterdam").strftime("%Y-%m-%d %H:%M:%S")}}'),
-#      db_schema=v_schema
-#  )
+  ef_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_ef",
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select EF_utpakking/meldinger_til_aa_pakke_ut EF_utpakking/fam_ef_fagsak""",
+     db_schema=v_schema
+ )
 
-consumer #>> ef_utpakking_dbt
+consumer >> ef_utpakking_dbt
