@@ -13,13 +13,15 @@ default_args = {
 }
 
 # Bygger parameter med logging, modeller og miljø
-settings = Variable.get("dbt_bt_schema", deserialize_json=True)
+settings = Variable.get("dbt_ef_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
+topic = Variable.get("EF_topic") # topic navn hentes foreløpig fra airflow variabler "teamfamilie.aapen-ensligforsorger-vedtak-test" 
+
 with DAG(
   dag_id="EF_konsument",
-  start_date=datetime(2023, 7, 27),
+  start_date=datetime(2023, 8, 7),
   schedule_interval= "@hourly",
   max_active_runs=1,
   catchup = False
@@ -27,7 +29,7 @@ with DAG(
 
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "ensligforsorger_hent_kafka_data",
-    config = ef.config,
+    config = ef.config.format(topic),
     #data_interval_start_timestamp_milli="1684022400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
     #data_interval_end_timestamp_milli="1685318400000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
