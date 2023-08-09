@@ -40,7 +40,7 @@ with DAG(
      name="utpakking_ef",
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
-     dbt_command= """run --select EF_utpakking/meldinger_til_aa_pakke_ut EF_utpakking/fam_ef_fagsak""",
+     dbt_command= """run --select EF_utpakking.*""",
      db_schema=v_schema
  )
 
