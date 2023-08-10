@@ -31,7 +31,7 @@ with DAG(
     task_id = "ensligforsorger_hent_kafka_data",
     config = ef.config.format(topic),
     data_interval_start_timestamp_milli="1689724800000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1691412236000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    data_interval_end_timestamp_milli="1691658621000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
