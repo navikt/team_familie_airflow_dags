@@ -3,7 +3,7 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamfamilie.aapen-kontantstotte-vedtak-v1
+  topic: {}
   schema: json
   keypath-seperator: /
 target:

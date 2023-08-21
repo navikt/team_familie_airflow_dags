@@ -3,7 +3,7 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: teamfamilie.aapen-barnetrygd-vedtak-v2
+  topic: {}
   schema: json
   keypath-seperator: /
 target:
