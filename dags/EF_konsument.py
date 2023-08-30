@@ -22,7 +22,7 @@ topic = Variable.get("EF_topic") # topic navn hentes foreløpig fra airflow vari
 with DAG(
   dag_id="EF_konsument",
   start_date=datetime(2023, 8, 7),
-  schedule_interval= None,#"@hourly",
+  schedule_interval= None, #"@hourly",
   max_active_runs=1,
   catchup = False
 ) as dag:
