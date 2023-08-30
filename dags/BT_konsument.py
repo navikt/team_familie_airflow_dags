@@ -22,7 +22,7 @@ topic = Variable.get("BT_topic")
 with DAG(
   dag_id="BT_konsument",
   start_date=datetime(2023, 7, 17),
-  schedule_interval= "@hourly",
+  schedule_interval= None, #"@hourly",
   max_active_runs=1,
   catchup = False
 ) as dag:
@@ -30,8 +30,8 @@ with DAG(
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "barnetrygd_hent_kafka_data",
     config = bt.config.format(topic),
-    #data_interval_start_timestamp_milli="1684022400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    #data_interval_end_timestamp_milli="1685318400000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    data_interval_start_timestamp_milli="1693288800000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    data_interval_end_timestamp_milli="1693339200000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
