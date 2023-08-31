@@ -14,7 +14,7 @@ with DAG(
   start_date=datetime(2023, 2, 21),
   schedule_interval= '@daily',
   max_active_runs=1,
-  catchup = False
+  catchup = True
 ) as dag:
 
     @task
