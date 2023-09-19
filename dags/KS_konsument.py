@@ -21,7 +21,7 @@ v_schema = settings["schema"]
 with DAG(
   dag_id="KS_konsument",
   start_date=datetime(2023, 7, 17),
-  schedule_interval= None,#"@hourly",
+  schedule_interval= "@hourly",
   max_active_runs=1,
   catchup = False
 ) as dag:
