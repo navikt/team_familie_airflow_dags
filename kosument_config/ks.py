@@ -18,7 +18,7 @@ target:
   table: dvh_fam_ks.fam_ks_meta_data
 transform:
   - src: kafka_message
-    dst: melding1
+    dst: melding
   - src: kafka_topic
     dst: kafka_topic
   - src: kafka_offset
