@@ -27,7 +27,7 @@ def kafka_consumer_kubernetes_pod_operator(
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=120),
-    #nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
+    nls_lang: str = "",
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
