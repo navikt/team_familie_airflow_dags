@@ -15,7 +15,7 @@ target:
   skip-duplicates-with: 
     - kafka_offset
     - kafka_topic
-  table: dvh_fam_ks.fam_ks_meta_data
+  table: dvh_fam_ks.fam_ks_meta_data_tmp
 transform:
   - src: kafka_message
     dst: melding
