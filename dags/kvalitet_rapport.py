@@ -9,7 +9,7 @@ from airflow.utils.timezone import make_aware
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error, slack_info
 from dataverk_airflow.knada_operators import create_knada_python_pod_operator
-from utils.db.oracle_conn import oracle_connection
+from utils.db.oracle_conn import oracle_conn
 
 with DAG(
   dag_id='datakvalitetsrapport',
@@ -60,7 +60,7 @@ with DAG(
             FROM DVH_FAM_KS.fam_ks_meta_data)
         where neste-kafka_offset > 1 and lastet_dato > to_date('27.09.2023', 'dd.mm.yyyy')
     """
-    with oracle_connection().cursor() as cur:
+    with oracle_conn().cursor() as cur:
         bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
         bt_hull = cur.execute(sjekk_hull_i_BT_meta_data).fetchone()[0]
         ef_ant = cur.execute(ef_ant_mottatt_mldinger).fetchone()[0]
