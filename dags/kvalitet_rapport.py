@@ -56,11 +56,11 @@ with DAG(
     """
     with oracle_conn().cursor() as cur:
         bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
-        bt_hull = [str(x) for x in cur.execute(sjekk_hull_i_BT_meta_data).fetchone()]
+        bt_hull = [str(x) for x in (cur.execute(sjekk_hull_i_BT_meta_data).fetchone() or [])]
         ef_ant = cur.execute(ef_ant_mottatt_mldinger).fetchone()[0]
-        ef_hull = [str(x) for x in cur.execute(sjekk_hull_i_EF_meta_data).fetchone()]
+        ef_hull = [str(x) for x in (cur.execute(sjekk_hull_i_EF_meta_data).fetchone() or [])]
         ks_ant = cur.execute(ks_ant_mottatt_mldinger).fetchone()[0]
-        ks_hull = [str(x) for x in cur.execute(sjekk_hull_i_KS_meta_data).fetchone()]
+        ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
     return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull]
 
 
