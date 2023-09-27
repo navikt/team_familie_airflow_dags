@@ -52,7 +52,7 @@ with DAG(
                 OVER(PARTITION BY kafka_topic
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_KS.fam_ks_meta_data)
-        where neste-kafka_offset > 1 and lastet_dato > to_date('25.09.2023', 'dd.mm.yyyy')
+        where neste-kafka_offset > 1 and lastet_dato > to_date('27.09.2023', 'dd.mm.yyyy')
     """
     with oracle_conn().cursor() as cur:
         bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
