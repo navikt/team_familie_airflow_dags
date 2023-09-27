@@ -1,14 +1,11 @@
 from datetime import datetime
-from typing import List
+from datetime import date
+from datetime import timedelta
 from airflow import DAG
 from airflow.decorators import task
-from airflow.models import Variable
 from airflow.models import XCom
 from airflow.models.taskinstance import TaskInstance
-from airflow.utils.timezone import make_aware
-from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error, slack_info
-from dataverk_airflow.knada_operators import create_knada_python_pod_operator
 from utils.db.oracle_conn import oracle_conn
 
 with DAG(
@@ -55,7 +52,7 @@ with DAG(
                 OVER(PARTITION BY kafka_topic, kafka_partisjon
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_KS.fam_ks_meta_data)
-        where neste-kafka_offset > 1 and lastet_dato > to_date('27.09.2023', 'dd.mm.yyyy')
+        where neste-kafka_offset > 1 and lastet_dato > to_date('25.09.2023', 'dd.mm.yyyy')
     """
     with oracle_conn().cursor() as cur:
         bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
@@ -69,17 +66,18 @@ with DAG(
 
   @task
   def info_slack(kafka_last):
+    gaarsdagensdato = date.today() - timedelta(days = 1)
     [
       bt_ant,bt_hull,
       ef_ant,ef_hull,
       ks_ant,ks_hull,
     ] = kafka_last
-    bt_antall_meldinger =        f"Antall mottatt BT meldinger.......{str(bt_ant).rjust(7, '.')}"
-    bt_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i BT_meta_data:............{str(bt_hull).rjust(7, '.')}"
-    ef_antall_meldinger =        f"Antall mottatt EF meldinger.......{str(ef_ant).rjust(7, '.')}"
-    ef_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i EF_meta_data:............{str(ef_hull).rjust(7, '.')}"
-    ks_antall_meldinger =        f"Antall mottatt KS meldinger.......{str(ks_ant).rjust(7, '.')}"
-    ks_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i KS_meta_data:............{str(ks_hull).rjust(7, '.')}"
+    bt_antall_meldinger =        f"Antall mottatt BT meldinger for {gaarsdagensdato}.......{str(bt_ant).rjust(7, '.')}"
+    bt_hull_i_meta_data =        f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull).rjust(7, '.')}"
+    ef_antall_meldinger =        f"Antall mottatt EF meldinger for {gaarsdagensdato}.......{str(ef_ant).rjust(7, '.')}"
+    ef_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull).rjust(7, '.')}"
+    ks_antall_meldinger =        f"Antall mottatt KS meldinger for {gaarsdagensdato}.......{str(ks_ant).rjust(7, '.')}"
+    ks_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull).rjust(7, '.')}"
     konsumenter_summary = f"""
 *Leste meldinger fra konsumenter siste døgn:*
  
