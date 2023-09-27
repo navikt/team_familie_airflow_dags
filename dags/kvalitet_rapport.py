@@ -72,12 +72,12 @@ with DAG(
       ef_ant,ef_hull,
       ks_ant,ks_hull,
     ] = kafka_last
-    bt_antall_meldinger =        f"Antall mottatt BT meldinger for {gaarsdagensdato}.......{str(bt_ant).rjust(7, '.')}"
-    bt_hull_i_meta_data =        f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull).rjust(7, '.')}"
-    ef_antall_meldinger =        f"Antall mottatt EF meldinger for {gaarsdagensdato}.......{str(ef_ant).rjust(7, '.')}"
-    ef_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull).rjust(7, '.')}"
-    ks_antall_meldinger =        f"Antall mottatt KS meldinger for {gaarsdagensdato}.......{str(ks_ant).rjust(7, '.')}"
-    ks_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull).rjust(7, '.')}"
+    bt_antall_meldinger = f"Antall mottatt BT meldinger for {gaarsdagensdato}......................{bt_ant}"
+    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
+    ef_antall_meldinger = f"Antall mottatt EF meldinger for {gaarsdagensdato}......................{ef_ant}"
+    ef_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(ef_hull)}"
+    ks_antall_meldinger = f"Antall mottatt KS meldinger for {gaarsdagensdato}......................{ks_ant}"
+    ks_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(ks_hull)}"
     konsumenter_summary = f"""
 *Leste meldinger fra konsumenter siste døgn:*
  
