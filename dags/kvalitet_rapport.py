@@ -30,9 +30,6 @@ with DAG(
     ks_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_KS.fam_ks_meta_data WHERE lastet_dato >= sysdate - 1
     """
-    pp_ant_mottatt_mldinger = """
-      SELECT COUNT(*) FROM DVH_FAM_PP.fam_pp_meta_data WHERE lastet_dato >= sysdate - 1
-    """
     sjekk_hull_i_BT_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_partition, kafka_offset,
@@ -67,7 +64,6 @@ with DAG(
         ef_hull = cur.execute(sjekk_hull_i_EF_meta_data).fetchone()
         ks_ant = cur.execute(ks_ant_mottatt_mldinger).fetchone()[0]
         ks_hull = cur.execute(sjekk_hull_i_KS_meta_data).fetchone()
-        pp_ant = cur.execute(pp_ant_mottatt_mldinger).fetchone()[0]
     return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant]
 
 
@@ -77,7 +73,6 @@ with DAG(
       bt_ant,bt_hull,
       ef_ant,ef_hull,
       ks_ant,ks_hull,
-      pp_ant
     ] = kafka_last
     bt_antall_meldinger =        f"Antall mottatt BT meldinger.......{str(bt_ant).rjust(7, '.')}"
     bt_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i BT_meta_data:............{str(bt_hull).rjust(7, '.')}"
@@ -85,7 +80,6 @@ with DAG(
     ef_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i EF_meta_data:............{str(ef_hull).rjust(7, '.')}"
     ks_antall_meldinger =        f"Antall mottatt KS meldinger.......{str(ks_ant).rjust(7, '.')}"
     ks_hull_i_meta_data =        f"Sjekk for manglene kafka_offset i KS_meta_data:............{str(ks_hull).rjust(7, '.')}"
-    pp_antall_meldinger =        f"Antall mottatt PP meldinger.....{str(pp_ant).rjust(7, '.')}"
     konsumenter_summary = f"""
 *Leste meldinger fra konsumenter siste døgn:*
  
@@ -96,7 +90,6 @@ with DAG(
 {ef_hull_i_meta_data}
 {ks_antall_meldinger}
 {ks_hull_i_meta_data}
-{pp_antall_meldinger}
 ```
 """
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
