@@ -29,38 +29,38 @@ with DAG(
     """
     sjekk_hull_i_BT_meta_data = """
         SELECT * FROM
-            (SELECT lastet_dato, kafka_topic, kafka_partition, kafka_offset,
+            (SELECT lastet_dato, kafka_topic, kafka_offset,
                 LEAD(kafka_offset) 
-                OVER(PARTITION BY kafka_topic, kafka_partition
+                OVER(PARTITION BY kafka_topic
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_BT.fam_bt_meta_data)
     where kafka_offset > 766801 and  neste-kafka_offset > 1
     """
     sjekk_hull_i_EF_meta_data = """
         SELECT * FROM
-            (SELECT lastet_dato, kafka_topic, kafka_partition, kafka_offset,
+            (SELECT lastet_dato, kafka_topic, kafka_offset,
                 LEAD(kafka_offset) 
-                OVER(PARTITION BY kafka_topic, kafka_partition
+                OVER(PARTITION BY kafka_topic
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_EF.fam_ef_meta_data)
         where lastet_dato > to_date('01.08.2023', 'dd.mm.yyyy') and  neste-kafka_offset > 1
     """
     sjekk_hull_i_KS_meta_data = """
         SELECT * FROM
-            (SELECT lastet_dato, kafka_topic, kafka_partisjon, kafka_offset,
+            (SELECT lastet_dato, kafka_topic, kafka_offset,
                 LEAD(kafka_offset) 
-                OVER(PARTITION BY kafka_topic, kafka_partisjon
+                OVER(PARTITION BY kafka_topic
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_KS.fam_ks_meta_data)
         where neste-kafka_offset > 1 and lastet_dato > to_date('25.09.2023', 'dd.mm.yyyy')
     """
     with oracle_conn().cursor() as cur:
         bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
-        bt_hull = cur.execute(sjekk_hull_i_BT_meta_data).fetchone()
+        bt_hull = [str(x) for x in cur.execute(sjekk_hull_i_BT_meta_data).fetchone()]
         ef_ant = cur.execute(ef_ant_mottatt_mldinger).fetchone()[0]
-        ef_hull = cur.execute(sjekk_hull_i_EF_meta_data).fetchone()
+        ef_hull = [str(x) for x in cur.execute(sjekk_hull_i_EF_meta_data).fetchone()]
         ks_ant = cur.execute(ks_ant_mottatt_mldinger).fetchone()[0]
-        ks_hull = cur.execute(sjekk_hull_i_KS_meta_data).fetchone()
+        ks_hull = [str(x) for x in cur.execute(sjekk_hull_i_KS_meta_data).fetchone()]
     return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull]
 
 
