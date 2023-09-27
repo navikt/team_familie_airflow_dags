@@ -12,7 +12,7 @@ with DAG(
   dag_id='datakvalitetsrapport',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2023, 9, 27),
-  schedule_interval= None,#"0 6 * * *", # kl 6 hver dag
+  schedule_interval= "0 7 * * *", # kl 7 hver dag
   catchup=False
 ) as dag:
 
