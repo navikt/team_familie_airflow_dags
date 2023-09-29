@@ -7,14 +7,12 @@ from airflow.models import XCom
 from airflow.models.taskinstance import TaskInstance
 from operators.slack_operator import slack_error, slack_info
 from utils.db.oracle_conn import oracle_conn
-from colorama import Fore
-
 
 with DAG(
   dag_id='datakvalitetsrapport',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2023, 9, 27),
-  schedule_interval= None,#"0 6 * * *", # kl 6 hver dag
+  schedule_interval= "0 7 * * *", # kl 7 hver dag
   catchup=False
 ) as dag:
 
@@ -54,7 +52,7 @@ with DAG(
                 OVER(PARTITION BY kafka_topic
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_KS.fam_ks_meta_data)
-        where neste-kafka_offset > 1 and lastet_dato > to_date('25.09.2023', 'dd.mm.yyyy')
+        where neste-kafka_offset > 1 and lastet_dato > to_date('27.09.2023', 'dd.mm.yyyy')
     """
     with oracle_conn().cursor() as cur:
         bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
@@ -84,11 +82,11 @@ with DAG(
 *Leste meldinger fra konsumenter siste døgn:*
  
 ```
-{Fore.GREEN + bt_antall_meldinger}
+{bt_antall_meldinger}
 {bt_hull_i_meta_data}
-{Fore.GREEN + ef_antall_meldinger}
+{ef_antall_meldinger}
 {ef_hull_i_meta_data}
-{Fore.GREEN + ks_antall_meldinger}
+{ks_antall_meldinger}
 {ks_hull_i_meta_data}
 ```
 """
