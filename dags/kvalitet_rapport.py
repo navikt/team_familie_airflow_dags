@@ -7,6 +7,8 @@ from airflow.models import XCom
 from airflow.models.taskinstance import TaskInstance
 from operators.slack_operator import slack_error, slack_info
 from utils.db.oracle_conn import oracle_conn
+from colorama import Fore
+
 
 with DAG(
   dag_id='datakvalitetsrapport',
@@ -82,11 +84,11 @@ with DAG(
 *Leste meldinger fra konsumenter siste døgn:*
  
 ```
-{bt_antall_meldinger}
+{Fore.GREEN + bt_antall_meldinger}
 {bt_hull_i_meta_data}
-{ef_antall_meldinger}
+{Fore.GREEN + ef_antall_meldinger}
 {ef_hull_i_meta_data}
-{ks_antall_meldinger}
+{Fore.GREEN + ks_antall_meldinger}
 {ks_hull_i_meta_data}
 ```
 """
