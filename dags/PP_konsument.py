@@ -13,12 +13,12 @@ default_args = {
 }
 
 # Bygger parameter med logging, modeller og miljø
-settings = Variable.get("dbt_bt_schema", deserialize_json=True)
+settings = Variable.get("dbt_pp_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-  dag_id="BT_konsument",
+  dag_id="PP_konsument",
   start_date=datetime(2023, 10, 19),
   schedule_interval= "@hourly",
   max_active_runs=1,
