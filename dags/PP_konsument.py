@@ -19,7 +19,7 @@ v_schema = settings["schema"]
 
 with DAG(
   dag_id="PP_konsument",
-  start_date=datetime(2023, 10, 25, 13),
+  start_date=datetime(2023, 10, 26, 10),
   schedule_interval= "@hourly",
   max_active_runs=1,
   catchup = True
