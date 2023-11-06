@@ -33,6 +33,7 @@ def create_dbt_operator(
       'DB_SCHEMA': db_schema,
       'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
     },
-    slack_channel=Variable.get("slack_error_channel")
+    slack_channel=Variable.get("slack_error_channel"),
+    requirements_path="team_familie_airflow_dags/requirements.txt"
   )
 
