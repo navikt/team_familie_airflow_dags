@@ -43,7 +43,7 @@ with DAG(
         slack_channel=Variable.get("slack_error_channel")
     )
 
-    patch_migrerte_vedtak = create_knada_python_pod_operator(
+    patch_migrerte_vedtak = python_operator(
         dag=dag,
         name="fam_ef_patch_migrert_vedtak",
         repo="navikt/team_familie_airflow_dags",
