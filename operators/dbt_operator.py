@@ -3,7 +3,7 @@ import os
 from airflow.models import Variable
 from kubernetes import client
 from airflow import DAG
-from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+from dataverk_airflow import python_operator
 
 def create_dbt_operator(
   dag: DAG,
@@ -16,7 +16,7 @@ def create_dbt_operator(
   **kwargs):
 
 
-  return create_knada_python_pod_operator(
+  return python_operator(
     dag=dag,
     name=name,
     repo='navikt/dvh_familie_dbt',
@@ -31,8 +31,11 @@ def create_dbt_operator(
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
       'DB_SCHEMA': db_schema,
-      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
+      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
+      "ORA_PYTHON_DRIVER_TYPE": "thin"
     },
-    slack_channel=Variable.get("slack_error_channel")
+    slack_channel=Variable.get("slack_error_channel"),
+    #requirements_path="requirements.txt",
+    image='ghcr.io/navikt/dvh-images/airflow-dbt:2023-11-01-1482dbf'
   )
 
