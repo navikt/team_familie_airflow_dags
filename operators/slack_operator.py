@@ -1,8 +1,6 @@
 import os
 from typing import Optional
 from airflow.models import Variable
-#from airflow.contrib.operators.slack_webhook_operator import SlackWebhookOperator
-#from airflow.providers.slack.operators.slack_webhook import SlackWebhookOperator
 from airflow.providers.slack.operators.slack import SlackAPIPostOperator
 from airflow.operators.python import get_current_context
 
@@ -34,7 +32,7 @@ def __slack_message(
   if context is None: context = get_current_context()
   SlackAPIPostOperator(
     task_id="slack-message",
-    token=os.environ["SLACK_TOKEN"],
+    slack_conn_id="slack_connection",
     text=message,
     channel=channel
     #icon_emoji=emoji,

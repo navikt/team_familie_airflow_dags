@@ -3,7 +3,7 @@ from airflow.utils.dates import datetime, timedelta
 from kubernetes import client
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
-from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+from dataverk_airflow import python_operator
 
 branch = Variable.get("branch")
 
@@ -31,7 +31,7 @@ with DAG(
 
     start_alert = notification_start()
 
-    patch_ybarn_arena = create_knada_python_pod_operator(
+    patch_ybarn_arena = python_operator(
         dag=dag,
         name="fam_ef_patch_ybarn_infotrygd_arena",
         repo="navikt/team_familie_airflow_dags",
@@ -43,7 +43,7 @@ with DAG(
         slack_channel=Variable.get("slack_error_channel")
     )
 
-    patch_migrerte_vedtak = create_knada_python_pod_operator(
+    patch_migrerte_vedtak = python_operator(
         dag=dag,
         name="fam_ef_patch_migrert_vedtak",
         repo="navikt/team_familie_airflow_dags",
