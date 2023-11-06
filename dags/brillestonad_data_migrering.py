@@ -1,6 +1,6 @@
 from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime
-from dataverk_airflow.knada_operators import create_knada_nb_pod_operator
+from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
@@ -25,7 +25,7 @@ with DAG(
 
     start_alert = notification_start()
 
-    bs_data_kopiering = create_knada_nb_pod_operator(
+    bs_data_kopiering = notebook_operator(
     dag = dag,
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
