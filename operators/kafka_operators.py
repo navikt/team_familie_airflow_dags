@@ -73,7 +73,7 @@ def kafka_consumer_kubernetes_pod_operator(
 
     return kubernetes_operator(
         dag=dag,
-        on_failure_callback=on_failure,
+        #on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
         name=task_id,
         namespace=namespace,
