@@ -31,7 +31,8 @@ def create_dbt_operator(
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
       'DB_SCHEMA': db_schema,
-      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
+      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
+      "ORA_PYTHON_DRIVER_TYPE": "thin"
     },
     slack_channel=Variable.get("slack_error_channel"),
     requirements_path="requirements.txt",
