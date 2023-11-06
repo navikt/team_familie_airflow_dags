@@ -5,7 +5,8 @@ from kubernetes import client
 
 from airflow import DAG
 from airflow.models.variable import Variable
-from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+#from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from dataverk_airflow import kubernetes_operator
 
 import kubernetes.client as k8s
 from dataverk_airflow.notifications import create_slack_notification
@@ -15,6 +16,7 @@ def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
     config: str,
     dag: DAG = None,
+    requirements_path: str = "team_familie_airflow_dags/requirements.txt",
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
@@ -69,13 +71,14 @@ def kafka_consumer_kubernetes_pod_operator(
             slack_notification = create_slack_notification(slack_channel, task_id, namespace)
             slack_notification.execute(context)
 
-    return KubernetesPodOperator(
+    return kubernetes_operator(
         dag=dag,
         on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
         name=task_id,
         namespace=namespace,
         task_id=task_id,
+        requirements_path=requirements_path,
         is_delete_operator_pod=delete_on_finish,
         image=kafka_consumer_image,
         image_pull_secrets=[k8s.V1LocalObjectReference('ghcr-credentials')],
