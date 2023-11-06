@@ -1,6 +1,6 @@
 from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime
-from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+from dataverk_airflow.knada_operators import python_opertator
 from airflow.operators.dummy_operator import DummyOperator
 from operators.slack_operator import slack_info
 from airflow.decorators import task
