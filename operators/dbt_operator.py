@@ -34,6 +34,6 @@ def create_dbt_operator(
       'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET')
     },
     slack_channel=Variable.get("slack_error_channel"),
-    requirements_path="navikt/team_familie_airflow_dags/requirements.txt"
+    requirements_path="requirements.txt"
   )
 
