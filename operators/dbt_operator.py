@@ -3,7 +3,7 @@ import os
 from airflow.models import Variable
 from kubernetes import client
 from airflow import DAG
-from dataverk_airflow.knada_operators import create_knada_python_pod_operator
+from dataverk_airflow import python_operator
 
 def create_dbt_operator(
   dag: DAG,
@@ -16,7 +16,7 @@ def create_dbt_operator(
   **kwargs):
 
 
-  return create_knada_python_pod_operator(
+  return python_operator(
     dag=dag,
     name=name,
     repo='navikt/dvh_familie_dbt',
