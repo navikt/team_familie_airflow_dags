@@ -36,7 +36,7 @@ with DAG(
         requests={'memory': '4G'},
         limits={'memory': '4G'}),
     slack_channel = Variable.get('slack_error_channel'),
-    image='ghcr.io/navikt/dvh-images/airflow-dbt:2023-11-01-1482dbf',
+    requirements_path="requirements.txt",
     log_output=False
     )
 
