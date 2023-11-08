@@ -36,6 +36,6 @@ def create_dbt_operator(
     },
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
-    image='ghcr.io/navikt/dvh-images/airflow-dbt:2023-11-01-1482dbf'
+    image='ghcr.io/navikt/dvh_familie_image:2023-11-08-ac8ab8e-main'
   )
 
