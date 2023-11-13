@@ -37,7 +37,7 @@ with DAG(
         limits={'memory': '4G'}),
     slack_channel = Variable.get('slack_error_channel'),
     #requirements_path="requirements.txt",
-    image='ghcr.io/navikt/dvh_familie_image:2023-11-13-f319fa2-main',
+    image='ghcr.io/navikt/dvh_familie_image:2023-11-13-81e9762-main',
     log_output=False
     )
 
