@@ -42,7 +42,7 @@ def oracle_to_bigquery(
 
     delete_from_bucket = GoogleCloudStorageDeleteOperator(
         task_id="delete-from-bucket",
-        bucket_name="ORACLE_BQ_TEST_APEN_DATA",
+        bucket_name=os.getenv("AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER").removeprefix("gs://"),
         objects=[oracle_table],
         gcp_conn_id=gcp_con_id,
     )
