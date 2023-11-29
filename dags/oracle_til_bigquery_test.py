@@ -23,7 +23,7 @@ def oracle_to_bigquery(
         gcp_conn_id=gcp_con_id,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
         sql=sql,
-        bucket="ORACLE_BQ_TEST_APEN_DATA",
+        bucket="ORACLE_BQ_TEST_APEN_DATA".removeprefix("gs://"),
         filename=oracle_table,
         export_format="csv"
     )
