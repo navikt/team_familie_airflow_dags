@@ -30,7 +30,7 @@ def oracle_to_bigquery(
 
     bucket_to_bq = GCSToBigQueryOperator(
         task_id="bucket-to-bq",
-        bucket="ORACLE_BQ_TEST_APEN_DATA"#os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
+        bucket="ORACLE_BQ_TEST_APEN_DATA",#os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
         gcp_conn_id=gcp_con_id,
         destination_project_dataset_table=bigquery_dest_uri,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
