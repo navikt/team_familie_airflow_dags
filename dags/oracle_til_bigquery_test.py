@@ -21,9 +21,9 @@ def oracle_to_bigquery(
         task_id="oracle-to-bucket",
         oracle_conn_id=oracle_con_id,
         gcp_conn_id=gcp_con_id,
-        impersonation_chain="TEAM-FAMILIE-DEV-ZWEX@knada-gcp.iam.gserviceaccount.com",
+        impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
         sql=sql,
-        bucket="ORACLE_BQ_TEST_APEN_DATA",#.removeprefix("gs://"),
+        bucket=os.getenv("AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER").removeprefix("gs://"),
         filename=oracle_table,
         export_format="csv"
     )
