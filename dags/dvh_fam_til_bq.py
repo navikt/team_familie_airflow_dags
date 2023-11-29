@@ -65,5 +65,5 @@ with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule=Non
         bigquery_dest_uri="dv-familie-prod-17e7.dvh_fam.agg_fam_stonad_ur",
     )
 
-    agg_fam_stonad_ur_sdp
+    #agg_fam_stonad_ur_sdp
     agg_fam_stonad_ur
