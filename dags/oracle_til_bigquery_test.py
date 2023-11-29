@@ -23,14 +23,14 @@ def oracle_to_bigquery(
         gcp_conn_id=gcp_con_id,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
         sql=sql,
-        bucket="ORACLE_BQ_TEST_APEN_DATA".removeprefix("gs://"),
+        bucket=os.getenv("AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER").removeprefix("gs://"),
         filename=oracle_table,
         export_format="csv"
     )
 
     bucket_to_bq = GCSToBigQueryOperator(
         task_id="bucket-to-bq",
-        bucket="ORACLE_BQ_TEST_APEN_DATA",#os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
+        bucket=os.getenv("AIRFLOW__LOGGING__REMOTE_BASE_LOG_FOLDER").removeprefix("gs://"),
         gcp_conn_id=gcp_con_id,
         destination_project_dataset_table=bigquery_dest_uri,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
@@ -55,7 +55,7 @@ with DAG('SimpleOracleToBigqueryOperator', start_date=datetime(2023, 2, 14), sch
         oracle_con_id="oracle_con",
         oracle_table="FAM_ORACLE_BIGQUERY_TEST",
         gcp_con_id="google_con_different_project",
-        bigquery_dest_uri="dv-familie-dev-f48b.oracle_bq_test_apen_data.fra_oracle_fp",
+        bigquery_dest_uri="dv-familie-dev-f48b.test.fra_oracle_fp",
     )
 
     oracle_to_bq
