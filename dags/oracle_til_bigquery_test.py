@@ -23,14 +23,14 @@ def oracle_to_bigquery(
         gcp_conn_id=gcp_con_id,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
         sql=sql,
-        bucket=os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
+        bucket="ORACLE_BQ_TEST_APEN_DATA",
         filename=oracle_table,
         export_format="csv"
     )
 
     bucket_to_bq = GCSToBigQueryOperator(
         task_id="bucket-to-bq",
-        bucket=os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
+        bucket="ORACLE_BQ_TEST_APEN_DATA"#os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
         gcp_conn_id=gcp_con_id,
         destination_project_dataset_table=bigquery_dest_uri,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
@@ -42,7 +42,7 @@ def oracle_to_bigquery(
 
     delete_from_bucket = GoogleCloudStorageDeleteOperator(
         task_id="delete-from-bucket",
-        bucket_name=os.getenv("ORACLE_BQ_TEST_APEN_DATA").removeprefix("gs://"),
+        bucket_name="ORACLE_BQ_TEST_APEN_DATA",
         objects=[oracle_table],
         gcp_conn_id=gcp_con_id,
     )
