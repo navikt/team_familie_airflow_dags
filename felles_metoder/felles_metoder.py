@@ -30,15 +30,6 @@ def set_secrets_as_envs():
   
 def oracle_secrets():
     set_secrets_as_envs()
-    print(dict(
-    user=getenv("DBT_ORCL_USER"),
-    password=getenv("DBT_ORCL_PASS"),
-    host = getenv("DBT_ORCL_HOST"),
-    service = getenv("DBT_ORCL_SERVICE"),
-    encoding="UTF-8",
-    nencoding="UTF-8"
-    ))
-
     return dict(
     user=getenv("DBT_ORCL_USER"),
     password=getenv("DBT_ORCL_PASS"),
