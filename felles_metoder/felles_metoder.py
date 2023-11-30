@@ -2,12 +2,9 @@ import datetime, os, json
 from os import getenv
 from google.cloud import secretmanager
 
-import os
-from airflow import DAG
 from airflow.providers.google.cloud.transfers.oracle_to_gcs import OracleToGCSOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDeleteOperator
-from datetime import datetime
 
 def get_periode():
     """
