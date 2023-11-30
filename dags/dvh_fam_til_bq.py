@@ -53,9 +53,9 @@ def oracle_to_bigquery(
 with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule=None) as dag:
     agg_fam_stonad_ur = oracle_to_bigquery(
         oracle_con_id="oracle_con",
-        oracle_table="agg_fam_stonad_ur",
+        oracle_table="agg_fam_kpi_ef",
         gcp_con_id="google_con_different_project",
-        bigquery_dest_uri="dv-familie-prod-17e7.dvh_fam.agg_fam_stonad_ur",
+        bigquery_dest_uri="dv-familie-prod-17e7.dvh_fam.agg_fam_kpi_ef",
     )
 
     agg_fam_stonad_ur
