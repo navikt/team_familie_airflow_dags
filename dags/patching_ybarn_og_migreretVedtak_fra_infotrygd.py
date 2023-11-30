@@ -51,5 +51,5 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> patch_migrerte_vedtak >> patch_ybarn_arena >> slutt_alert
+start_alert >> patch_ybarn_arena >> slutt_alert
 
