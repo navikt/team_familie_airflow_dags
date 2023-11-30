@@ -5,6 +5,7 @@ from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from dataverk_airflow import python_operator
 from felles_metoder import felles_metoder
+import os
 
 branch = Variable.get("branch")
 
@@ -14,6 +15,8 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
     'on_failure_callback': slack_error
     }
+
+print(os.path.abspath(felles_metoder.py))
 
 with DAG(
     dag_id = 'Fam_EF_patching_ybarn_og_migrerte_vedtak', 
