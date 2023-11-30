@@ -12,14 +12,13 @@ def oracle_to_bigquery(
     oracle_table: str,
     gcp_con_id: str,
     bigquery_dest_uri: str,
-    task_name: str,
     columns: list = [],
 ):
     columns = ",".join(columns) if len(columns) > 0 else "*"
     write_disposition = "WRITE_TRUNCATE"
     sql=f"SELECT {columns} FROM {oracle_table}"
 
-    globals()[f"oracle_to_bucket+{task_name}"] = OracleToGCSOperator(
+    oracle_to_bucket = OracleToGCSOperator(
         task_id="oracle-to-bucket",
         oracle_conn_id=oracle_con_id,
         gcp_conn_id=gcp_con_id,
@@ -30,7 +29,7 @@ def oracle_to_bigquery(
         export_format="csv"
     )
 
-    globals()[f"bucket_to_bq+{task_name}"] = GCSToBigQueryOperator(
+    bucket_to_bq = GCSToBigQueryOperator(
         task_id="bucket-to-bq",
         bucket="oracle_bq_test_apen_data",
         gcp_conn_id=gcp_con_id,
@@ -42,14 +41,14 @@ def oracle_to_bigquery(
         source_format="csv"
     )
 
-    globals()[f"delete_from_bucket+{task_name}"] = GoogleCloudStorageDeleteOperator(
+    delete_from_bucket = GoogleCloudStorageDeleteOperator(
         task_id="delete-from-bucket",
         bucket_name="oracle_bq_test_apen_data",
         objects=[oracle_table],
         gcp_conn_id=gcp_con_id,
     )
 
-    return globals()[f"oracle_to_bucket+{task_name}"]  >> globals()[f"bucket_to_bq+{task_name}"] >> globals()[f"delete_from_bucket+{task_name}"]
+    return oracle_to_bucket  >> bucket_to_bq >> delete_from_bucket
 
 
 with DAG(
@@ -65,7 +64,6 @@ with DAG(
             "oracle_table":"FAM_ORACLE_BIGQUERY_TEST",
             "gcp_con_id":"google_con_different_project",
             "bigquery_dest_uri":"dv-familie-dev-f48b.test.fra_oracle_fp",
-            "task_name":"{{ task_instance_key_str }}",
             }
     )
     
@@ -76,7 +74,6 @@ with DAG(
             "oracle_table":"FAM_ORACLE_BIGQUERY_TEST",
             "gcp_con_id":"google_con_different_project",
             "bigquery_dest_uri":"dv-familie-dev-f48b.test.fra_oracle_fp",
-            "task_name":"{{ task_instance_key_str }}",
             }
     )
 
