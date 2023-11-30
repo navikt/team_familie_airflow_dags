@@ -1,10 +1,8 @@
 from airflow import DAG
 from datetime import datetime
 from felles_metoder.felles_metoder import oracle_to_bigquery
-from utils.db.oracle_conn import oracle_conn
 
 with DAG('SimpleOracleToBigqueryOperator', start_date=datetime(2023, 2, 14), schedule=None) as dag:
-    ekstrainfo = oracle_conn()
 
     oracle_to_bq = oracle_to_bigquery(
         oracle_con_id="oracle_con",
@@ -14,4 +12,3 @@ with DAG('SimpleOracleToBigqueryOperator', start_date=datetime(2023, 2, 14), sch
     )
 
     oracle_to_bq
-    ekstrainfo
