@@ -4,6 +4,7 @@ from airflow.providers.google.cloud.transfers.oracle_to_gcs import OracleToGCSOp
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDeleteOperator
 from datetime import datetime
+from airflow.operators.python_operator import PythonOperator
 
 
 def oracle_to_bigquery(
@@ -57,21 +58,26 @@ with DAG(
     schedule=None
 ) as dag:
 
-
-    oracle_to_bq = oracle_to_bigquery(
-        oracle_con_id="oracle_con",
-        oracle_table="FAM_ORACLE_BIGQUERY_TEST",
-        gcp_con_id="google_con_different_project",
-        bigquery_dest_uri="dv-familie-dev-f48b.test.fra_oracle_fp",
-        task_name = "{{ task_instance_key_str }}",
+    oracle_to_bq = PythonOperator(
+        task_id = 'task1',
+        python_callable = oracle_to_bigquery,
+        op_kwargs = {"oracle_con_id":"oracle_con",
+            "oracle_table":"FAM_ORACLE_BIGQUERY_TEST",
+            "gcp_con_id":"google_con_different_project",
+            "bigquery_dest_uri":"dv-familie-dev-f48b.test.fra_oracle_fp",
+            "task_name":"{{ task_instance_key_str }}",
+            }
     )
-
-    oracle_to_bq_test = oracle_to_bigquery(
-        oracle_con_id="oracle_con",
-        oracle_table="FAM_ORACLE_BIGQUERY_TEST",
-        gcp_con_id="google_con_different_project",
-        bigquery_dest_uri="dv-familie-dev-f48b.test.fra_oracle_fp",
-        task_name = "{{ task_instance_key_str }}",
+    
+    oracle_to_bq_test = PythonOperator(
+        task_id = 'task2',
+        python_callable = oracle_to_bigquery,
+        op_kwargs = {"oracle_con_id":"oracle_con",
+            "oracle_table":"FAM_ORACLE_BIGQUERY_TEST",
+            "gcp_con_id":"google_con_different_project",
+            "bigquery_dest_uri":"dv-familie-dev-f48b.test.fra_oracle_fp",
+            "task_name":"{{ task_instance_key_str }}",
+            }
     )
 
 oracle_to_bq >> oracle_to_bq_test
