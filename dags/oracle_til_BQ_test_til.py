@@ -66,7 +66,15 @@ with DAG(
         task_name = "{{ task_instance_key_str }}",
     )
 
-oracle_to_bq
+    oracle_to_bq_test = oracle_to_bigquery(
+        oracle_con_id="oracle_con",
+        oracle_table="FAM_ORACLE_BIGQUERY_TEST",
+        gcp_con_id="google_con_different_project",
+        bigquery_dest_uri="dv-familie-dev-f48b.test.fra_oracle_fp",
+        task_name = "{{ task_instance_key_str }}",
+    )
+
+oracle_to_bq >> oracle_to_bq_test
 
 
 
