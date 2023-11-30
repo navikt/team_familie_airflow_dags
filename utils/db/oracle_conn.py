@@ -27,6 +27,7 @@ def oracle_conn():
     dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
     try:
         conn = cx_Oracle.connect(user = oracle_secrets()['user'], password = oracle_secrets()['password'], dsn = dsn_tns)
+        print(set_secrets_as_envs())
         print(conn)
         return conn
     except cx_Oracle.Error as error:
