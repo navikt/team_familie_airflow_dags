@@ -40,7 +40,8 @@ with DAG(
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel")
+        slack_channel=Variable.get("slack_error_channel"),
+        image='ghcr.io/navikt/dvh_familie_image:2023-11-13-b583be6-main'
     )
 
     patch_migrerte_vedtak = python_operator(
@@ -52,7 +53,8 @@ with DAG(
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel")
+        slack_channel=Variable.get("slack_error_channel"),
+        image='ghcr.io/navikt/dvh_familie_image:2023-11-13-b583be6-main'
     )
 
     @task
