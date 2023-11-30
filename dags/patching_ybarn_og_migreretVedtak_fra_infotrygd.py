@@ -44,19 +44,6 @@ with DAG(
         image='ghcr.io/navikt/dvh_familie_image:2023-11-13-b583be6-main'
     )
 
-    patch_migrerte_vedtak = python_operator(
-        dag=dag,
-        name="fam_ef_patch_migrert_vedtak",
-        repo="navikt/team_familie_airflow_dags",
-        script_path="Oracle_python/fam_ef_patch_migrerte_vedtak.py",
-        branch=branch,
-        resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel"),
-        image='ghcr.io/navikt/dvh_familie_image:2023-11-13-b583be6-main'
-    )
-
     @task
     def notification_end():
         slack_info(
