@@ -1,6 +1,6 @@
 import cx_Oracle
 import os
-print('TEST HHH',os.path.abspath(__file__))
+print('TEST HHH222',os.path.abspath(__file__))
 
 import felles_metoder.felles_metoder
 
