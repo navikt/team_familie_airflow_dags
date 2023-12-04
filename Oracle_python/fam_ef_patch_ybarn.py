@@ -1,4 +1,7 @@
 import cx_Oracle
+import os
+print('TEST HHH',os.path.abspath(__file__))
+
 import felles_metoder.felles_metoder
 
 def patch_ybarn_arena():
@@ -25,5 +28,6 @@ def patch_ybarn_arena():
             connection.commit()
 
 if __name__ == "__main__":
+    print('TEST HHH222',os.path.abspath(__file__))
     patch_ybarn_arena()
 
