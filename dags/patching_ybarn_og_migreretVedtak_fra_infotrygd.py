@@ -4,7 +4,6 @@ from kubernetes import client
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from dataverk_airflow import python_operator
-from felles_metoder import felles_metoder
 import os
 
 branch = Variable.get("branch")
