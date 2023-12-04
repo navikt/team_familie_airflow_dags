@@ -1,4 +1,5 @@
 import datetime, os, json
+print('TEST HHH222',os.path.abspath(__file__))
 from os import getenv
 from google.cloud import secretmanager
 
