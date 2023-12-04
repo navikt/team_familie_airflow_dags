@@ -7,9 +7,9 @@ import oracledb
 
 with DAG('SimpleOracleToBigqueryOperator', start_date=datetime(2023, 2, 14), schedule=None) as dag:
 
-    secrets = oracle_secrets()
+    oracle_secrets = oracle_secrets()
     user = oracle_secrets['user'] + '[DVH_FAM_FP]'
-    dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
+    dsn_tns = cx_Oracle.makedsn(oracle_secrets['host'], 1521, service_name = oracle_secrets['service'])
 
     oracle_to_bq = oracle_to_bigquery(
         oracle_con_id=oracledb.connect(user=user, password = oracle_secrets['password'], dsn=dsn_tns),#"oracle_con",
