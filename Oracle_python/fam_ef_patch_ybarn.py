@@ -1,8 +1,8 @@
 import cx_Oracle
-from felles_metoder.felles_metoder import oracle_secrets, get_periode
+import felles_metoder.felles_metoder
 
 def patch_ybarn_arena():
-    periode = get_periode()
+    periode = felles_metoder.get_periode()
 
     send_context_sql = (f'''
         begin
@@ -12,7 +12,7 @@ def patch_ybarn_arena():
         end;
     ''')
     
-    secrets = oracle_secrets()
+    secrets = felles_metoder.oracle_secrets()
     print(secrets['host'],secrets['service'],secrets['user'])
 
     dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
