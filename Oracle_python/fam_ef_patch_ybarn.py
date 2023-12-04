@@ -2,10 +2,10 @@ import cx_Oracle
 import os
 print('TEST HHH222',os.path.abspath(__file__))
 
-import felles_metoder.felles_metoder
+from .felles_metoder.felles_metoder import oracle_secrets, get_periode
 
 def patch_ybarn_arena():
-    periode = felles_metoder.get_periode()
+    periode = get_periode()
 
     send_context_sql = (f'''
         begin
@@ -15,7 +15,7 @@ def patch_ybarn_arena():
         end;
     ''')
     
-    secrets = felles_metoder.oracle_secrets()
+    secrets = oracle_secrets()
     print(secrets['host'],secrets['service'],secrets['user'])
 
     dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
