@@ -2,7 +2,7 @@ import cx_Oracle
 import os
 print('TEST HHH222',os.path.abspath(__file__))
 
-from .felles_metoder.felles_metoder import oracle_secrets, get_periode
+from ..felles_metoder.felles_metoder import oracle_secrets, get_periode
 
 def patch_ybarn_arena():
     periode = get_periode()
