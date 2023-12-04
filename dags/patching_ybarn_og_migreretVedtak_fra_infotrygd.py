@@ -15,7 +15,7 @@ default_args = {
     'on_failure_callback': slack_error
     }
 
-#print(os.path.abspath(felles_metoder))
+print(os.path.abspath(__file__))
 
 with DAG(
     dag_id = 'Fam_EF_patching_ybarn_og_migrerte_vedtak', 
