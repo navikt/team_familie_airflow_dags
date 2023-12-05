@@ -13,7 +13,6 @@ def patch_ybarn_arena():
     ''')
     
     secrets = oracle_secrets()
-    print(secrets['host'],secrets['service'],secrets['user'])
 
     dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
     with cx_Oracle.connect(user = secrets['user']+'[dvh_fam_ef]', password = secrets['password'], dsn = dsn_tns) as connection:
@@ -26,4 +25,3 @@ def patch_ybarn_arena():
 
 if __name__ == "__main__":
     patch_ybarn_arena()
-
