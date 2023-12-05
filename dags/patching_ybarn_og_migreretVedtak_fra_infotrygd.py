@@ -4,8 +4,6 @@ from kubernetes import client
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from dataverk_airflow import python_operator
-from felles_metoder import felles_metoder
-import os
 
 branch = Variable.get("branch")
 
@@ -15,8 +13,6 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
     'on_failure_callback': slack_error
     }
-
-print(os.path.abspath(felles_metoder))
 
 with DAG(
     dag_id = 'Fam_EF_patching_ybarn_og_migrerte_vedtak', 
@@ -44,8 +40,19 @@ with DAG(
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel"),
-        image='ghcr.io/navikt/dvh_familie_image:2023-11-13-b583be6-main'
+        slack_channel=Variable.get("slack_error_channel")
+    )
+
+    patch_migrerte_vedtak = python_operator(
+        dag=dag,
+        name="fam_ef_patch_migrert_vedtak",
+        repo="navikt/team_familie_airflow_dags",
+        script_path="Oracle_python/fam_ef_patch_migrerte_vedtak.py",
+        branch=branch,
+        resources=client.V1ResourceRequirements(
+            requests={"memory": "4G"},
+            limits={"memory": "4G"}),
+        slack_channel=Variable.get("slack_error_channel")
     )
 
     @task
@@ -55,5 +62,4 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> patch_ybarn_arena >> slutt_alert
-
+start_alert >> patch_migrerte_vedtak >> patch_ybarn_arena >> slutt_alert
