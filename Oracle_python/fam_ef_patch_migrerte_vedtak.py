@@ -1,4 +1,4 @@
-import oracledb as db
+from dataverk_airflow import oracledb as db
 from felles_metoder.felles_metoder import oracle_secrets, get_periode
 
 
