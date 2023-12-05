@@ -1,4 +1,4 @@
-import cx_Oracle
+import oracledb as db
 from felles_metoder.felles_metoder import oracle_secrets, get_periode
 
 
@@ -16,8 +16,8 @@ def patch_migrerte_vedtak():
     
     secrets = oracle_secrets()
 
-    dsn_tns = cx_Oracle.makedsn(secrets['host'], 1521, service_name = secrets['service'])
-    with cx_Oracle.connect(user = secrets['user']+'[dvh_fam_ef]', password = secrets['password'], dsn = dsn_tns) as connection:
+    dsn_tns = db.makedsn(secrets['host'], 1521, service_name = secrets['service'])
+    with db.connect(user = secrets['user']+'[dvh_fam_ef]', password = secrets['password'], dsn = dsn_tns) as connection:
         with connection.cursor() as cursor:
             cursor.execute(send_context_sql)
 
