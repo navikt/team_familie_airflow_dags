@@ -1,5 +1,11 @@
+import sys
 import cx_Oracle
+
+sys.path.append('../team_familie_airflow_dags/felles_metoder')
+
 from felles_metoder.felles_metoder import oracle_secrets, get_periode
+
+
 
 def patch_migrerte_vedtak():
     periode = get_periode()
