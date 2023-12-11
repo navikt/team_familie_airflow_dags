@@ -7,8 +7,11 @@ from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDele
 from datetime import datetime
 
 settings = Variable.get("oracle_table", deserialize_json=True)
-tabellnavn = settings["tabell"]
-schema = settings["schema"]
+tabellnavn1 = settings["tabell1"]
+schema1 = settings["schema1"]
+
+tabellnavn2 = settings["tabell2"]
+schema2 = settings["schema2"]
 
 
 def oracle_to_bigquery(
@@ -23,7 +26,7 @@ def oracle_to_bigquery(
     sql=f"SELECT {columns} FROM {oracle_table}"
 
     oracle_to_bucket = OracleToGCSOperator(
-        task_id="oracle-to-bucket",
+        task_id=f"{oracle_table}-oracle-to-bucket",
         oracle_conn_id=oracle_con_id,
         gcp_conn_id=gcp_con_id,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
@@ -34,7 +37,7 @@ def oracle_to_bigquery(
     )
 
     bucket_to_bq = GCSToBigQueryOperator(
-        task_id="bucket-to-bq",
+        task_id=f"{oracle_table}-bucket-to-bq",
         bucket="dvh_fam",
         gcp_conn_id=gcp_con_id,
         destination_project_dataset_table=bigquery_dest_uri,
@@ -46,7 +49,7 @@ def oracle_to_bigquery(
     )
 
     delete_from_bucket = GoogleCloudStorageDeleteOperator(
-        task_id="delete-from-bucket",
+        task_id=f"{oracle_table}-delete-from-bucket",
         bucket_name="dvh_fam",
         objects=[oracle_table],
         gcp_conn_id=gcp_con_id,
@@ -58,9 +61,16 @@ def oracle_to_bigquery(
 with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule=None) as dag:
     agg_fam_stonad_ur = oracle_to_bigquery(
         oracle_con_id="oracle_con",
-        oracle_table= f"{schema}.{tabellnavn}", # oracle_table hentes fra airflow->admin->variables. Det går sjappere å endre tabellnavn der enn å gjøre det i selv dagen!    "agg_fam_bt_eos_kpi", 
+        oracle_table= f"{settings['schema1']}.{settings['tabellnavn1']}", # oracle_table hentes fra airflow->admin->variables. Det går sjappere å endre tabellnavn der enn å gjøre det i selv dagen!    "agg_fam_bt_eos_kpi", 
         gcp_con_id="google_con_different_project",
-        bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{tabellnavn}",
+        bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{settings['tabellnavn1']}",
     )
 
-    agg_fam_stonad_ur
+    agg_fam_stonad_ur_sdp = oracle_to_bigquery(
+        oracle_con_id="oracle_con",
+        oracle_table= f"{settings['schema2']}.{settings['tabellnavn2']}", # oracle_table hentes fra airflow->admin->variables. Det går sjappere å endre tabellnavn der enn å gjøre det i selv dagen!    "agg_fam_bt_eos_kpi", 
+        gcp_con_id="google_con_different_project",
+        bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{settings['tabellnavn2']}",
+    )
+
+    agg_fam_stonad_ur >> agg_fam_stonad_ur_sdp
