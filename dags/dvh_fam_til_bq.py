@@ -61,7 +61,7 @@ with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule=Non
         oracle_con_id="oracle_con",
         oracle_table= f"{tabellnavn}.{schema}", # oracle_table hentes fra airflow->admin->variables. Det går sjappere å endre tabellnavn der enn å gjøre det i selv dagen!    "agg_fam_bt_eos_kpi", 
         gcp_con_id="google_con_different_project",
-        bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{settings['tabellnavn1']}",
+        bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{tabellnavn}",
     )
 
     agg_fam_stonad_ur
