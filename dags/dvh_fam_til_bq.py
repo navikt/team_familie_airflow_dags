@@ -7,8 +7,8 @@ from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDele
 from datetime import datetime
 
 settings = Variable.get("oracle_table", deserialize_json=True)
-tabellnavn = settings.get("key1")["tabellnavn"]
-schema = settings.get("key1")["schema"]
+tabellnavn = settings[0]["tabellnavn"]
+schema = settings[0]["schema"]
 #tabellnavn1 = settings["tabell1"]
 #schema1 = settings["schema1"]
 
