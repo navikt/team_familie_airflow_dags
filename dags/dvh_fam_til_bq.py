@@ -7,11 +7,11 @@ from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDele
 from datetime import datetime
 
 settings = Variable.get("oracle_table", deserialize_json=True)
-tabellnavn1 = settings["tabell1"]
-schema1 = settings["schema1"]
+#tabellnavn1 = settings["tabell1"]
+#schema1 = settings["schema1"]
 
-tabellnavn2 = settings["tabell2"]
-schema2 = settings["schema2"]
+#tabellnavn2 = settings["tabell2"]
+#schema2 = settings["schema2"]
 
 
 def oracle_to_bigquery(
