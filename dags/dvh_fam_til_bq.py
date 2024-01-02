@@ -52,7 +52,7 @@ def oracle_to_bigquery(
     return oracle_to_bucket >> bucket_to_bq >> delete_from_bucket
 
 
-with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule=None) as dag:
+with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule="@monthly") as dag:
     for v in settings:
         tabellnavn = v["tabellnavn"]
         schema = v["schema"]
