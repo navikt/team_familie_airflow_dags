@@ -31,7 +31,7 @@ def kafka_consumer_kubernetes_pod_operator(
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
-    allowlist: list = ['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
+    allowlist: list = ['oracle.db.no:1521', '*.googleapis.com', 'github.com', 'hooks.slack.com'],
     *args,
     **kwargs
 ):
@@ -85,7 +85,7 @@ def kafka_consumer_kubernetes_pod_operator(
         volumes=[vault_volume()],
         volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
-        annotations={"allowlist": ",".join(allowlist)}, #{"sidecar.istio.io/inject": "false"},
+        annotations={"sidecar.istio.io/inject": "false","allowlist": ",".join(allowlist)}, #{"sidecar.istio.io/inject": "false"},
         container_resources=client.V1ResourceRequirements(
             requests={"memory": "8G"},
             limits={"memory": "8G"}
