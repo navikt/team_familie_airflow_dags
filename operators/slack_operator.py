@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 from airflow.models import Variable
+from kubernetes import client as k8s
 from airflow.providers.slack.operators.slack import SlackAPIPostOperator
 from airflow.operators.python import get_current_context
 
@@ -31,10 +32,30 @@ def __slack_message(
 ):
   if context is None: context = get_current_context()
   SlackAPIPostOperator(
-    task_id="slack-message",
+    executor_config={
+      "pod_override": k8s.V1Pod(
+          metadata=k8s.V1ObjectMeta(annotations={"allowlist": "slack.com"})
+      )
+    },
     slack_conn_id="slack_connection",
     text=message,
-    channel=channel
-    #icon_emoji=emoji,
-    #attachments=attachments
-  ).execute()
+    channel=channel,
+    attachments=[
+      {
+          "fallback": "min attachment",
+          "color": "#2eb886",
+          "pretext": "test",
+          "author_name": "Nada",
+          "title": "Nada",
+          "text": "test",
+          "fields": [
+              {
+                  "title": "Priority",
+                  "value": "High",
+                  "short": False
+              }
+          ],
+          "footer": "Nada"
+      }
+    ]
+  )
