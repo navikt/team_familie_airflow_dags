@@ -30,15 +30,15 @@ with DAG(
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
+    allowlist=['dm09-scan.adeo.no:1521','oracle.db.no:1521', '*.googleapis.com', 'github.com'],
     branch = branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
         requests={'memory': '4G'},
         limits={'memory': '4G'}),
-    slack_channel = Variable.get('slack_error_channel'),
+    #slack_channel = Variable.get('slack_error_channel'),
     #requirements_path="requirements.txt",
     image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
-    allowlist=['dm09-scan.adeo.no:1521','oracle.db.no:1521', '*.googleapis.com', 'github.com'],
     log_output=False
     )
 
