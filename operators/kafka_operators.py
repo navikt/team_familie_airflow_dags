@@ -31,6 +31,7 @@ def kafka_consumer_kubernetes_pod_operator(
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
+    allowlist: list = ['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
     *args,
     **kwargs
 ):
@@ -47,6 +48,7 @@ def kafka_consumer_kubernetes_pod_operator(
     :param startup_timeout_seconds: int: pod startup timeout
     :param retry_delay: timedelta: Time inbetween retries, default 120 seconds
     :param nls_lang: str: Configure locale and character sets with NLS_LANG environment variable in k8s pod, defaults to Norwegian
+    :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :return: KubernetesPodOperator
     """
 
@@ -83,7 +85,7 @@ def kafka_consumer_kubernetes_pod_operator(
         volumes=[vault_volume()],
         volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
-        annotations={"sidecar.istio.io/inject": "false"},
+        annotations={"allowlist": ",".join(allowlist)}, #{"sidecar.istio.io/inject": "false"},
         container_resources=client.V1ResourceRequirements(
             requests={"memory": "8G"},
             limits={"memory": "8G"}
