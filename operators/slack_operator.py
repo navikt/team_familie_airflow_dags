@@ -46,8 +46,8 @@ def __slack_message(
           "fallback": "min attachment",
           "color": "#2eb886",
           "pretext": "test",
-          "author_name": "Nada",
-          "title": "Nada",
+          "author_name": "Team_Familie",
+          "title": "Familie",
           "text": "test",
           "fields": [
               {
