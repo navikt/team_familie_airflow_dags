@@ -38,7 +38,7 @@ with DAG(
     slack_channel = Variable.get('slack_error_channel'),
     #requirements_path="requirements.txt",
     image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
-    allowlist=['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
+    allowlist=['dm09-scan.adeo.no:1521','oracle.db.no:1521', '*.googleapis.com', 'github.com'],
     log_output=False
     )
 
