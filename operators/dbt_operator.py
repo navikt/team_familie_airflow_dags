@@ -12,7 +12,7 @@ def create_dbt_operator(
   dbt_command: str,
   db_schema: str,
   script_path:str,
-  allowlist:list,
+  allowlist: list = [],
   *args,
   **kwargs):
 
@@ -23,7 +23,6 @@ def create_dbt_operator(
     repo='navikt/dvh_familie_dbt',
     script_path=script_path,#'airflow/dbt_run_test.py',
     branch=branch,
-    annotations={"allowlist": ",".join(allowlist)}, 
     do_xcom_push=True,
     resources=client.V1ResourceRequirements(
         requests={"memory": "6G"},
@@ -39,6 +38,6 @@ def create_dbt_operator(
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
     image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
-    allowlist = ['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
+    allowlist = allowlist
   )
 

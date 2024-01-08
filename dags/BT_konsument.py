@@ -42,7 +42,8 @@ with DAG(
       script_path = 'airflow/dbt_run.py',
       branch=v_branch,
       dbt_command= """run --select BT_utpakking.*""",
-      db_schema=v_schema
+      db_schema=v_schema,
+      allowlist=['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
   )
 
 consumer >> bt_utpakking_dbt
