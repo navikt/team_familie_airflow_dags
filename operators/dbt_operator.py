@@ -12,7 +12,7 @@ def create_dbt_operator(
   dbt_command: str,
   db_schema: str,
   script_path:str,
-  allowlist: list = ['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
+  allowlist:list,
   *args,
   **kwargs):
 
@@ -38,6 +38,7 @@ def create_dbt_operator(
     },
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
-    image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main'
+    image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
+    allowlist = ['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
   )
 
