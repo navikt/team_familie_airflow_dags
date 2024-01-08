@@ -12,6 +12,7 @@ def create_dbt_operator(
   dbt_command: str,
   db_schema: str,
   script_path:str,
+  allowlist: list = ['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
   *args,
   **kwargs):
 
@@ -22,6 +23,7 @@ def create_dbt_operator(
     repo='navikt/dvh_familie_dbt',
     script_path=script_path,#'airflow/dbt_run_test.py',
     branch=branch,
+    annotations={"allowlist": ",".join(allowlist)}, 
     do_xcom_push=True,
     resources=client.V1ResourceRequirements(
         requests={"memory": "6G"},
