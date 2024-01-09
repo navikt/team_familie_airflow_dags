@@ -42,7 +42,8 @@ with DAG(
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
     dbt_command= """run --select KS_utpakking.*""",
-    db_schema=v_schema
+    db_schema=v_schema,
+    allowlist=['dm09-scan.adeo.no:1521']
 )
 
 consumer >> ks_utpakking_dbt

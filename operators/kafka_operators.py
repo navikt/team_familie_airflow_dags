@@ -83,8 +83,8 @@ def kafka_consumer_kubernetes_pod_operator(
         volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
         container_resources=client.V1ResourceRequirements(
-            requests={"memory": "8G", "cpu": "900m"},
-            limits={"memory": "8G", "cpu": "900m"}
+            requests={"memory": "8G"},
+            limits={"memory": "8G"}
         ),
         retries=retries,
         retry_delay=retry_delay,
