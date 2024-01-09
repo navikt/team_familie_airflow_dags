@@ -1,15 +1,14 @@
 import os
-
 from datetime import timedelta
 from kubernetes import client
-
 from airflow import DAG
 from airflow.models.variable import Variable
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
-
 import kubernetes.client as k8s
 from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 from operators.vault import vault_volume, vault_volume_mount
+import operators.slack_operator as slack_operator
+
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -18,7 +17,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:27fba5e",
+    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:27fba5e",					
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
@@ -31,7 +30,7 @@ def kafka_consumer_kubernetes_pod_operator(
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
-    allowlist: list = ['oracle.db.no:1521', '*.googleapis.com', 'github.com', 'hooks.slack.com'],
+    allowlist: list = ['dm09-scan.adeo.no:1521', 'hooks.slack.com','nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-kafka-nav-prod.aivencloud.com:26487'],
     *args,
     **kwargs
 ):
@@ -51,16 +50,15 @@ def kafka_consumer_kubernetes_pod_operator(
     :param allowlist: list: list of hosts and port the task needs to reach on the format host:port
     :return: KubernetesPodOperator
     """
-
     env_vars = {
         "TZ": os.environ["TZ"],
         "NLS_LANG": nls_lang,
         "CONSUMER_CONFIG": config,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         "KAFKA_TIMESTAMP_START": data_interval_start_timestamp_milli,
-        "KAFKA_TIMESTAMP_STOP": data_interval_end_timestamp_milli,
+        "KAFKA_TIMESTAMP_STOP": data_interval_end_timestamp_milli,														
         "DATA_INTERVAL_START":data_interval_start_timestamp_milli,
-        "DATA_INTERVAL_END":data_interval_end_timestamp_milli 
+        "DATA_INTERVAL_END":data_interval_end_timestamp_milli 						   
     }
 
     if extra_envs:
@@ -68,8 +66,7 @@ def kafka_consumer_kubernetes_pod_operator(
 
     def on_failure(context):
         if slack_channel:
-            slack_notification = create_slack_notification(slack_channel, task_id, namespace)
-            slack_notification.execute(context)
+            slack_operator.slack_error(channel=slack_channel, context = context)
 
     return KubernetesPodOperator(
         dag=dag,
@@ -85,14 +82,18 @@ def kafka_consumer_kubernetes_pod_operator(
         volumes=[vault_volume()],
         volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
-        annotations={"sidecar.istio.io/inject": "false","allowlist": ",".join(allowlist)}, #{"sidecar.istio.io/inject": "false"},
         container_resources=client.V1ResourceRequirements(
-            requests={"memory": "8G"},
-            limits={"memory": "8G"}
+            requests={"memory": "8G", "cpu": "900m"},
+            limits={"memory": "8G", "cpu": "900m"}
         ),
         retries=retries,
         retry_delay=retry_delay,
         do_xcom_push=do_xcom_push,
+        executor_config={
+            "pod_override": k8s.V1Pod(
+                metadata=k8s.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
+             )
+        },						 
         *args,
         **kwargs
     )
