@@ -30,12 +30,13 @@ def __slack_message(
   emoji: str,
   attachments: Optional[list] = None
 ):
+  allowlist = ['hooks.slack.com', 'slack.com']
   if context is None: context = get_current_context()
   SlackAPIPostOperator(
     task_id="slack-message",	
     executor_config={
       "pod_override": k8s.V1Pod(
-          metadata=k8s.V1ObjectMeta(annotations={"allowlist": "hooks.slack.com"})
+          metadata=k8s.V1ObjectMeta(annotations={"allowlist": allowlist})
       )
         }
   ).execute()
