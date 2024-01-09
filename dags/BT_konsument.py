@@ -43,7 +43,7 @@ with DAG(
       branch=v_branch,
       dbt_command= """run --select BT_utpakking.*""",
       db_schema=v_schema,
-      allowlist=['oracle.db.no:1521', '*.googleapis.com', 'github.com'],
+      allowlist=['dm09-scan.adeo.no:1521'],
   )
 
 consumer >> bt_utpakking_dbt

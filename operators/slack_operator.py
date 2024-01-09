@@ -12,9 +12,9 @@ def slack_info(message: str = None, context = None, channel: str = None, emoji="
     message = f"Airflow DAG: {context['dag'].dag_id} har kjørt ferdig."
   __slack_message(context, message, channel, emoji)
 
-
 def slack_error(
   context = None,
+					  
   channel: str = None,
   emoji=":red_circle:"
 ):
@@ -32,31 +32,10 @@ def __slack_message(
 ):
   if context is None: context = get_current_context()
   SlackAPIPostOperator(
-    task_id="slack-message",
+    task_id="slack-message",	
     executor_config={
       "pod_override": k8s.V1Pod(
           metadata=k8s.V1ObjectMeta(annotations={"allowlist": "hooks.slack.com"})
       )
-    },
-    slack_conn_id="slack_connection",
-    text=message,
-    channel=channel,
-    attachments=[
-      {
-          "fallback": "min attachment",
-          "color": "#2eb886",
-          "pretext": "test",
-          "author_name": "Team_Familie",
-          "title": "Familie",
-          "text": "test",
-          "fields": [
-              {
-                  "title": "Priority",
-                  "value": "High",
-                  "short": False
-              }
-          ],
-          "footer": "Nada"
-      }
-    ]
-  )
+        }
+  ).execute()
