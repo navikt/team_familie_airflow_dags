@@ -39,6 +39,7 @@ with DAG(
       script_path = 'airflow/dbt_run.py',
       branch=v_branch,
       dbt_command= "run --select PP_utpakking.*",
+      allowlist=['dm09-scan.adeo.no:1521'],
       db_schema=v_schema
   )
 
