@@ -30,7 +30,7 @@ with DAG(
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
-    allowlist=['dm09-scan.adeo.no:1521','oracle.db.no:1521', '*.googleapis.com', 'github.com'],
+    allowlist=['dm09-scan.adeo.no:1521'],
     branch = branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
