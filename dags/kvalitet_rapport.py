@@ -18,7 +18,7 @@ with DAG(
   @task(
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com,dm09-scan.adeo.no:1521"})
             )
         }
     )
@@ -90,7 +90,7 @@ with DAG(
   @task(
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com,dm09-scan.adeo.no:1521"})
             )
         }
     )
