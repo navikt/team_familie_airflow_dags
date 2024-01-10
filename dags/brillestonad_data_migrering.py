@@ -7,6 +7,7 @@ from operators.slack_operator import slack_info
 
 miljo = Variable.get('miljo')
 branch = Variable.get("branch")
+oracledb_allowlist = Variable.get("oracle_db_ip_allowlist")
 
 with DAG(
   dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle',
@@ -36,7 +37,7 @@ with DAG(
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
-    allowlist=['dm09-scan.adeo.no:1521', 'slack.com', 'hooks.slack.com'],
+    allowlist=[oracledb_allowlist, 'slack.com', 'hooks.slack.com'],
     branch = branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
