@@ -3,7 +3,7 @@ from datetime import date
 from datetime import timedelta
 from airflow import DAG
 from airflow.decorators import task
-from airflow.models import XCom
+from kubernetes import client
 from operators.slack_operator import slack_error, slack_info
 from utils.db.oracle_conn import oracle_conn
 
@@ -15,7 +15,13 @@ with DAG(
   catchup=False
 ) as dag:
 
-  @task
+  @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+            )
+        }
+    )
   def hent_kafka_last():
     bt_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1
@@ -81,7 +87,13 @@ with DAG(
     return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant,pp_hull,bs_ant]
 
 
-  @task
+  @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+            )
+        }
+    )
   def info_slack(kafka_last):
     gaarsdagensdato = date.today() - timedelta(days = 1)
     [
