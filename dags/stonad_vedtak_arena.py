@@ -3,7 +3,16 @@ from airflow.utils.dates import datetime, timedelta
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
+from kubernetes import client
 from felles_metoder.felles_metoder import get_periode
+from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id
+
+miljo = Variable.get('miljo')   
+allowlist = []
+if miljo == 'Prod':
+    allowlist.extend(prod_oracle_conn_id)
+else:
+    allowlist.extend(dev_oracle_conn_id)
 
 default_args = {
     'owner': 'Team-Familie', 
@@ -28,7 +37,13 @@ with DAG(
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
-    @task
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
+            )
+        }
+    )
     def notification_start():
         slack_info(
             message = "Lasting av data til både fam_ef_arena_stonad og fam_ef_arena_vedtak starter nå ved hjelp av Airflow! :rocket:"
@@ -41,11 +56,18 @@ with DAG(
         name="dbt-run_stonad_arena",
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select EF_arena.*  --vars '{{"periode":{periode}}}' """, 
+        dbt_command=f"""run --select EF_arena.*  --vars '{{"periode":{periode}}}' """,
+        allowlist=allowlist, 
         db_schema=v_schema
     )
 
-    @task
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
+            )
+        }
+    )
     def notification_end():
         slack_info(
             message = "Data er feridg lastet til fam_ef_arena_stonad og fam_ef_arena_vedtak! :tada: :tada:"

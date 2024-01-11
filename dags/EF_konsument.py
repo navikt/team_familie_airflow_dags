@@ -5,6 +5,15 @@ from kosument_config import ef
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
+from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
+
+miljo = Variable.get('miljo')
+
+allowlist = []
+if miljo == 'Prod':
+  allowlist.extend(prod_oracle_conn_id)
+else:
+  allowlist.extend(dev_oracle_conn_id)
 
 default_args = {
     'owner': 'Team-Familie',
@@ -43,7 +52,8 @@ with DAG(
      branch=v_branch,
      dbt_command= """run --select EF_utpakking.*""",
      db_schema=v_schema,
-     allowlist=['dm09-scan.adeo.no:1521']
+     allowlist=allowlist
+
  )
 
 consumer >> ef_utpakking_dbt

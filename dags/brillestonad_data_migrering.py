@@ -4,10 +4,16 @@ from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id
 
 miljo = Variable.get('miljo')
 branch = Variable.get("branch")
-oracledb_allowlist = Variable.get("oracle_db_ip_allowlist")
+allowlist = []
+
+if miljo == 'Prod':
+    allowlist.extend(prod_oracle_conn_id)
+else:
+    allowlist.extend(dev_oracle_conn_id)
 
 with DAG(
   dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle',
@@ -21,7 +27,7 @@ with DAG(
     @task(
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
             )
         }
     )
@@ -37,7 +43,7 @@ with DAG(
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
-    allowlist=[oracledb_allowlist, 'slack.com', 'hooks.slack.com'],
+    allowlist=allowlist,
     branch = branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
@@ -52,7 +58,7 @@ with DAG(
     @task(
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
             )
         }
     )
