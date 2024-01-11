@@ -2,13 +2,12 @@ import os
 from datetime import timedelta
 from kubernetes import client
 from airflow import DAG
-from airflow.models.variable import Variable
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
 import kubernetes.client as k8s
-from dataverk_airflow.notifications import create_email_notification, create_slack_notification
 from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
-
+from airflow.models.variable import Variable
+from allowlists.allowlist import dev_kafka, prod_kafka
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -30,7 +29,7 @@ def kafka_consumer_kubernetes_pod_operator(
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
-    allowlist: list = ['dm09-scan.adeo.no:1521', 'hooks.slack.com','nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-kafka-nav-prod.aivencloud.com:26487'],
+    allowlist: list = [],
     *args,
     **kwargs
 ):
@@ -60,6 +59,12 @@ def kafka_consumer_kubernetes_pod_operator(
         "DATA_INTERVAL_START":data_interval_start_timestamp_milli,
         "DATA_INTERVAL_END":data_interval_end_timestamp_milli 						   
     }
+
+    miljo = Variable.get('miljo')   
+    if miljo == 'Prod':
+        allowlist.extend(prod_kafka)
+    else:
+        allowlist.extend(dev_kafka)
 
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)

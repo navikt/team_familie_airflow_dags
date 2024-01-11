@@ -2,10 +2,19 @@ from datetime import datetime
 from datetime import date
 from datetime import timedelta
 from airflow import DAG
+from airflow.models import Variable
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_error, slack_info
 from utils.db.oracle_conn import oracle_conn
+from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack
+
+miljo = Variable.get('miljo')   
+allowlist = []
+if miljo == 'Prod':
+    allowlist.extend(prod_oracle_slack)
+else:
+    allowlist.extend(dev_oracle_slack)
 
 with DAG(
   dag_id='datakvalitetsrapport',
@@ -18,7 +27,7 @@ with DAG(
   @task(
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com,dm09-scan.adeo.no:1521"})
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
         }
     )
@@ -90,7 +99,7 @@ with DAG(
   @task(
         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com,dm09-scan.adeo.no:1521"})
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
         }
     )
