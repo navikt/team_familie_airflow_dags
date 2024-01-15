@@ -1,5 +1,3 @@
---dev
-
 from airflow.models import DAG, Variable
 from airflow.utils.dates import datetime
 from dataverk_airflow import notebook_operator
