@@ -6,6 +6,10 @@ from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
 from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
+from airflow.operators.email import EmailOperator
+from kubernetes import client as k8s
+
+allowlist = ['smtp.adeo.no:26']
 
 miljo = Variable.get('miljo')
 
@@ -54,5 +58,23 @@ with DAG(
      db_schema=v_schema,
      allowlist=allowlist
  )
+  
+  epost_ved_feil = EmailOperator(
+     dag=dag,
+     task_id="fp_airflow_task_failed",
+     to=[
+      "Adam.Arafa.***REMOVED***",
+      "Hans.***REMOVED***",
+     ],
+     cc=["helen.rong@nav.no"],
+     subject=f"Airflow task FP_konsument error",
+     html_content=f"<p> Airflow task FP_konsument i DAG {dag._dag_id} feilet"
+     f"kl. {datetime.now().isoformat()}. ",
+     executor_config = {
+            "pod_override": k8s.V1Pod(
+                metadata=k8s.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
+            )
+        }
+  )
 
-consumer >> fp_utpakking_dbt
+consumer >> fp_utpakking_dbt >> epost_ved_feil
