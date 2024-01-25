@@ -58,7 +58,6 @@ with DAG(
   )
   
   epost_ved_feil = EmailOperator(
-     dag=dag,
      task_id="fp_airflow_task_failed",
      to=[
       "Adam.Arafa.Roe@nav.no",
