@@ -74,4 +74,4 @@ with DAG(
         }
   )
 
-consumer >> fp_utpakking_dbt >> epost_ved_feil
+consumer >> fp_utpakking_dbt# >> epost_ved_feil
