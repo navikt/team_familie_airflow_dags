@@ -9,8 +9,6 @@ from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
 from airflow.operators.email import EmailOperator
 from kubernetes import client as k8s
 
-allowlist = ['smtp.adeo.no:26']
-
 miljo = Variable.get('miljo')
 
 allowlist = []
@@ -57,14 +55,14 @@ with DAG(
      dbt_command= """run --select FP_utpakking.*""",
      db_schema=v_schema,
      allowlist=allowlist
- )
+  )
   
   epost_ved_feil = EmailOperator(
      dag=dag,
      task_id="fp_airflow_task_failed",
      to=[
       "Adam.Arafa.***REMOVED***",
-      "Hans.***REMOVED***",
+      "Hans.***REMOVED***"
      ],
      cc=["helen.rong@nav.no"],
      subject=f"Airflow task FP_konsument error",
@@ -72,10 +70,9 @@ with DAG(
      f"kl. {datetime.now().isoformat()}. ",
      executor_config = {
             "pod_override": k8s.V1Pod(
-                metadata=k8s.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
+                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "smtp.adeo.no:26, 35.235.240.1:89, 35.235.240.2"})
             )
         }
   )
 
-consumer >> fp_utpakking_dbt
-epost_ved_feil
+consumer >> fp_utpakking_dbt >> epost_ved_feil
