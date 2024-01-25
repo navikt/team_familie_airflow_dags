@@ -57,6 +57,7 @@ with DAG(
      allowlist=allowlist
   )
   
+ """
   epost_ved_feil = EmailOperator(
      task_id="fp_airflow_task_failed",
      to=[
@@ -73,5 +74,6 @@ with DAG(
             )
         }
   )
+  """
 
 consumer >> fp_utpakking_dbt
