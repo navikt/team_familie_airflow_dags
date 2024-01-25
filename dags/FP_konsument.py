@@ -56,24 +56,5 @@ with DAG(
      db_schema=v_schema,
      allowlist=allowlist
   )
-  
- """
-  epost_ved_feil = EmailOperator(
-     task_id="fp_airflow_task_failed",
-     to=[
-      "Adam.Arafa.Roe@nav.no",
-      "Hans.Hval@nav.no"
-     ],
-     cc=["helen.rong@nav.no"],
-     subject=f"Airflow task FP_konsument error",
-     html_content=f"<p> Airflow task FP_konsument i DAG {dag._dag_id} feilet"
-     f"kl. {datetime.now().isoformat()}. ",
-     executor_config = {
-            "pod_override": k8s.V1Pod(
-                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "smtp.adeo.no:26, 35.235.240.1:89, 35.235.240.2"})
-            )
-        }
-  )
-  """
 
 consumer >> fp_utpakking_dbt
