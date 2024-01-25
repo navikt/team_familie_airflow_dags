@@ -56,5 +56,5 @@ with DAG(
      db_schema=v_schema,
      allowlist=allowlist
   )
-
-consumer >> fp_utpakking_dbt
+  
+  consumer >> fp_utpakking_dbt
