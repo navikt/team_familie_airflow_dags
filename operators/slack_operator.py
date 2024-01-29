@@ -36,9 +36,9 @@ def __slack_message(
     slack_conn_id="slack_connection",
     text=message,
     channel=channel,
-    #executor_config={
-    #  "pod_override": k8s.V1Pod(
-    #      metadata=k8s.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
-    #  )
-    #    }
-  ).execute()
+    executor_config={
+     "pod_override": k8s.V1Pod(
+         metadata=k8s.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
+     )
+       }
+  )#.execute()
