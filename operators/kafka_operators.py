@@ -8,10 +8,15 @@ from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
 from allowlists.allowlist import dev_kafka, prod_kafka
+from dataverk_airflow.notifications import (
+    create_email_notification,
+    create_slack_notification,
+)
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
     config: str,
+    name: str,
     dag: DAG = None,
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
@@ -69,13 +74,18 @@ def kafka_consumer_kubernetes_pod_operator(
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
 
-    # def on_failure(context):
+    def on_failure(context):
+        if slack_channel:
+            slack_notification = create_slack_notification(dag, slack_channel, name, namespace)
+            slack_notification.execute()
     #     if slack_channel:
     #         slack_operator.slack_error(channel=slack_channel, context = context)
+        
+ 
 
     return KubernetesPodOperator(
         dag=dag,
-        #on_failure_callback=on_failure,
+        on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
         name=task_id,
         namespace=namespace,
@@ -91,7 +101,6 @@ def kafka_consumer_kubernetes_pod_operator(
             requests={"memory": "8G"},
             limits={"memory": "8G"}
         ),
-        slack_channel = Variable.get("slack_error_channel"),
         retries=retries,
         retry_delay=retry_delay,
         do_xcom_push=do_xcom_push,
