@@ -91,6 +91,7 @@ def kafka_consumer_kubernetes_pod_operator(
             requests={"memory": "8G"},
             limits={"memory": "8G"}
         ),
+        #slack_channel = Variable.get("slack_error_channel"),
         retries=retries,
         retry_delay=retry_delay,
         do_xcom_push=do_xcom_push,
