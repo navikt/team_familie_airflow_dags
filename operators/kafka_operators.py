@@ -69,13 +69,13 @@ def kafka_consumer_kubernetes_pod_operator(
     if extra_envs:
         env_vars = dict(env_vars, **extra_envs)
 
-    def on_failure(context):
-        if slack_channel:
-            slack_operator.slack_error(channel=slack_channel, context = context)
+    # def on_failure(context):
+    #     if slack_channel:
+    #         slack_operator.slack_error(channel=slack_channel, context = context)
 
     return KubernetesPodOperator(
         dag=dag,
-        on_failure_callback=on_failure,
+        #on_failure_callback=on_failure,
         startup_timeout_seconds=startup_timeout_seconds,
         name=task_id,
         namespace=namespace,
@@ -91,7 +91,7 @@ def kafka_consumer_kubernetes_pod_operator(
             requests={"memory": "8G"},
             limits={"memory": "8G"}
         ),
-        #slack_channel = Variable.get("slack_error_channel"),
+        slack_channel = Variable.get("slack_error_channel"),
         retries=retries,
         retry_delay=retry_delay,
         do_xcom_push=do_xcom_push,
