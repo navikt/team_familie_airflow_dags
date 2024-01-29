@@ -16,7 +16,6 @@ from dataverk_airflow.notifications import (
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
     config: str,
-    name: str,
     dag: DAG = None,
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
@@ -76,7 +75,7 @@ def kafka_consumer_kubernetes_pod_operator(
 
     def on_failure(context):
         if slack_channel:
-            slack_notification = create_slack_notification(dag, slack_channel, name, namespace)
+            slack_notification = create_slack_notification(dag, slack_channel, task_id, namespace)
             slack_notification.execute()
     #     if slack_channel:
     #         slack_operator.slack_error(channel=slack_channel, context = context)
