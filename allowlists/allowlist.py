@@ -8,7 +8,7 @@ dev_aiven_conn_ip = ['nav-dev-kafka-nav-dev.aivencloud.com:26484', 'nav-dev-kafk
 
 
 prod_kafka = prod_oracle_conn_id + prod_aiven_conn_ip
-dev_kafka = dev_oracle_conn_id + dev_aiven_conn_ip
+dev_kafka = dev_oracle_conn_id + dev_aiven_conn_ip + slack_allowlist
 
 prod_oracle_slack = prod_oracle_conn_id + slack_allowlist
 dev_oracle_slack = dev_oracle_conn_id + slack_allowlist
