@@ -25,11 +25,11 @@ with DAG(
 ) as dag:
 
     @task(
-        executor_config={
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
-            )
-        }
+    #     executor_config={
+    #         "pod_override": client.V1Pod(
+    #             metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
+    #         )
+    #     }
     )	 
     def notification_start():
         slack_info(
@@ -56,11 +56,11 @@ with DAG(
     )
 
     @task(
-        executor_config={
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
-            )
-        }
+        # executor_config={
+        #     "pod_override": client.V1Pod(
+        #         metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
+        #     )
+        # }
     )	 
     def notification_end():
         slack_info(
