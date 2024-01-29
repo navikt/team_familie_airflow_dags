@@ -4,7 +4,7 @@ from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id																						 
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id
 
 miljo = Variable.get('miljo')
 branch = Variable.get("branch")
@@ -25,12 +25,12 @@ with DAG(
 ) as dag:
 
     @task(
-    #     executor_config={
-    #         "pod_override": client.V1Pod(
-    #             metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
-    #         )
-    #     }
-    )	 
+        # executor_config={
+        #     "pod_override": client.V1Pod(
+        #         metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
+        #     )
+        # }
+    )
     def notification_start():
         slack_info(
             message = f'Kopiering  av brillestønads data fra BigQuery til Oracle i {miljo} database  starter nå! :rocket:'
@@ -43,7 +43,7 @@ with DAG(
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
-    allowlist=allowlist,						
+    allowlist=allowlist,
     branch = branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
@@ -61,7 +61,7 @@ with DAG(
         #         metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
         #     )
         # }
-    )	 
+    )
     def notification_end():
         slack_info(
             message = f'Kopiering av brillestønads data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
