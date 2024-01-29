@@ -8,10 +8,6 @@ from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
 from allowlists.allowlist import dev_kafka, prod_kafka
-from dataverk_airflow.notifications import (
-    create_email_notification,
-    create_slack_notification,
-)
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -75,13 +71,8 @@ def kafka_consumer_kubernetes_pod_operator(
 
     def on_failure(context):
         if slack_channel:
-            slack_notification = create_slack_notification(dag, slack_channel, task_id, namespace)
-            slack_notification.execute()
-    #     if slack_channel:
-    #         slack_operator.slack_error(channel=slack_channel, context = context)
+            slack_operator.slack_error(channel=slack_channel, context = context)
         
- 
-
     return KubernetesPodOperator(
         dag=dag,
         on_failure_callback=on_failure,
