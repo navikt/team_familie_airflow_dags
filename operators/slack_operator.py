@@ -41,4 +41,4 @@ def __slack_message(
     #      metadata=k8s.V1ObjectMeta(annotations={"allowlist": "slack.com,hooks.slack.com"})
     #  )
     #    }
-  ).execute()
+  ).execute(context=get_current_context())
