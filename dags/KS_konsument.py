@@ -6,6 +6,8 @@ from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
 from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
+import kubernetes.client as k8s
+
 
 miljo = Variable.get('miljo')
 
@@ -52,7 +54,12 @@ with DAG(
     branch=v_branch,
     dbt_command= """run --select KS_utpakking.*""",
     db_schema=v_schema,
-    allowlist=allowlist
+    #allowlist=allowlist,
+    executor_config={
+      "pod_override": k8s.V1Pod(
+          metadata=k8s.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
+      )
+    }
 )
 
 consumer >> ks_utpakking_dbt
