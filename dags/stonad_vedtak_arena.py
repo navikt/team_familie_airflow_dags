@@ -25,8 +25,8 @@ periode = get_periode()
 
 # Bygger parameter med logging, modeller og miljø
 settings = Variable.get("dbt_ef_schema", deserialize_json=True)
-v_branch = 'main'#settings["branch"]
-v_schema = 'dvh_fam_ef'#settings["schema"]
+v_branch = settings["branch"]
+v_schema = settings["schema"]
 
 with DAG(
     dag_id = 'Sas_erstatning', 
