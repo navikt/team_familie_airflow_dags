@@ -1,6 +1,7 @@
 import os
 from airflow import DAG
 from airflow.models import Variable
+import kubernetes.client as k8s
 from airflow.providers.google.cloud.transfers.oracle_to_gcs import OracleToGCSOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDeleteOperator
@@ -27,7 +28,12 @@ def oracle_to_bigquery(
         sql=sql,
         bucket="dvh_fam",
         filename=oracle_table,
-        export_format="csv"
+        export_format="csv",
+        executor_config={
+            "pod_override": k8s.V1Pod(
+                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "dm08-scan.adeo.no:1521"})
+            )
+        }
     )
 
     bucket_to_bq = GCSToBigQueryOperator(
