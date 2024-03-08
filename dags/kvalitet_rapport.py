@@ -72,7 +72,7 @@ with DAG(
                 OVER(PARTITION BY kafka_topic
                 ORDER BY kafka_offset) neste
             FROM DVH_FAM_KS.fam_ks_meta_data)
-        where neste-kafka_offset > 1 and lastet_dato > to_date('27.09.2023', 'dd.mm.yyyy')
+        where neste-kafka_offset > 1 and lastet_dato > to_date('05.03.2024', 'dd.mm.yyyy')
     """
     sjekk_hull_i_PP_meta_data = """
         SELECT * FROM
