@@ -40,8 +40,8 @@ with DAG(
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "ensligforsorger_hent_kafka_data_test",
     config = ef_test.config.format(topic),
-    data_interval_start_timestamp_milli="1706788800000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1709294400000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    data_interval_start_timestamp_milli="1709294400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    data_interval_end_timestamp_milli="1710937740000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
