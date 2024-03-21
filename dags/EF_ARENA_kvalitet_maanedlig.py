@@ -100,8 +100,7 @@ with DAG(
         )
     def info_slack(melding):
       slack_info(
-      message=f"{melding}",
-      emoji=":newspaper:"
+      message=f"Månedlig diff mellom fam_ef_stonad_arena og dt_p.fak_stonad:\n{melding}"
       )
 
     finn_ut_diff = diff()
