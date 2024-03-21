@@ -88,8 +88,8 @@ with DAG(
         and periode = 202401
       """
       with oracle_conn().cursor() as cur:
-        diff = [str(x) for x in (cur.execute(diff_fak_slutt_tabell).fetchone() or [])]   
-      return [diff]
+        resultat = [str(x) for x in (cur.execute(diff_fak_slutt_tabell).fetchone() or [])]   
+      return [resultat]
   
     def info_slack(melding):
       slack_info(
@@ -98,4 +98,4 @@ with DAG(
       )
 
     finn_ut_diff = diff()
-    post_til_info_slack = info_slack(finn_ut_diff)
+    #post_til_info_slack = info_slack(finn_ut_diff)
