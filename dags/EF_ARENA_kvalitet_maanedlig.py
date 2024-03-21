@@ -95,9 +95,7 @@ with DAG(
      slack_info(
       message=f"{diff}",
       emoji=":newspaper:"
-   )
+     )
 
    finn_ut_diff = diff()
    post_til_info_slack = info_slack(finn_ut_diff)
-
-finn_ut_diff >> post_til_info_slack
