@@ -21,15 +21,15 @@ with DAG(
   schedule_interval= "0 12 5 * *", # kl 12 den 5. hver måned
   catchup=True
 ) as dag:
-   @task(
-       executor_config={
+    @task(
+         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+               metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
-       }
-   )
+         }
+        )
    
-   def diff():
+    def diff():
       diff_fak_slutt_tabell = """  
         with arena as
         (
@@ -91,11 +91,11 @@ with DAG(
         diff = [str(x) for x in (cur.execute(diff_fak_slutt_tabell).fetchone() or [])]   
       return [diff]
   
-   def info_slack(diff):
-     slack_info(
-      message=f"{diff}",
+    def info_slack(melding):
+      slack_info(
+      message=f"{melding}",
       emoji=":newspaper:"
-     )
+      )
 
-   finn_ut_diff = diff()
-   post_til_info_slack = info_slack(finn_ut_diff)
+    finn_ut_diff = diff()
+    post_til_info_slack = info_slack(finn_ut_diff)
