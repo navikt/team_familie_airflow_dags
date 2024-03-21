@@ -35,7 +35,7 @@ with DAG(
         (
         select periode, maalgruppe_kode, maalgruppe_navn, stonad_kode
                 ,count(distinct case when belop is not null then fk_person1 end) ant_fk_person1
-        from fam_ef_stonad_arena
+        from dvh_fam_ef.fam_ef_stonad_arena
         unpivot(
             belop
             for stonad_kode
