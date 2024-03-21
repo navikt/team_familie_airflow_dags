@@ -91,6 +91,13 @@ with DAG(
         resultat = [str(x) for x in (cur.execute(diff_fak_slutt_tabell).fetchone() or [])]   
       return [resultat]
   
+    @task(
+         executor_config={
+            "pod_override": client.V1Pod(
+               metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+         }
+        )
     def info_slack(melding):
       slack_info(
       message=f"{melding}",
@@ -98,4 +105,6 @@ with DAG(
       )
 
     finn_ut_diff = diff()
-    #post_til_info_slack = info_slack(finn_ut_diff)
+    post_til_info_slack = info_slack(finn_ut_diff)
+
+    finn_ut_diff >> post_til_info_slack
