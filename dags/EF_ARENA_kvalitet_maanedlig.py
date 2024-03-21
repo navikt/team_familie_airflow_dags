@@ -1,3 +1,12 @@
+from datetime import datetime
+from airflow import DAG
+from airflow.models import Variable
+from airflow.decorators import task
+from kubernetes import client
+from operators.slack_operator import slack_error, slack_info
+from utils.db.oracle_conn import oracle_conn
+from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack
+
 miljo = Variable.get('miljo')
 allowlist = []
 if miljo == 'Prod':
