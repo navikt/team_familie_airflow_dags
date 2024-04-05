@@ -32,7 +32,7 @@ topic = Variable.get("FP_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="FP_konsument",
-  start_date=datetime(2024, 1, 25, 11),
+  start_date=datetime(2024, 4, 8),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
@@ -57,4 +57,4 @@ with DAG(
      allowlist=allowlist
   )
   
-  consumer >> fp_utpakking_dbt
+  consumer #>> fp_utpakking_dbt
