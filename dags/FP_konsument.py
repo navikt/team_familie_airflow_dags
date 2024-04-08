@@ -48,14 +48,14 @@ with DAG(
   )
 
   
-  #fp_utpakking_dbt = create_dbt_operator(
-  #   dag=dag,
-  #   name="utpakking_fp",
-  #   script_path = 'airflow/dbt_run.py',
-  #   branch=v_branch,
-  #   dbt_command= """run --select FP_utpakking.*""",
-  #   db_schema=v_schema,
-  #   allowlist=allowlist
-  #)
+  fp_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_fp",
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select FP_utpakking.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
+  )
 
-consumer
+consumer >> fp_utpakking_dbt
