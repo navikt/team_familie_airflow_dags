@@ -57,4 +57,4 @@ with DAG(
      allowlist=allowlist
   )
   
-  consumer #>> fp_utpakking_dbt
+  consumer
