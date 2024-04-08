@@ -58,4 +58,4 @@ with DAG(
   #   allowlist=allowlist
   #)
 
-  consumer
+consumer
