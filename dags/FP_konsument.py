@@ -56,5 +56,3 @@ with DAG(
      db_schema=v_schema,
      allowlist=allowlist
   )
-  
-  consumer
