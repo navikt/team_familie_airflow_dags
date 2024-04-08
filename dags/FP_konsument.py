@@ -32,11 +32,11 @@ topic = Variable.get("FP_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="FP_konsument",
-  start_date=datetime(2024, 4, 8),
+  start_date=datetime(2024, 4, 8, 15),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
-  catchup = False
+  catchup = True
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
@@ -57,3 +57,5 @@ with DAG(
   #   db_schema=v_schema,
   #   allowlist=allowlist
   #)
+
+  consumer
