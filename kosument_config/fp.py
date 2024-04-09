@@ -1,8 +1,8 @@
 config="""
 source:
   type: kafka
-  batch-size: 100
-  batch-interval: 5
+  batch-size: 200
+  batch-interval: 10
   topic: {}
   schema: json
   keypath-seperator: /
