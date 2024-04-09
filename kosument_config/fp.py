@@ -1,7 +1,7 @@
 config="""
 source:
   type: kafka
-  batch-size: 100
+  batch-size: 50
   batch-interval: 5
   topic: {}
   schema: json
