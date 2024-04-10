@@ -1,7 +1,7 @@
 config="""
 source:
   type: kafka
-  batch-size: 400
+  batch-size: 10000
   batch-interval: 10
   topic: {}
   schema: json
@@ -12,9 +12,6 @@ target:
     - method: oracledb.Cursor.setinputsizes
       name: melding
       value: oracledb.BLOB
-  skip-duplicates-with: 
-    - kafka_offset
-    - kafka_topic
   table: DVH_FAM_FP.FAM_FP_META_DATA
 transform:
   - src: kafka_message
