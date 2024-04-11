@@ -42,7 +42,12 @@ with DAG(
     config = test_fp.config.format(topic),
     #data_interval_start_timestamp_milli="1697900400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
     #data_interval_end_timestamp_milli="1698156000000",   # from first day we got data until 29.05.2023 (todays before todays date)
-    slack_channel = Variable.get("slack_error_channel")
+    slack_channel = Variable.get("slack_error_channel"),
+    extra_envs={
+            "SOURCE_SECRET_PATH": f"projects/{Variable.get('KNADA_TEAM_SECRET')}/secrets/team-familie-ptdc/versions/latest",
+            "TARGET_SECRET_PATH": f"projects/{Variable.get('KNADA_TEAM_SECRET')}/secrets/team-familie-ptdc/versions/latest",
+        },
+    kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685",
   )
 
 consumer
