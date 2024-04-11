@@ -12,9 +12,6 @@ target:
     - method: oracledb.Cursor.setinputsizes
       name: melding
       value: oracledb.BLOB
-  skip-duplicates-with: 
-    - kafka_offset
-    - kafka_topic
   table: DVH_FAM_FP.FAM_FP_META_DATA
 transform:
   - src: kafka_message
