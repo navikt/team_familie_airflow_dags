@@ -30,7 +30,7 @@ topic = Variable.get("FP_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="TEST_FP_konsument",
-  start_date=datetime(2024, 4, 10, 11),
+  start_date=datetime(2024, 4, 10, 1),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
