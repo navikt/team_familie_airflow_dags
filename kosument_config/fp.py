@@ -4,6 +4,7 @@ source:
   batch-size: 50
   batch-interval: 5
   topic: {}
+  group-id: dvh_familie_konsument
   schema: json
   keypath-seperator: /
 target:
