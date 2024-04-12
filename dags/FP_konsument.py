@@ -32,7 +32,7 @@ topic = Variable.get("FP_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="FP_konsument",
-  start_date=datetime(2024, 4, 11),
+  start_date=datetime(2024, 4, 12),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
@@ -45,17 +45,20 @@ with DAG(
     #data_interval_start_timestamp_milli="1708955634000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
     #data_interval_end_timestamp_milli="1709301234000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
+    extra_envs={
+        "PROJECT_SECRET_PATH": f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest",
+    },
+    kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685"
   )
 
-  
-  fp_utpakking_dbt = create_dbt_operator(
-     dag=dag,
-     name="utpakking_fp",
-     script_path = 'airflow/dbt_run.py',
-     branch=v_branch,
-     dbt_command= """run --select FP_utpakking.*""",
-     db_schema=v_schema,
-     allowlist=allowlist
-  )
+  # fp_utpakking_dbt = create_dbt_operator(
+  #    dag=dag,
+  #    name="utpakking_fp",
+  #    script_path = 'airflow/dbt_run.py',
+  #    branch=v_branch,
+  #    dbt_command= """run --select FP_utpakking.*""",
+  #    db_schema=v_schema,
+  #    allowlist=allowlist
+  # )
 
-consumer >> fp_utpakking_dbt
+consumer #>> fp_utpakking_dbt
