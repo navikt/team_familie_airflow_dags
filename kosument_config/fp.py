@@ -1,7 +1,7 @@
 config="""
 source:
   type: kafka
-  batch-size: 50
+  batch-size: 50000
   batch-interval: 5
   topic: {}
   group-id: dvh_familie_konsument
