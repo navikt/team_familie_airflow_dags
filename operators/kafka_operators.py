@@ -16,7 +16,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685",					
+    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:27fba5e",					
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
@@ -72,7 +72,7 @@ def kafka_consumer_kubernetes_pod_operator(
     def on_failure(context):
         if slack_channel:
             slack_operator.slack_error(channel=slack_channel, context = context)
-        
+
     return KubernetesPodOperator(
         dag=dag,
         on_failure_callback=on_failure,

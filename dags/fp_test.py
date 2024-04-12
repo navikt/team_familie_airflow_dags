@@ -1,5 +1,6 @@
 from datetime import datetime
 from airflow.models import DAG
+import os
 from airflow.models import Variable
 from kosument_config import fp
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
@@ -44,7 +45,12 @@ with DAG(
     config = fp.config.format(topic),
     #data_interval_start_timestamp_milli="1708955634000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
     #data_interval_end_timestamp_milli="1709301234000",   # from first day we got data until 29.05.2023 (todays before todays date)
-    slack_channel = Variable.get("slack_error_channel")
+    slack_channel = Variable.get("slack_error_channel"),
+    extra_envs={
+            "SOURCE_SECRET_PATH": f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest",
+            "TARGET_SECRET_PATH": f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest",
+        },
+    kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685"
   )
 
 
