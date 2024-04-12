@@ -47,8 +47,7 @@ with DAG(
     #data_interval_end_timestamp_milli="1709301234000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel"),
     extra_envs={
-            "SOURCE_SECRET_PATH": f"projects/193123067890/secrets/team-familie-dev-zwex/versions/latest",
-            "TARGET_SECRET_PATH": f"projects/193123067890/secrets/team-familie-dev-zwex/versions/latest",
+            "PROJECT_SECRET_PATH": f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest",
         },
     kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685"
   )
