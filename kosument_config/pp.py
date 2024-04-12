@@ -4,6 +4,7 @@ source:
   batch-size: 50
   batch-interval: 5
   topic: k9saksbehandling.aapen-k9-stonadstatistikk-v1
+  group-id: dvh_familie_konsument
   schema: json
   keypath-seperator: /
 target:
