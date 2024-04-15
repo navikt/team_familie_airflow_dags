@@ -29,5 +29,5 @@ transform:
   - src: $$$BATCH_TIME
     dst: lastet_dato
   - src: ytelseType
-    dst: stonadstype
+    dst: ytelse_type
 """
