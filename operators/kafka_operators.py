@@ -16,7 +16,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685",					
+    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:27fba5e",					
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
@@ -27,7 +27,7 @@ def kafka_consumer_kubernetes_pod_operator(
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=120),
-    #nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
+    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
@@ -53,7 +53,7 @@ def kafka_consumer_kubernetes_pod_operator(
     """
     env_vars = {
         "TZ": os.environ["TZ"],
-        #"NLS_LANG": nls_lang,
+        "NLS_LANG": nls_lang,
         "CONSUMER_CONFIG": config,
         "KNADA_TEAM_SECRET": os.environ["KNADA_TEAM_SECRET"],
         "KAFKA_TIMESTAMP_START": data_interval_start_timestamp_milli,
