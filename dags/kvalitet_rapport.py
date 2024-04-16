@@ -126,6 +126,7 @@ with DAG(
     )
   def info_slack(kafka_last):
     gaarsdagensdato = date.today() - timedelta(days = 1)
+    dagensdato = date.today()
     [
       bt_ant,bt_hull,
       ef_ant,ef_hull,
@@ -146,7 +147,7 @@ with DAG(
     bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
     fp_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}......................{str(fp_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
-    fp_oracle_antall_meldinger = f"Antall mottatt FP Oracle meldinger for {gaarsdagensdato}......................{str(fp_oracle_ant)}"
+    fp_oracle_antall_meldinger = f"Antall mottatt FP Oracle meldinger for {dagensdato}......................{str(fp_oracle_ant)}"
     konsumenter_summary = f"""
 *Leste meldinger fra konsumenter siste døgn:*
  
