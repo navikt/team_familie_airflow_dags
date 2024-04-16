@@ -50,6 +50,12 @@ with DAG(
     fp_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE lastet_dato >= sysdate - 1
     """
+    fp_oracle_ant_mottatt_mldinger = """
+      SELECT COUNT(DISTINCT TRANS_ID)
+      FROM DVH_FAM_FP.FAM_FP_FAGSAK
+      WHERE LASTET_DATO > TRUNC(SYSDATE)
+    """
+
     sjekk_hull_i_BT_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_offset,
@@ -107,7 +113,8 @@ with DAG(
         bs_ant = cur.execute(bs_ant_mottatt_mldinger).fetchone()[0]
         fp_ant = cur.execute(fp_ant_mottatt_mldinger).fetchone()[0]               
         fp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_FP_meta_data).fetchone() or [])]  
-    return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant,pp_hull,bs_ant,fp_ant,fp_hull]
+        fp_oracle_ant = cur.execute(fp_oracle_ant_mottatt_mldinger).fetchone()[0]  
+    return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant,pp_hull,bs_ant,fp_ant,fp_hull,fp_oracle_ant]
 
 
   @task(
@@ -125,7 +132,8 @@ with DAG(
       ks_ant,ks_hull,
       pp_ant,pp_hull,
       bs_ant,
-      fp_ant,fp_hull,     
+      fp_ant,fp_hull,    
+      fp_oracle_ant, 
     ] = kafka_last
     bt_antall_meldinger = f"Antall mottatt BT meldinger for {gaarsdagensdato}......................{str(bt_ant)}"
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
@@ -138,6 +146,7 @@ with DAG(
     bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
     fp_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}......................{str(fp_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
+    fp_oracle_antall_meldinger = f"Antall mottatt FP Oracle meldinger for {gaarsdagensdato}......................{str(fp_oracle_ant)}"
     konsumenter_summary = f"""
 *Leste meldinger fra konsumenter siste døgn:*
  
@@ -153,6 +162,7 @@ with DAG(
 {bs_antall_meldinger}
 {fp_antall_meldinger}
 {fp_hull_i_meta_data}
+{fp_oracle_antall_meldinger}
 ```
 """
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
