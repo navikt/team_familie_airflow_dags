@@ -6,14 +6,13 @@ source:
   topic: {}
   group-id: dvh_familie_konsument_test
   schema: json
-  keypath-seperator: /
   key-decoder: utf-8
 target:
   type: oracle
   custom-config:
     - method: oracledb.Cursor.setinputsizes
       name: melding
-      value: oracledb.BLOB
+      value: oracledb.DB_TYPE_CLOB
   table: DVH_FAM_FP.TEST_FAM_FP_META_DATA
 transform:
   - src: kafka_message
