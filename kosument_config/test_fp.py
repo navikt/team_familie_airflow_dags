@@ -7,6 +7,7 @@ source:
   group-id: dvh_familie_konsument_test
   schema: json
   keypath-seperator: /
+  key-decoder: utf-8
 target:
   type: oracle
   custom-config:
