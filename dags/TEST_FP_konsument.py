@@ -48,7 +48,7 @@ with DAG(
             "SOURCE_SECRET_PATH": f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest",
             "TARGET_SECRET_PATH": f"{os.environ['KNADA_TEAM_SECRET']}/versions/latest",
         },
-    kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685",
+    kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-01-02-3a5b785",
   )
 
 consumer
