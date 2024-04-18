@@ -155,7 +155,7 @@ with DAG(
     bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
     fp_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}......................{str(fp_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
-    fp_gml_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}.................{str(fp_gml_ant)}" # Fjernet 5 "." for å formatere likt med andre linjer med kortere string
+    fp_gml_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_gml_ant)}" 
     es_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_ant)}"
     sp_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_ant)}"
     konsumenter_summary = f"""
