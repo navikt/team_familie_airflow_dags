@@ -12,7 +12,7 @@ target:
   custom-config:
     - method: oracledb.Cursor.setinputsizes
       name: melding
-      value: oracledb.BLOB
+      value: oracledb.DB_TYPE_CLOB
   skip-duplicates-with: 
     - kafka_offset
     - kafka_topic
