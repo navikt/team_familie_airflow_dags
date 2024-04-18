@@ -30,18 +30,18 @@ topic = Variable.get("EF_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="EF_konsument",
-  start_date=datetime(2023, 10, 24),
+  start_date=datetime(2024, 4, 18, 12),
   default_args = default_args,
-  schedule_interval= None,#"@hourly",
-  max_active_runs=1#,
- # catchup = True
+  schedule_interval= "@hourly",
+  max_active_runs=1,
+  catchup = True
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "ensligforsorger_hent_kafka_data",
     config = ef.config.format(topic),
-    data_interval_start_timestamp_milli="1712916000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1713448800000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    #data_interval_start_timestamp_milli="1712916000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    #data_interval_end_timestamp_milli="1713448800000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
