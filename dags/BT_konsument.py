@@ -30,7 +30,7 @@ topic = Variable.get("BT_topic")
 
 with DAG(
   dag_id="BT_konsument",
-  start_date=datetime(2024, 4, 18, 12),
+  start_date=datetime(2024, 4, 18, 11),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
