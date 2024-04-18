@@ -6,7 +6,6 @@ source:
   topic: {}
   group-id: dvh_familie_konsument_test
   schema: json
-  key-decoder: utf-8
 target:
   type: oracle
   custom-config:
