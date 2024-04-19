@@ -1,9 +1,9 @@
 config="""
 source:
   type: kafka
-  batch-size: 50
+  batch-size: 10000
   batch-interval: 5
-  topic: k9saksbehandling.aapen-k9-stonadstatistikk-v1
+  topic: {}
   group-id: dvh_familie_konsument
   schema: json
   keypath-seperator: /
@@ -16,7 +16,8 @@ target:
   skip-duplicates-with: 
     - kafka_offset
     - kafka_topic
-  table: dvh_fam_pp.fam_pp_meta_data
+    - kafka_partition
+  table: DVH_FAM_FP.FAM_FP_META_DATA
 transform:
   - src: kafka_message
     dst: melding
@@ -31,4 +32,6 @@ transform:
     dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
+  - src: ytelseType
+    dst: ytelse_type
 """

@@ -3,7 +3,7 @@ source:
   type: kafka
   batch-size: 50
   batch-interval: 5
-  topic: k9saksbehandling.aapen-k9-stonadstatistikk-v1
+  topic: {}
   group-id: dvh_familie_konsument
   schema: json
   keypath-seperator: /
@@ -16,7 +16,7 @@ target:
   skip-duplicates-with: 
     - kafka_offset
     - kafka_topic
-  table: dvh_fam_pp.fam_pp_meta_data
+  table: DVH_FAM_BT.FAM_BT_META_DATA
 transform:
   - src: kafka_message
     dst: melding
@@ -32,3 +32,5 @@ transform:
   - src: $$$BATCH_TIME
     dst: lastet_dato
 """
+
+
