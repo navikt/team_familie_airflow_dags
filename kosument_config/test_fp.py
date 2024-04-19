@@ -1,21 +1,18 @@
 config="""
 source:
   type: kafka
-  batch-size: 50
+  batch-size: 5000
   batch-interval: 5
-  topic: teamfamilie.aapen-barnetrygd-vedtak-v2
+  topic: {}
+  group-id: dvh_familie_konsument_test
   schema: json
-  keypath-seperator: /
 target:
   type: oracle
   custom-config:
     - method: oracledb.Cursor.setinputsizes
       name: melding
-      value: oracledb.BLOB
-  skip-duplicates-with: 
-    - kafka_offset
-    - kafka_topic
-  table: DVH_FAM_BT.FAM_BT_META_DATA
+      value: oracledb.DB_TYPE_BLOB
+  table: DVH_FAM_FP.TEST_FAM_FP_META_DATA
 transform:
   - src: kafka_message
     dst: melding
@@ -31,5 +28,3 @@ transform:
   - src: $$$BATCH_TIME
     dst: lastet_dato
 """
-
-
