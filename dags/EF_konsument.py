@@ -5,15 +5,17 @@ from kosument_config import ef
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
-from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
 
 miljo = Variable.get('miljo')
-
 allowlist = []
+
 if miljo == 'Prod':
-  allowlist.extend(prod_oracle_conn_id)
+    allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'test_r':
+    allowlist.extend(r_oracle_conn_id)
 else:
-  allowlist.extend(dev_oracle_conn_id)
+    allowlist.extend(dev_oracle_conn_id)
 
 default_args = {
     'owner': 'Team-Familie',
