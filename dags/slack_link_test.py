@@ -16,26 +16,27 @@ elif miljo == 'test_r':
 else:
     allowlist.extend(dev_oracle_slack)
 
-default_args = {
-    'owner': 'airflow',
-    'start_date': datetime(2024, 4, 19),
-}
 
-dag = DAG('slack_link_test', default_args=default_args, schedule_interval=None)
+with DAG(
+  dag_id='slack_link_test',
+  start_date=datetime(2024, 4, 22),
+  schedule_interval= None, # kl 7 hver dag
+  catchup=False
+) as dag:
 
-@task(
-    executor_config={
-        "pod_override": client.V1Pod(
-            metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
-        )
-    }
-)
-def info_slack():
-    CustomSlackOperator(
-    task_id='send_slack_message',
-    text="Click [here](https://vg.no) to visit our website.",
-    dag=dag
-)
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+        }
+    )
+    def info_slack():
+        CustomSlackOperator(
+        task_id='send_slack_message',
+        text="Click [here](https://vg.no) to visit our website.",
+        dag=dag
+    )
 
-info_slack()
+    info_slack()
   
