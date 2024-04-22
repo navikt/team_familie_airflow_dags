@@ -29,23 +29,16 @@ with DAG(
 ) as dag:
 
     @task(
-            executor_config={
-                "pod_override": client.V1Pod(
-                    metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
-                )
-            }
+         executor_config={
+            "pod_override": client.V1Pod(
+               metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+         }
         )
-    def send_slack_message_with_link():
-        message_with_link = "Click <here|https://www.vg.no> to visit our website."
-        
-        slack_operator = SlackAPIPostOperator(
-            task_id='send_slack_message',
-            context = None,
-            channel='#dv-team-familie-varslinger',
-            text=message_with_link,
-        )
-        slack_operator.execute()
+    def info_slack():
+      slack_info(
+      message="Click <here|https://www.vg.no> to visit our website."
+      )
 
-    # Example usage:
-    send_slack_message_with_link()
+    info_slack()
   
