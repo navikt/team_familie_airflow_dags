@@ -37,7 +37,7 @@ with DAG(
         )
     def info_slack():
       slack_info(
-      message="Click <here|https://www.vg.no> to visit our website."
+      message="Click [here](https://www.vg.no)  to visit our website."
       )
 
     info_slack()
