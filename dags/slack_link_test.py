@@ -40,6 +40,7 @@ with DAG(
         
         slack_operator = SlackAPIPostOperator(
             task_id='send_slack_message',
+            context = None,
             channel='#dv-team-familie-varslinger',
             text=message_with_link,
         )
