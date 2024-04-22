@@ -21,7 +21,7 @@ else:
     allowlist.extend(dev_oracle_slack)
 
 with DAG(
-  dag_id='datakvalitetsrapport',
+  dag_id='slack_link_test',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2024, 4, 22),
   schedule_interval= None, 
