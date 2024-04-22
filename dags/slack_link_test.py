@@ -1,9 +1,12 @@
-from airflow import DAG
 from datetime import datetime
-from operators.custom_slack_operator import CustomSlackOperator
+from datetime import date
+from datetime import timedelta
+from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
 from kubernetes import client
+from operators.slack_operator import slack_error, slack_info
+from utils.db.oracle_conn import oracle_conn
 from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack, r_oracle_slack
 
 miljo = Variable.get('miljo')   
@@ -16,27 +19,24 @@ elif miljo == 'test_r':
 else:
     allowlist.extend(dev_oracle_slack)
 
-
 with DAG(
   dag_id='slack_link_test',
+  default_args={'on_failure_callback': slack_error},
   start_date=datetime(2024, 4, 22),
-  schedule_interval= None, # kl 7 hver dag
+  schedule_interval= None, 
   catchup=False
 ) as dag:
 
     @task(
-        executor_config={
+         executor_config={
             "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+               metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
-        }
-    )
+         }
+        )
     def info_slack():
-        CustomSlackOperator(
-        task_id='send_slack_message',
-        text="Click [here](https://vg.no) to visit our website.",
-        dag=dag
-    )
+      slack_info(
+      message="Click <https://www.vg.no|here> to visit vg.no"
+      )
 
     info_slack()
-  
