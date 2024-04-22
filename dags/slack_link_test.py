@@ -1,6 +1,6 @@
 from airflow import DAG
 from datetime import datetime
-from operators import CustomSlackOperator
+from operators.custom_slack_operator import CustomSlackOperator
 from airflow.models import Variable
 from airflow.decorators import task
 from kubernetes import client
