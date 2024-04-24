@@ -158,7 +158,7 @@ with DAG(
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull)}"
     ks_antall_meldinger = f"Antall mottatt {ks_grafana} for {gaarsdagensdato}......................{str(ks_ant)}"
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull)}"
-    pp_antall_meldinger = f"Antall mottatt {pp_grafana}for {gaarsdagensdato}......................{str(pp_ant)}"
+    pp_antall_meldinger = f"Antall mottatt {pp_grafana} for {gaarsdagensdato}......................{str(pp_ant)}"
     pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data for {gaarsdagensdato}:............{str(pp_hull)}"
     bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
     fp_antall_meldinger = f"Antall mottatt {fp_grafana} for {gaarsdagensdato}......................{str(fp_ant)}"
