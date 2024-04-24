@@ -153,7 +153,9 @@ with DAG(
       sp_ant,    
       bs_ant,
     ] = kafka_last
-    bt_antall_meldinger = f"Antall mottatt {bt_grafana} for {gaarsdagensdato}......................{str(bt_ant)}"
+    BLUE = '\033[1;34;48m' # Blåfarge for å fremheve link
+    RESET = '\033[1;37;0m' # Fjerner farge
+    bt_antall_meldinger = f"Antall mottatt {BLUE}{bt_grafana}{RESET} for {gaarsdagensdato}......................{str(bt_ant)}"
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
     ef_antall_meldinger = f"Antall mottatt {ef_grafana} for {gaarsdagensdato}......................{str(ef_ant)}"
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull)}"
