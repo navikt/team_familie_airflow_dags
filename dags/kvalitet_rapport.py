@@ -18,7 +18,7 @@ elif miljo == 'test_r':
     allowlist.extend(r_oracle_slack)   									  
 else:
     allowlist.extend(dev_oracle_slack)
-    miljo = 'dev' # Ønsker å sette verdi for å bruke direkte i string i rapport
+    miljo = 'dev' # Har ingen verdi, men ønsker å sette verdi for å bruke direkte i string i rapport
 
 with DAG(
   dag_id='datakvalitetsrapport',
@@ -119,13 +119,13 @@ with DAG(
         ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
         pp_ant = cur.execute(pp_ant_mottatt_mldinger).fetchone()[0]
         pp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_PP_meta_data).fetchone() or [])]  
-        bs_ant = cur.execute(bs_ant_mottatt_mldinger).fetchone()[0]
         fp_ant = cur.execute(fp_ant_mottatt_mldinger).fetchone()[0]               
         fp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_FP_meta_data).fetchone() or [])]  
         fp_gml_ant = cur.execute(fp_gml_ant_mottatt_mldinger).fetchone()[0]  
         es_ant = cur.execute(es_ant_mottatt_mldinger).fetchone()[0]   
-        sp_ant = cur.execute(sp_ant_mottatt_mldinger).fetchone()[0]   
-    return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant,pp_hull,bs_ant,fp_ant,fp_hull,fp_gml_ant,es_ant,sp_ant]
+        sp_ant = cur.execute(sp_ant_mottatt_mldinger).fetchone()[0]           
+        bs_ant = cur.execute(bs_ant_mottatt_mldinger).fetchone()[0]
+    return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant,pp_hull,fp_ant,fp_hull,fp_gml_ant,es_ant,sp_ant,bs_ant]
 
 
   @task(
@@ -147,11 +147,11 @@ with DAG(
       ef_ant,ef_hull,
       ks_ant,ks_hull,
       pp_ant,pp_hull,
-      bs_ant,
       fp_ant,fp_hull,    
       fp_gml_ant, 
       es_ant,
-      sp_ant,
+      sp_ant,    
+      bs_ant,
     ] = kafka_last
     bt_antall_meldinger = f"Antall mottatt {bt_grafana} for {gaarsdagensdato}......................{str(bt_ant)}"
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
@@ -161,12 +161,12 @@ with DAG(
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull)}"
     pp_antall_meldinger = f"Antall mottatt {pp_grafana} for {gaarsdagensdato}......................{str(pp_ant)}"
     pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data for {gaarsdagensdato}:............{str(pp_hull)}"
-    bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
     fp_antall_meldinger = f"Antall mottatt {fp_grafana} for {gaarsdagensdato}......................{str(fp_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
     fp_gml_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_gml_ant)}" 
     es_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_ant)}"
     sp_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_ant)}"
+    bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
     konsumenter_summary = f"""
 *Leste {miljo} meldinger fra konsumenter siste døgn:*
  
@@ -179,12 +179,12 @@ with DAG(
 {ef_hull_i_meta_data}
 {ks_antall_meldinger}
 {ks_hull_i_meta_data}
-{bs_antall_meldinger}
 {fp_antall_meldinger}
 {fp_hull_i_meta_data}
 {fp_gml_antall_meldinger}
 {es_antall_meldinger}
 {sp_antall_meldinger}
+{bs_antall_meldinger}
 ```
 """
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
