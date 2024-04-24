@@ -15,9 +15,10 @@ allowlist = []
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_slack)
 elif miljo == 'test_r':
-    allowlist.extend(r_oracle_slack)				   									  
+    allowlist.extend(r_oracle_slack)   									  
 else:
     allowlist.extend(dev_oracle_slack)
+    miljo = 'dev' # Ønsker å sette verdi for å bruke direkte i string i rapport
 
 with DAG(
   dag_id='datakvalitetsrapport',
@@ -167,7 +168,7 @@ with DAG(
     es_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_ant)}"
     sp_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_ant)}"
     konsumenter_summary = f"""
-*Leste meldinger fra konsumenter siste døgn:*
+*Leste {miljo} meldinger fra konsumenter siste døgn:*
  
 ```
 {pp_antall_meldinger}
