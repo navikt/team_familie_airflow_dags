@@ -11,7 +11,7 @@ target:
   custom-config:
     - method: oracledb.Cursor.setinputsizes
       name: melding
-      value: oracledb.DB_TYPE_clob
+      value: oracledb.DB_TYPE_CLOB
   table: DVH_FAM_FP.TEST_FAM_FP_META_DATA
 transform:
   - src: kafka_message
