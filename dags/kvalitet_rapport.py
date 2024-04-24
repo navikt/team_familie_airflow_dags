@@ -153,15 +153,15 @@ with DAG(
       sp_ant,    
       bs_ant,
     ] = kafka_last
-    bt_antall_meldinger = f"Antall mottatt {'\033[34m'}{bt_grafana} for {gaarsdagensdato}......................{str(bt_ant)}"
+    bt_antall_meldinger = f"Antall mottatt {f"\033[38;2;0;0;255m"}{bt_grafana} for {gaarsdagensdato}......................{str(bt_ant)}"
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
-    ef_antall_meldinger = f"Antall mottatt {'\033[34m'}{ef_grafana} for {gaarsdagensdato}......................{str(ef_ant)}"
+    ef_antall_meldinger = f"Antall mottatt {f"\033[38;2;0;0;255m"}{ef_grafana} for {gaarsdagensdato}......................{str(ef_ant)}"
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull)}"
-    ks_antall_meldinger = f"Antall mottatt {'\033[34m'}{ks_grafana} for {gaarsdagensdato}......................{str(ks_ant)}"
+    ks_antall_meldinger = f"Antall mottatt {f"\033[38;2;0;0;255m"}{ks_grafana} for {gaarsdagensdato}......................{str(ks_ant)}"
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull)}"
-    pp_antall_meldinger = f"Antall mottatt {'\033[34m'}{pp_grafana} for {gaarsdagensdato}......................{str(pp_ant)}"
+    pp_antall_meldinger = f"Antall mottatt {f"\033[38;2;0;0;255m"}{pp_grafana} for {gaarsdagensdato}......................{str(pp_ant)}"
     pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data for {gaarsdagensdato}:............{str(pp_hull)}"
-    fp_antall_meldinger = f"Antall mottatt {'\033[34m'}{fp_grafana} for {gaarsdagensdato}......................{str(fp_ant)}"
+    fp_antall_meldinger = f"Antall mottatt {f"\033[38;2;0;0;255m"}{fp_grafana} for {gaarsdagensdato}......................{str(fp_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
     fp_gml_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_gml_ant)}" 
     es_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_ant)}"
