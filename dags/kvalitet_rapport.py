@@ -15,9 +15,10 @@ allowlist = []
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_slack)
 elif miljo == 'test_r':
-    allowlist.extend(r_oracle_slack)				   									  
+    allowlist.extend(r_oracle_slack)   									  
 else:
     allowlist.extend(dev_oracle_slack)
+    miljo = 'dev' # Har her ingen verdi, så ønsker å sette verdi for å bruke direkte i string i rapport
 
 with DAG(
   dag_id='datakvalitetsrapport',
@@ -33,34 +34,44 @@ with DAG(
                 metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
         }
-    )
+    )    
+  # Husk å gi rettighet i riktig db, e.g. "GRANT SELECT, INSERT, UPDATE ON DVH_FAM_FP.FP_ENGANGSSTONAD_DVH TO DVH_FAM_Airflow;"
   def hent_kafka_last():
-    # Husk å gi rettighet i riktig db, e.g. "GRANT SELECT, INSERT, UPDATE ON DVH_FAM_FP.FP_ENGANGSSTONAD_DVH TO DVH_FAM_Airflow;"
-    bt_ant_mottatt_mldinger = """
+    bt_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1
     """
-    ef_ant_mottatt_mldinger = """
+    ef_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1
     """
-    ks_ant_mottatt_mldinger = """
+    ks_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_KS.fam_ks_meta_data WHERE lastet_dato >= sysdate - 1
     """
-    pp_ant_mottatt_mldinger = """
+    pp_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_PP.fam_pp_meta_data WHERE lastet_dato >= sysdate - 1
     """
-    bs_ant_mottatt_mldinger = """
+    bs_bs_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_HM.brillestonad WHERE lastet_dato >= sysdate - 1
     """
-    fp_ant_mottatt_mldinger = """
+    # Sum av meldinger fra FP, ES & SP
+    fp_md_sum_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE lastet_dato >= sysdate - 1
     """
-    fp_gml_ant_mottatt_mldinger = """
+    fp_md_ant_mottatt_mldinger = """
+      SELECT COUNT (*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE KAFKA_MOTTATT_DATO > TRUNC(SYSDATE-1) and ytelse_type = 'FORELDREPENGER';
+    """
+    es_md_ant_mottatt_mldinger = """
+      SELECT COUNT (*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE KAFKA_MOTTATT_DATO > TRUNC(SYSDATE-1) and ytelse_type = 'ENGANGSSTØNAD';
+    """    
+    sp_md_ant_mottatt_mldinger = """
+      SELECT COUNT (*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE KAFKA_MOTTATT_DATO > TRUNC(SYSDATE-1) and ytelse_type = 'SVANGERSKAPSPENGER';
+    """
+    fp_fgsk_ant_mottatt_mldinger = """
       SELECT COUNT(DISTINCT TRANS_ID) FROM DVH_FAM_FP.FAM_FP_FAGSAK WHERE LASTET_DATO > TRUNC(SYSDATE)
     """
-    es_ant_mottatt_mldinger = """ 
+    es_dvh_ant_mottatt_mldinger = """ 
       SELECT COUNT(*) FROM DVH_FAM_FP.FP_ENGANGSSTONAD_DVH WHERE LASTET_DATO > TRUNC(SYSDATE)
     """ 
-    sp_ant_mottatt_mldinger = """
+    sp_fgsk_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_FP.FAM_SP_FAGSAK WHERE LASTET_DATO > TRUNC(SYSDATE)
     """ 
 
@@ -110,21 +121,27 @@ with DAG(
         where neste-kafka_offset > 1
     """
     with oracle_conn().cursor() as cur:
-        bt_ant = cur.execute(bt_ant_mottatt_mldinger).fetchone()[0]
+        bt_md_ant = cur.execute(bt_md_ant_mottatt_mldinger).fetchone()[0]
         bt_hull = [str(x) for x in (cur.execute(sjekk_hull_i_BT_meta_data).fetchone() or [])]
-        ef_ant = cur.execute(ef_ant_mottatt_mldinger).fetchone()[0]
+        ef_md_ant = cur.execute(ef_md_ant_mottatt_mldinger).fetchone()[0]
         ef_hull = [str(x) for x in (cur.execute(sjekk_hull_i_EF_meta_data).fetchone() or [])]
-        ks_ant = cur.execute(ks_ant_mottatt_mldinger).fetchone()[0]
+        ks_md_ant = cur.execute(ks_md_ant_mottatt_mldinger).fetchone()[0]
         ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
-        pp_ant = cur.execute(pp_ant_mottatt_mldinger).fetchone()[0]
+        pp_md_ant = cur.execute(pp_md_ant_mottatt_mldinger).fetchone()[0]
         pp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_PP_meta_data).fetchone() or [])]  
-        bs_ant = cur.execute(bs_ant_mottatt_mldinger).fetchone()[0]
-        fp_ant = cur.execute(fp_ant_mottatt_mldinger).fetchone()[0]               
+        fp_md_sum_ant = cur.execute(fp_md_sum_ant_mottatt_mldinger).fetchone()[0]               
         fp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_FP_meta_data).fetchone() or [])]  
-        fp_gml_ant = cur.execute(fp_gml_ant_mottatt_mldinger).fetchone()[0]  
-        es_ant = cur.execute(es_ant_mottatt_mldinger).fetchone()[0]   
-        sp_ant = cur.execute(sp_ant_mottatt_mldinger).fetchone()[0]   
-    return [bt_ant,bt_hull,ef_ant,ef_hull,ks_ant,ks_hull,pp_ant,pp_hull,bs_ant,fp_ant,fp_hull,fp_gml_ant,es_ant,sp_ant]
+
+        fp_md_ant = cur.execute(fp_md_ant_mottatt_mldinger).fetchone()[0]  
+        es_md_ant = cur.execute(es_md_ant_mottatt_mldinger).fetchone()[0]   
+        sp_md_ant = cur.execute(sp_md_ant_mottatt_mldinger).fetchone()[0]
+
+        fp_fgsk_ant = cur.execute(fp_fgsk_ant_mottatt_mldinger).fetchone()[0]  
+        es_dvh_ant = cur.execute(es_dvh_ant_mottatt_mldinger).fetchone()[0]   
+        sp_fgsk_ant = cur.execute(sp_fgsk_ant_mottatt_mldinger).fetchone()[0]
+
+        bs_bs_ant = cur.execute(bs_bs_ant_mottatt_mldinger).fetchone()[0]
+    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant]
 
 
   @task(
@@ -142,48 +159,63 @@ with DAG(
     fp_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22:%7B%22datasource%22:%22000000021%22,%22queries%22:%5B%7B%22exemplar%22:true,%22expr%22:%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamforeldrepenger.fpsak-dvh-stonadsstatistikk-v1%5C%22%7D%20%3E%200%20%22,%22refId%22:%22A%22,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22000000021%22%7D%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1|*FP meldinger*>"
     gaarsdagensdato = date.today() - timedelta(days = 1)
     [
-      bt_ant,bt_hull,
-      ef_ant,ef_hull,
-      ks_ant,ks_hull,
-      pp_ant,pp_hull,
+      bt_md_ant,bt_hull,
+      ef_md_ant,ef_hull,
+      ks_md_ant,ks_hull,
+      pp_md_ant,pp_hull,
+      fp_md_sum_ant,fp_hull,    
+      fp_md_ant,
+      es_md_ant,
+      sp_md_ant,
+      fp_fgsk_ant, 
+      es_dvh_ant,
+      sp_fgsk_ant,    
       bs_ant,
-      fp_ant,fp_hull,    
-      fp_gml_ant, 
-      es_ant,
-      sp_ant,
     ] = kafka_last
-    bt_antall_meldinger = f"Antall mottatt {bt_grafana} for {gaarsdagensdato}......................{str(bt_ant)}"
+    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana} for {gaarsdagensdato}......................{str(bt_md_ant)}"
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
-    ef_antall_meldinger = f"Antall mottatt {ef_grafana} for {gaarsdagensdato}......................{str(ef_ant)}"
+    ef_md_antall_meldinger = f"Antall mottatt {ef_grafana} for {gaarsdagensdato}......................{str(ef_md_ant)}"
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull)}"
-    ks_antall_meldinger = f"Antall mottatt {ks_grafana} for {gaarsdagensdato}......................{str(ks_ant)}"
+    ks_md_antall_meldinger = f"Antall mottatt {ks_grafana} for {gaarsdagensdato}......................{str(ks_md_ant)}"
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull)}"
-    pp_antall_meldinger = f"Antall mottatt {pp_grafana}for {gaarsdagensdato}......................{str(pp_ant)}"
+    pp_md_antall_meldinger = f"Antall mottatt {pp_grafana} for {gaarsdagensdato}......................{str(pp_md_ant)}"
     pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data for {gaarsdagensdato}:............{str(pp_hull)}"
-    bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_ant)}"
-    fp_antall_meldinger = f"Antall mottatt {fp_grafana} for {gaarsdagensdato}......................{str(fp_ant)}"
+    fp_md_sum_antall_meldinger = f"Antall mottatt {fp_grafana} for {gaarsdagensdato}......................{str(fp_md_sum_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
-    fp_gml_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_gml_ant)}" 
-    es_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_ant)}"
-    sp_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_ant)}"
+
+    fp_md_antall_meldinger = f"Antall mottatt FP meldinger fra meta_data for {gaarsdagensdato}..................{str(fp_md_ant)}" 
+    ef_md_antall_meldinger = f"Antall mottatt ES meldinger fra meta_data for {gaarsdagensdato}..................{str(es_md_ant)}"
+    sp_md_antall_meldinger = f"Antall mottatt SP meldinger fra meta_data for {gaarsdagensdato}..................{str(sp_md_ant)}"
+
+    fp_fgsk_antall_meldinger = f"Antall mottatt FP meldinger fra fagsak for {gaarsdagensdato}..................{str(fp_fgsk_ant)}" 
+    es_dvh_antall_meldinger = f"Antall mottatt ES meldinger fra ENGANGSSTONAD_DVH for {gaarsdagensdato}..................{str(es_dvh_ant)}"
+    sp_fgsk_antall_meldinger = f"Antall SP meldinger fra meta_data for {gaarsdagensdato}..................{str(sp_fgsk_ant)}"
+
+    bs_bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_bs_ant)}"
+
     konsumenter_summary = f"""
-*Leste meldinger fra konsumenter siste døgn i :*
+*Leste {miljo} meldinger fra konsumenter siste døgn:*
  
 ```
-{pp_antall_meldinger}
+{bs_bs_antall_meldinger}
+{pp_md_antall_meldinger}
 {pp_hull_i_meta_data}
-{bt_antall_meldinger}
+{bt_md_antall_meldinger}
 {bt_hull_i_meta_data}
-{ef_antall_meldinger}
+{ef_md_antall_meldinger}
 {ef_hull_i_meta_data}
-{ks_antall_meldinger}
+{ks_md_antall_meldinger}
 {ks_hull_i_meta_data}
-{bs_antall_meldinger}
-{fp_antall_meldinger}
+{fp_md_sum_antall_meldinger}
 {fp_hull_i_meta_data}
-{fp_gml_antall_meldinger}
-{es_antall_meldinger}
-{sp_antall_meldinger}
+
+{fp_md_antall_meldinger}
+{ef_md_antall_meldinger}
+{sp_md_antall_meldinger}
+
+{fp_fgsk_antall_meldinger}
+{es_dvh_antall_meldinger}
+{sp_fgsk_antall_meldinger}
 ```
 """
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
