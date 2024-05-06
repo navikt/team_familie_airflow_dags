@@ -220,7 +220,7 @@ with DAG(
 """
     # Når det oppdages et hull, vil det komme en notification
     if any(s != "[]" for s in str([bt_hull,ef_hull,ks_hull,pp_hull,fp_hull])): 
-           konsumenter_summary = konsumenter_summary + '<@channel> NB, hull i et kosument!'
+           konsumenter_summary = konsumenter_summary + f"```<@channel> NB, hull i et kosument!```"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
