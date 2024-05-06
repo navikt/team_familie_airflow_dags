@@ -74,7 +74,6 @@ with DAG(
     sp_fgsk_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_FP.FAM_SP_FAGSAK WHERE LASTET_DATO > TRUNC(SYSDATE)
     """ 
-
     sjekk_hull_i_BT_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_offset,
@@ -114,7 +113,9 @@ with DAG(
     sjekk_hull_i_FP_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_offset,
-                LEAD(kafka_offset) OVER(PARTITION BY kafka_topic, kafka_partition ORDER BY kafka_offset) neste
+                LEAD(kafka_offset) 
+                OVER(PARTITION BY kafka_topic, kafka_partition 
+                ORDER BY kafka_offset) neste
             FROM DVH_FAM_FP.fam_fp_meta_data)
         where neste-kafka_offset > 1
     """
@@ -129,15 +130,12 @@ with DAG(
         pp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_PP_meta_data).fetchone() or [])]  
         fp_md_sum_ant = cur.execute(fp_md_sum_ant_mottatt_mldinger).fetchone()[0]               
         fp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_FP_meta_data).fetchone() or [])]  
-
         fp_md_ant = cur.execute(fp_md_ant_mottatt_mldinger).fetchone()[0]  
         es_md_ant = cur.execute(es_md_ant_mottatt_mldinger).fetchone()[0]   
         sp_md_ant = cur.execute(sp_md_ant_mottatt_mldinger).fetchone()[0]
-
         fp_fgsk_ant = cur.execute(fp_fgsk_ant_mottatt_mldinger).fetchone()[0]  
         es_dvh_ant = cur.execute(es_dvh_ant_mottatt_mldinger).fetchone()[0]   
         sp_fgsk_ant = cur.execute(sp_fgsk_ant_mottatt_mldinger).fetchone()[0]
-
         bs_bs_ant = cur.execute(bs_bs_ant_mottatt_mldinger).fetchone()[0]
     return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant]
 
@@ -180,17 +178,14 @@ with DAG(
     pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data for {gaarsdagensdato}:............{str(pp_hull)}"
     fp_md_sum_antall_meldinger = f"Antall mottatt summerte {fp_grafana} for {gaarsdagensdato}.............{str(fp_md_sum_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
-
     fp_md_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}......................{str(fp_md_ant)}" 
     es_md_antall_meldinger = f"Antall mottatt ES meldinger for {gaarsdagensdato}......................{str(es_md_ant)}"
     sp_md_antall_meldinger = f"Antall mottatt SP meldinger for {gaarsdagensdato}......................{str(sp_md_ant)}"
-
     fp_fgsk_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_fgsk_ant)}" 
     es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_dvh_ant)}"
     sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_fgsk_ant)}"
-
     bs_bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_bs_ant)}"
-
+    # Vennligst behold lufterom mellom meldinger for bedre lesbarhet
     konsumenter_summary = f"""
 *Leste {miljo} meldinger fra konsumenter siste døgn:*
  
@@ -216,9 +211,9 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    # Når det oppdages et hull, vil det komme en notification
+    # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare legges til slutten av summary string. TODO: Legg ogås til i string navnet på hvilket konsument som har hull
     if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
-           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument!```"
+           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument! :old-man-yells-at-kafka:```"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
