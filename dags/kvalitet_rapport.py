@@ -114,9 +114,7 @@ with DAG(
     sjekk_hull_i_FP_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_offset,
-                LEAD(kafka_offset) 
-                OVER(PARTITION BY kafka_topic
-                ORDER BY kafka_offset) neste
+                LEAD(kafka_offset) OVER(PARTITION BY kafka_topic, kafka_partition ORDER BY kafka_offset) neste
             FROM DVH_FAM_FP.fam_fp_meta_data)
         where neste-kafka_offset > 1
     """
