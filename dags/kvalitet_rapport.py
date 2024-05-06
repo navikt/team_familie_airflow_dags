@@ -170,7 +170,7 @@ with DAG(
       fp_fgsk_ant, 
       es_dvh_ant,
       sp_fgsk_ant,    
-      bs_ant,
+      bs_bs_ant,
     ] = kafka_last
     bt_md_antall_meldinger = f"Antall mottatt {bt_grafana} for {gaarsdagensdato}......................{str(bt_md_ant)}"
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
