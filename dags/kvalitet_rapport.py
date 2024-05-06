@@ -213,7 +213,7 @@ with DAG(
 """
     # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare legges til slutten av summary string. TODO: Legg ogås til i string navnet på hvilket konsument som har hull
     if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
-           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument! :old-man-yells-at-kafka:```"
+           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument! <:old-man-yells-at-kafka:>```"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
