@@ -185,7 +185,7 @@ with DAG(
     es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_dvh_ant)}"
     sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_fgsk_ant)}"
     bs_bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_bs_ant)}"
-    # Vennligst behold lufterom mellom meldinger for bedre lesbarhet
+    # Vennligst behold lufterom mellom printede meldinger for bedre lesbarhet
     konsumenter_summary = f"""
 *Leste {miljo} meldinger fra konsumenter siste døgn:*
  
@@ -213,7 +213,7 @@ with DAG(
 """
     # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare legges til slutten av summary string. TODO: Legg ogås til i string navnet på hvilket konsument som har hull
     if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
-           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument! <:old-man-yells-at-kafka:>```"
+           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument! :fire:```"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
