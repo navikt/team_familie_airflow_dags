@@ -183,9 +183,9 @@ with DAG(
     fp_md_sum_antall_meldinger = f"Antall mottatt summerte {fp_grafana} for {gaarsdagensdato}.............{str(fp_md_sum_ant)}"
     fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
 
-    fp_md_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}..................{str(fp_md_ant)}" 
-    es_md_antall_meldinger = f"Antall mottatt ES meldinger for {gaarsdagensdato}..................{str(es_md_ant)}"
-    sp_md_antall_meldinger = f"Antall mottatt SP meldinger for {gaarsdagensdato}..................{str(sp_md_ant)}"
+    fp_md_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}......................{str(fp_md_ant)}" 
+    es_md_antall_meldinger = f"Antall mottatt ES meldinger for {gaarsdagensdato}......................{str(es_md_ant)}"
+    sp_md_antall_meldinger = f"Antall mottatt SP meldinger for {gaarsdagensdato}......................{str(sp_md_ant)}"
 
     fp_fgsk_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_fgsk_ant)}" 
     es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_dvh_ant)}"
@@ -218,6 +218,10 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
+    # Når det oppdages et hull, vil det komme en notification
+    if any(s != "[]" for s in str([bt_hull,ef_hull,ks_hull,pp_hull,fp_hull])): 
+           konsumenter_summary = konsumenter_summary + '<@channel> NB, hull i et kosument!'
+
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
 
