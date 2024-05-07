@@ -35,7 +35,7 @@ with DAG(
             )
         }
     )    
-  # Husk å gi rettighet i riktig db, e.g. "GRANT SELECT, INSERT, UPDATE ON DVH_FAM_FP.FP_ENGANGSSTONAD_DVH TO DVH_FAM_Airflow;"
+  # Ved bruk av nye db, husk å gi rettighet til airflow, e.g. "GRANT SELECT, INSERT, UPDATE ON DVH_FAM_FP.FP_ENGANGSSTONAD_DVH TO DVH_FAM_Airflow;"
   def hent_kafka_last():
     bt_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1
@@ -185,7 +185,7 @@ with DAG(
     es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_dvh_ant)}"
     sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_fgsk_ant)}"
     bs_bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_bs_ant)}"
-    # Vennligst behold lufterom mellom printede meldinger for bedre lesbarhet
+    # Vennligst behold noen lufterom mellom printede meldinger for bedre lesbarhet
     konsumenter_summary = f"""
 *Leste {miljo} meldinger fra konsumenter siste døgn:*
  
@@ -211,7 +211,7 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare legges til slutten av summary string. TODO: Legg ogås til i string navnet på hvilket konsument som har hull
+    # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare konkatineres til slutten av summary string
     if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
            konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument! :fire:```"
 
