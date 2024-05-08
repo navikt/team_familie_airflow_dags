@@ -211,6 +211,7 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
+    
     topics_med_hull = f""
     for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]:
         # Sjekker om listen er tom, betyr ikke noe hull oppdaget
@@ -223,7 +224,7 @@ with DAG(
         # Fjerner siste komma og mellomrom
         topics_med_hull = topics_med_hull[:-2]
         # Konkatinerer en notification med navn på topics med hull til summary
-        konsumenter_summary += f"<!channel> Minst ett hull oppdaget i {topics_med_hull}!"
+        konsumenter_summary += f"<!channel> Minst ett hull oppdaget i TEST!"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
