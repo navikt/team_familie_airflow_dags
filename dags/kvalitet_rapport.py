@@ -212,23 +212,8 @@ with DAG(
 ```
 """
     
-    topics_med_hull = ""
-    for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]:
-        # Sjekker om listen er tom, betyr ikke noe hull oppdaget
-        if sublist:
-            # Henter navn på topic
-            topics_med_hull += str(sublist[1]) + ", "
 
-    # Sjekker om noe ble lagt til i string, betyr hull oppdaget
-    if topics_med_hull:
-        # Fjerner siste komma og mellomrom
-        topics_med_hull = topics_med_hull[:-2]
-        # Konkatinerer en notification med navn på topics med hull til summary
-
-        # konsumenter_summary += f"\n" + f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```"
-        kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}" + f"<!channel> Minst ett hull oppdaget i {topics_med_hull}!"
-    else:
-      kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}" 
+    kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}" 
 
 
     slack_info(
