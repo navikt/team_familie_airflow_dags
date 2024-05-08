@@ -220,7 +220,7 @@ with DAG(
         topics_med_hull = topics_med_hull[:-2]
         # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
         #konsumenter_summary.join(f"```<!channel> NB, hull i et kosument!```")
-        konsumenter_summary = konsumenter_summary.join(f"```<!channel> NB, minst ett hull oppdaget i {topics_med_hull}```")
+        konsumenter_summary += (f"```<!channel> NB, minst ett hull oppdaget i {topics_med_hull}```")
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
