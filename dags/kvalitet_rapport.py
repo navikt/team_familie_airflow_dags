@@ -210,6 +210,7 @@ with DAG(
 {es_dvh_antall_meldinger}
 {sp_fgsk_antall_meldinger}
 ```
+
 """
     # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare konkatineres til slutten av summary string
     if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
