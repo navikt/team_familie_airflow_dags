@@ -111,8 +111,8 @@ with DAG(
         where neste-kafka_offset > 1 and lastet_dato > to_date('24.10.2023', 'dd.mm.yyyy')
     """
     sjekk_hull_i_FP_meta_data = """
-         SELECT * FROM
-            (SELECT lastet_dato, kafka_topic, kafka_offset, kafka_partition,
+        SELECT * FROM
+            (SELECT lastet_dato, kafka_topic, kafka_offset,
                 LEAD(kafka_offset) 
                 OVER(PARTITION BY kafka_topic, kafka_partition 
                 ORDER BY kafka_offset) neste
@@ -211,9 +211,11 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    
+    # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare konkatineres til slutten av summary string
+    if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
+           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument!```"
 
-    kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}" 
+    kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
 
     slack_info(
