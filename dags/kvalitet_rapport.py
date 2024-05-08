@@ -116,7 +116,8 @@ with DAG(
                 LEAD(kafka_offset) 
                 OVER(PARTITION BY kafka_topic, kafka_partition 
                 ORDER BY kafka_offset) neste
-            FROM DVH_FAM_FP.fam_fp_meta_data)
+            FROM DVH_FAM_FP.fam_fp_meta_data
+            where kafka_mottatt_dato > to_date('16.04.2024','dd.mm.yyyy'))
         where neste-kafka_offset > 1
     """
     with oracle_conn().cursor() as cur:
