@@ -217,14 +217,14 @@ with DAG(
         # Sjekker om listen er tom, betyr ikke noe hull oppdaget
         if sublist:
             # Henter navn på topic
-            topics_med_hull += str(sublist[1]) + f", "
+            topics_med_hull = topics_med_hull + str(sublist[1]) + f", "
 
     # Sjekker om noe ble lagt til i string, betyr hull oppdaget
     if topics_med_hull:
         # Fjerner siste komma og mellomrom
         topics_med_hull = topics_med_hull[:-2]
         # Konkatinerer en notification med navn på topics med hull til summary
-        konsumenter_summary += f"<!channel> Minst ett hull oppdaget i TEST!"
+        konsumenter_summary = konsumenter_summary + f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
