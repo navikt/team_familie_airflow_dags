@@ -112,11 +112,12 @@ with DAG(
     """
     sjekk_hull_i_FP_meta_data = """
         SELECT * FROM
-            (SELECT lastet_dato, kafka_topic, kafka_offset,
+            (SELECT lastet_dato, kafka_topic, kafka_offset, kafka_partition,
                 LEAD(kafka_offset) 
                 OVER(PARTITION BY kafka_topic, kafka_partition 
                 ORDER BY kafka_offset) neste
-            FROM DVH_FAM_FP.fam_fp_meta_data)
+            FROM DVH_FAM_FP.fam_fp_meta_data
+            where kafka_mottatt_dato > to_date('16.04.2024','dd.mm.yyyy'))
         where neste-kafka_offset > 1
     """
     with oracle_conn().cursor() as cur:
@@ -211,9 +212,19 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare konkatineres til slutten av summary string
-    if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
-           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument!```"
+    topics_med_hull = ""
+    for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]:
+        # Sjekker om listen er tom, betyr ikke noe hull oppdaget
+        if sublist:
+            # Henter navn på topic
+            topics_med_hull += str(sublist[1]) + ","
+
+    # Sjekker om noe ble lagt til i string, betyr hull oppdaget
+    if topics_med_hull:
+        # Fjerner siste komma
+        topics_med_hull = topics_med_hull[:-1]
+        # Konkatinerer en notification med navn på topics med hull til summary
+        konsumenter_summary = konsumenter_summary + f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```"
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
