@@ -211,16 +211,15 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    # Konkatinerer navn på topic og komma med mellomrom til string, hvis liste inneholder hull
-    topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist)
+    # Konkatinerer navn på topic og komma med mellomrom til string, hvis liste inneholder hull. Join legger til space mellom strings
+    topics_med_hull = ",".join(str(sublist[1]) for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist)
 
     # Sjekker om noe ble lagt til i string
     if topics_med_hull:
-        # Fjerner siste komma og mellomrom lagt til
-        topics_med_hull = topics_med_hull[:-2]
+        # Fjerner siste komma. Space blir ikke lagt til etter siste string
+        topics_med_hull = topics_med_hull[:-1]
         # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
-        #konsumenter_summary.join(f"```<!channel> NB, hull i et kosument!```")
-        konsumenter_summary += (f"```<!channel> NB, minst ett hull oppdaget i {topics_med_hull}```")
+        konsumenter_summary += (f"```<!channel> NB, minst ett hull oppdaget i {topics_med_hull}!```")
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 

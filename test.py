@@ -1,6 +1,2 @@
-s = f""
-
-for i in ["bt_hull","ef_hull"]:
-    s += i+ f", "
-
-print(s)
+topics_med_hull = ", ".join(str(sublist[1]) for sublist in [[], [1,2,3]] if sublist)
+print(topics_med_hull)
