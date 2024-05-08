@@ -210,11 +210,16 @@ with DAG(
 {es_dvh_antall_meldinger}
 {sp_fgsk_antall_meldinger}
 ```
-
 """
-    # Når det oppdages et hull, vil det komme en notification for alle i channel. Dette bare konkatineres til slutten av summary string
-    if any(s != [] for s in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull]): 
-           konsumenter_summary = konsumenter_summary + f"```<!channel> NB, hull i et kosument!```"
+    # Konkatinerer navn på topic og komma med mellomrom til string, hvis liste inneholder hull
+    topics_med_hull = ", ".join(str(sublist[1] for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist))
+
+    # Sjekker om noe ble lagt til i string
+    if topics_med_hull:
+        # Fjerner siste komma og mellomrom lagt til
+        topics_med_hull = topics_med_hull[:-2]
+        # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
+        konsumenter_summary += f"""```<!channel> NB, hull i et kosument!```"""
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
