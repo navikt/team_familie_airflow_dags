@@ -224,7 +224,7 @@ with DAG(
         # Fjerner siste komma
         topics_med_hull = topics_med_hull[:-1]
         # Konkatinerer en notification med navn på topics med hull til summary
-        konsumenter_summary = konsumenter_summary + f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```"
+        konsumenter_summary = konsumenter_summary + f"""```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```"""
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
