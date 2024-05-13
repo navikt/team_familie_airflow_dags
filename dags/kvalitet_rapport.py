@@ -210,6 +210,26 @@ with DAG(
 {fp_fgsk_antall_meldinger}
 {es_dvh_antall_meldinger}
 {sp_fgsk_antall_meldinger}
+
+{bs_bs_antall_meldinger}
+{pp_md_antall_meldinger}
+{pp_hull_i_meta_data}
+{bt_md_antall_meldinger}
+{bt_hull_i_meta_data}
+{ef_md_antall_meldinger}
+{ef_hull_i_meta_data}
+{ks_md_antall_meldinger}
+{ks_hull_i_meta_data}
+{fp_md_sum_antall_meldinger}
+{fp_hull_i_meta_data}
+
+{fp_md_antall_meldinger}
+{es_md_antall_meldinger}
+{sp_md_antall_meldinger}
+
+{fp_fgsk_antall_meldinger}
+{es_dvh_antall_meldinger}
+{sp_fgsk_antall_meldinger}
 ```
 """
     # # Hvis topic inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
