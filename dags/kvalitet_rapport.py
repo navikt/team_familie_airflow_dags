@@ -112,7 +112,7 @@ with DAG(
     """
     sjekk_hull_i_FP_meta_data = """
         SELECT * FROM
-            (SELECT lastet_dato, kafka_topic, kafka_offset,
+            (SELECT lastet_dato, kafka_topic, kafka_offset, kafka_partition,
                 LEAD(kafka_offset) 
                 OVER(PARTITION BY kafka_topic, kafka_partition 
                 ORDER BY kafka_offset) neste
@@ -169,26 +169,25 @@ with DAG(
       sp_fgsk_ant,    
       bs_bs_ant,
     ] = kafka_last
-    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana} for {gaarsdagensdato}......................{str(bt_md_ant)}"
-    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data for {gaarsdagensdato}:............{str(bt_hull)}"
-    ef_md_antall_meldinger = f"Antall mottatt {ef_grafana} for {gaarsdagensdato}......................{str(ef_md_ant)}"
-    ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data for {gaarsdagensdato}:............{str(ef_hull)}"
-    ks_md_antall_meldinger = f"Antall mottatt {ks_grafana} for {gaarsdagensdato}......................{str(ks_md_ant)}"
-    ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data for {gaarsdagensdato}:............{str(ks_hull)}"
-    pp_md_antall_meldinger = f"Antall mottatt {pp_grafana} for {gaarsdagensdato}......................{str(pp_md_ant)}"
-    pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data for {gaarsdagensdato}:............{str(pp_hull)}"
-    fp_md_sum_antall_meldinger = f"Antall mottatt summerte {fp_grafana} for {gaarsdagensdato}.............{str(fp_md_sum_ant)}"
-    fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data for {gaarsdagensdato}:............{str(fp_hull)}"
-    fp_md_antall_meldinger = f"Antall mottatt FP meldinger for {gaarsdagensdato}......................{str(fp_md_ant)}" 
-    es_md_antall_meldinger = f"Antall mottatt ES meldinger for {gaarsdagensdato}......................{str(es_md_ant)}"
-    sp_md_antall_meldinger = f"Antall mottatt SP meldinger for {gaarsdagensdato}......................{str(sp_md_ant)}"
-    fp_fgsk_antall_meldinger = f"Antall mottatt FP GML meldinger for {gaarsdagensdato}..................{str(fp_fgsk_ant)}" 
-    es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger for {gaarsdagensdato}..................{str(es_dvh_ant)}"
-    sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger for {gaarsdagensdato}..................{str(sp_fgsk_ant)}"
-    bs_bs_antall_meldinger = f"Antall mottatt BS meldinger for {gaarsdagensdato}......................{str(bs_bs_ant)}"
-    # Vennligst behold noen lufterom mellom printede meldinger for bedre lesbarhet
+    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana}......................{str(bt_md_ant)}"
+    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data:............{str(bt_hull)}"
+    ef_md_antall_meldinger = f"Antall mottatt {ef_grafana}......................{str(ef_md_ant)}"
+    ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data:............{str(ef_hull)}"
+    ks_md_antall_meldinger = f"Antall mottatt {ks_grafana}......................{str(ks_md_ant)}"
+    ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data:............{str(ks_hull)}"
+    pp_md_antall_meldinger = f"Antall mottatt {pp_grafana}......................{str(pp_md_ant)}"
+    pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data:............{str(pp_hull)}"
+    fp_md_sum_antall_meldinger = f"Antall mottatt summerte {fp_grafana}.............{str(fp_md_sum_ant)}"
+    fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data:............{str(fp_hull)}"
+    fp_md_antall_meldinger = f"Antall mottatt FP meldinger......................{str(fp_md_ant)}" 
+    es_md_antall_meldinger = f"Antall mottatt ES meldinger......................{str(es_md_ant)}"
+    sp_md_antall_meldinger = f"Antall mottatt SP meldinger......................{str(sp_md_ant)}"
+    fp_fgsk_antall_meldinger = f"Antall mottatt FP GML meldinger..................{str(fp_fgsk_ant)}" 
+    es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger..................{str(es_dvh_ant)}"
+    sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger..................{str(sp_fgsk_ant)}"
+    bs_bs_antall_meldinger = f"Antall mottatt BS meldinger......................{str(bs_bs_ant)}"
     konsumenter_summary = f"""
-*Leste {miljo} meldinger fra konsumenter siste døgn:*
+*Leste {miljo} meldinger fra konsumenter på {gaarsdagensdato}:*
  
 ```
 {bs_bs_antall_meldinger}
@@ -202,16 +201,24 @@ with DAG(
 {ks_hull_i_meta_data}
 {fp_md_sum_antall_meldinger}
 {fp_hull_i_meta_data}
-
 {fp_md_antall_meldinger}
 {es_md_antall_meldinger}
 {sp_md_antall_meldinger}
-
 {fp_fgsk_antall_meldinger}
 {es_dvh_antall_meldinger}
 {sp_fgsk_antall_meldinger}
 ```
 """
+    # Hvis topic inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
+    topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist)
+
+    # Sjekker om noe ble lagt til i string
+    if topics_med_hull:
+        # Trenger ikke lenger fjerne siste komma og mellomrom med join
+        #topics_med_hull = topics_med_hull[:-2]
+        # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
+        konsumenter_summary += (f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```")
+
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
 
 
