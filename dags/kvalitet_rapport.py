@@ -212,24 +212,24 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    # Hvis topic inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
-    topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist)
+    # # Hvis topic inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
+    # topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist)
 
-    # Sjekker om noe ble lagt til i string
-    if topics_med_hull:
-        # Trenger ikke lenger fjerne siste komma og mellomrom med join
-        #topics_med_hull = topics_med_hull[:-2]
-        # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
-        konsumenter_summary += (f"```<!channel> NB, minst ett hull oppdaget i {topics_med_hull}!```")
+    # # Sjekker om noe ble lagt til i string
+    # if topics_med_hull:
+    #     # Trenger ikke lenger fjerne siste komma og mellomrom med join
+    #     #topics_med_hull = topics_med_hull[:-2]
+    #     # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
+    #     konsumenter_summary += (f"```<!channel> NB, minst ett hull oppdaget i {topics_med_hull}!```")
 
     kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
+
 
 
     slack_info(
       message=f"{kafka_summary}",
       emoji=":newspaper:"
     )
-
 
 
   kafka_last = hent_kafka_last()
