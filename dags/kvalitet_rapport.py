@@ -24,7 +24,7 @@ with DAG(
   dag_id='datakvalitetsrapport',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2023, 9, 27),
-  schedule_interval= "0 7 * * *", # kl 7 hver dag
+  schedule_interval= "0 5 * * *", # kl 7 CEST hver dag, så rapporten er klar innen Hans er på jobb ;)
   catchup=False
 ) as dag:
 
