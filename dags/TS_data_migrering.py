@@ -4,7 +4,7 @@ from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
 
 miljo = Variable.get('miljo')
 branch = Variable.get("branch")
@@ -12,16 +12,18 @@ allowlist = []
 
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'test_r':
+    allowlist.extend(r_oracle_conn_id)
 else:
     allowlist.extend(dev_oracle_conn_id)
 
 with DAG(
-  dag_id = 'kopier_BS_data_fra_BigQuery_til_Oracle',
-  description = 'kopierer brillestonad data fra en tabell i BigQuery til en tabell i Oracle database',
-  start_date=datetime(2023, 2, 21),
-  schedule_interval= '@daily',
+  dag_id = 'kopier_TS_data_fra_BigQuery_til_Oracle',
+  description = 'kopierer tilleggsstonader data fra en tabell i BigQuery til en tabell i Oracle database',
+  start_date=datetime(2024, 5, 29), 
+  schedule_interval= '0 5 * * *', #05:00 om morgenen
   max_active_runs=1,
-  catchup = False
+  catchup = True
 ) as dag:
 
     @task(
@@ -33,16 +35,16 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = f'Kopiering av brillestønads data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
+            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
         )
 
     start_alert = notification_start()
 
-    bs_data_kopiering = notebook_operator(
+    ts_data_kopiering = notebook_operator(
     dag = dag,
-    name = 'BS_data_kopiering',
+    name = 'TS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
-    nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
+    nb_path = 'TS/kopiere_ts_data_fra_bq_til_oracle.ipynb',
     allowlist=allowlist,
     branch = branch,
     #delete_on_finish= False,
@@ -51,7 +53,6 @@ with DAG(
         limits={'memory': '4G'}),
     slack_channel = Variable.get('slack_error_channel'),
     requirements_path="requirements.txt",
-    #image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
     log_output=False
     )
 
@@ -64,8 +65,9 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = f'Kopiering av brillestønads data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
+            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
         )
     slutt_alert = notification_end()
 
-start_alert >> bs_data_kopiering >> slutt_alert
+#start_alert >> slutt_alert
+ts_data_kopiering 
