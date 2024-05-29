@@ -26,19 +26,19 @@ with DAG(
   catchup = True
 ) as dag:
 
-    @task(
-        executor_config={
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
-            )
-        }
-    )
-    def notification_start():
-        slack_info(
-            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
-        )
+    # @task(
+    #     executor_config={
+    #         "pod_override": client.V1Pod(
+    #             metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(slack_allowlist)})
+    #         )
+    #     }
+    # )
+    # def notification_start():
+    #     slack_info(
+    #         message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
+    #     )
 
-    start_alert = notification_start()
+    # start_alert = notification_start()
 
     ts_data_kopiering = notebook_operator(
     dag = dag,
@@ -56,18 +56,18 @@ with DAG(
     log_output=False
     )
 
-    @task(
-        executor_config={
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
-            )
-        }
-    )
-    def notification_end():
-        slack_info(
-            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
-        )
-    slutt_alert = notification_end()
+    # @task(
+    #     executor_config={
+    #         "pod_override": client.V1Pod(
+    #             metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
+    #         )
+    #     }
+    # )
+    # def notification_end():
+    #     slack_info(
+    #         message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
+    #     )
+    # slutt_alert = notification_end()
 
 #start_alert >> slutt_alert
 ts_data_kopiering 
