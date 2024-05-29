@@ -20,8 +20,8 @@ else:
 with DAG(
   dag_id = 'kopier_TS_data_fra_BigQuery_til_Oracle',
   description = 'kopierer tilleggsstonader data fra en tabell i BigQuery til en tabell i Oracle database',
-  start_date=datetime(2024, 5, 29, 6), #06:00 om morgenen
-  schedule_interval= '@daily',
+  start_date=datetime(2024, 5, 29), 
+  schedule_interval= '0 6 * * *', #06:00 om morgenen
   max_active_runs=1,
   catchup = True
 ) as dag:
