@@ -33,13 +33,12 @@ def count_successful_dag_runs():
     session = Session()
 
     try:
-        current_time = datetime.today(timezone.utc)
-        print(current_time)
+        current_time = datetime.now(timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0)
         #last_day = current_time -  datetime.timedelta(days=1)
         # Query for the count of successful DAG runs
         success_counts = session.query(
             DagRun.dag_id, func.count(DagRun.dag_id).label('success_count')
-        ).filter(DagRun.state == 'success',  DagRun.execution_date == current_time).group_by(DagRun.dag_id).all()
+        ).filter(DagRun.state == 'success',  DagRun.execution_date > current_time).group_by(DagRun.dag_id).all()
 
         # Process the results (print to log, store in another table, etc.)
         for dag_id, success_count in success_counts:
