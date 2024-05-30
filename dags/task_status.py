@@ -4,17 +4,17 @@ from airflow.models import DagRun
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from airflow import settings
-from datetime import datetime, timedelta,timezone 
+import datetime 
 
 # Default arguments for the DAG
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2024, 5, 30),
+    'start_date': datetime.datetime(2024, 5, 30),
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': datetime.datetime(minutes=5),
 }
 
 # Define the DAG
@@ -22,7 +22,7 @@ dag = DAG(
     'count_successful_dag_runs',
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
-    schedule_interval=timedelta(days=1),
+    schedule_interval=datetime.datetime(days=1),
 )
 
 def count_successful_dag_runs():
@@ -33,7 +33,7 @@ def count_successful_dag_runs():
     session = Session()
 
     try:
-        current_time = datetime.datetime.now(timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
+        current_time = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
         #last_day = current_time -  datetime.timedelta(days=1)
         # Query for the count of successful DAG runs
         success_counts = session.query(
