@@ -33,7 +33,7 @@ def count_successful_dag_runs():
     session = Session()
 
     try:
-        current_time = datetime.date.today() 
+        current_time = datetime.today()
         #last_day = current_time -  datetime.timedelta(days=1)
         # Query for the count of successful DAG runs
         success_counts = session.query(
