@@ -22,3 +22,4 @@ with DAG(
         python_callable=get_most_recent_dag_run('FP_konsument'),
         dag=dag
     )
+dag_run
