@@ -29,7 +29,7 @@ with DAG(
     def get():
         dag_run = get_most_recent_dag_run
         if dag_run:
-            print(f'The most recent DagRun was executed at: {dag_run.execution_date}')
+            print(f'The most recent DagRun was executed at: ')
 
     dag_run = PythonOperator(
         task_id='Helen_tester',
