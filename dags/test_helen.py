@@ -6,7 +6,7 @@ from airflow.operators.python_operator import PythonOperator
 with DAG(
   dag_id="Helen tester",
   start_date=datetime(2024, 5, 30),
-  default_args = default_args,
+  #default_args = default_args,
   schedule_interval= None,
   max_active_runs=1,
   catchup = False
