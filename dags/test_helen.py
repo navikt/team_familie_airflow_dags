@@ -20,14 +20,15 @@ with DAG(
   catchup = False
 ) as dag:
     
-    def get_most_recent_dag_run(dag_id):
+    def get_most_recent_dag_run():
+        dag_id = 'FP_konsument'
         dag_runs = DagRun.find(dag_id=dag_id)
         dag_runs.sort(key=lambda x: x.execution_date, reverse=True)
         return dag_runs[0] if dag_runs else None
 
     dag_run = PythonOperator(
         task_id='Helen_tester',
-        python_callable=get_most_recent_dag_run('FP_konsument'),
+        python_callable=get_most_recent_dag_run,
         dag=dag
     )
 dag_run
