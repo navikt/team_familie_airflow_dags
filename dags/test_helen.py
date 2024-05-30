@@ -24,6 +24,8 @@ with DAG(
         dag_id = 'FP_konsument'
         dag_runs = DagRun.find(dag_id=dag_id)
         dag_runs.sort(key=lambda x: x.execution_date, reverse=True)
+        if dag_run:
+            print(f'The most recent DagRun was executed at: {dag_run.execution_date}')
         return dag_runs[0] if dag_runs else None
 
     dag_run = PythonOperator(
