@@ -14,7 +14,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': datetime.datetime(minutes=5),
+    'retry_delay': datetime.timedelta(minutes=5),
 }
 
 # Define the DAG
@@ -22,7 +22,7 @@ dag = DAG(
     'count_successful_dag_runs',
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
-    schedule_interval=datetime.datetime(days=1),
+    schedule_interval=datetime.timedelta(days=1),
 )
 
 def count_successful_dag_runs():
