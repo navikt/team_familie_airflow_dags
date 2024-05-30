@@ -30,6 +30,7 @@ with DAG(
         dag_run = get_most_recent_dag_run
         if dag_run:
             print(f'The most recent DagRun was executed at: ')
+            print(dag_run)
 
     dag_run = PythonOperator(
         task_id='Helen_tester',
