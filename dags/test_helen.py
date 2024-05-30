@@ -4,7 +4,7 @@ from airflow.utils.dates import datetime
 from airflow.operators.python_operator import PythonOperator
 
 with DAG(
-  dag_id='Helen tester',
+  dag_id='Helen_tester',
   start_date=datetime(2024, 5, 30),
   #default_args = default_args,
   schedule_interval= None,
@@ -18,7 +18,7 @@ with DAG(
         return dag_runs[0] if dag_runs else None
 
     dag_run = PythonOperator(
-        task_id='Helen tester',
+        task_id='Helen_tester',
         python_callable=get_most_recent_dag_run('FP_konsument'),
         dag=dag
     )
