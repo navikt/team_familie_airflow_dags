@@ -1,11 +1,22 @@
 from airflow.models import DagRun
+from airflow.operators.python_operator import PythonOperator
 
-def get_most_recent_dag_run(dag_id):
-    dag_runs = DagRun.find(dag_id=dag_id)
-    dag_runs.sort(key=lambda x: x.execution_date, reverse=True)
-    return dag_runs[0] if dag_runs else None
+with DAG(
+  dag_id="Helen tester",
+  start_date=datetime(2024, 5, 30),
+  default_args = default_args,
+  schedule_interval= None,
+  max_active_runs=1,
+  catchup = False
+) as dag:
+    
+    def get_most_recent_dag_run(dag_id):
+        dag_runs = DagRun.find(dag_id=dag_id)
+        dag_runs.sort(key=lambda x: x.execution_date, reverse=True)
+        return dag_runs[0] if dag_runs else None
 
-
-dag_run = get_most_recent_dag_run('FP_konsument')
-if dag_run:
-    print(f'The most recent DagRun was executed at: {dag_run.execution_date}')
+    dag_run = PythonOperator(
+        task_id='Helen tester',
+        python_callable=get_most_recent_dag_run('FP_konsument'),
+        dag=dag
+    )
