@@ -3,10 +3,19 @@ from airflow.models import DAG
 from airflow.utils.dates import datetime
 from airflow.operators.python_operator import PythonOperator
 
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'start_date': datetime.datetime(2024, 5, 30),
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': datetime.timedelta(minutes=5),
+}
+
 with DAG(
   dag_id='Helen_tester',
-  start_date=datetime(2024, 5, 30),
-  #default_args = default_args,
+  default_args = default_args,
   schedule_interval= None,
   max_active_runs=1,
   catchup = False
