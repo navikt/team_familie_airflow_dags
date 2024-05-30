@@ -4,6 +4,7 @@ source:
   batch-size: 50
   batch-interval: 5
   topic: {}
+  group-id: dvh_familie_konsument
   schema: json
   keypath-seperator: /
 target:
@@ -11,7 +12,7 @@ target:
   custom-config:
     - method: oracledb.Cursor.setinputsizes
       name: melding
-      value: oracledb.BLOB
+      value: oracledb.DB_TYPE_CLOB
   skip-duplicates-with: 
     - kafka_offset
     - kafka_topic

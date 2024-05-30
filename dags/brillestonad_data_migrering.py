@@ -33,7 +33,7 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = f'Kopiering  av brillestønads data fra BigQuery til Oracle i {miljo} database  starter nå! :rocket:'
+            message = f'Kopiering av brillestønads data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
         )
 
     start_alert = notification_start()
