@@ -31,9 +31,9 @@ def count_successful_dag_runs():
     engine = create_engine(settings.SQL_ALCHEMY_CONN)
     Session.configure(bind=engine)
     session = Session()
-    
+
     try:
-        current_time = datetime.datetime.utcnow()
+        current_time = datetime.now()
         last_day = current_time -  datetime.timedelta(days=1)
         # Query for the count of successful DAG runs
         success_counts = session.query(
