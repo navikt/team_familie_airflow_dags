@@ -28,9 +28,9 @@ with DAG(
     dag_id = 'rydd_recycle_bin', 
     description = 'An Airflow DAG that deletes dbt_temp tables i recycle bin',
     default_args = default_args,
-    start_date = datetime(2024, 6, 3), # start date for the dag
-    schedule_interval = '@daily' , # 5te hver måned,
-    catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
+    start_date = datetime(2024, 6, 3), 
+    schedule_interval = '@daily' , 
+    catchup = False 
 ) as dag:
     
     slett_tabeller_recycle_bin = python_operator(
