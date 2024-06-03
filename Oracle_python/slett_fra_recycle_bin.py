@@ -10,20 +10,20 @@ def delete_from_recycle_bin():
         end;
     ''')
 
-    delete_ef_tables_sql = (f"BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_EF' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/")
+    delete_ef_tables_sql = ("""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_EF' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/""")
     
-    delete_pp_tables_sql = (f"BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_PP' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/")
+    delete_pp_tables_sql = ("""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_PP' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/""")
     
-    delete_bt_tables_sql = (f"BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_BT' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/")
+    delete_bt_tables_sql = ("""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_BT' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/""")
     
-    delete_ks_tables_sql = (f"BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_KS' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/")
+    delete_ks_tables_sql = ("""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_KS' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/""")
     
-    delete_fp_tables_sql = (f"BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_FP' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/")
+    delete_fp_tables_sql = ("""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER='DVH_FAM_FP' AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;/""")
 
     
     secrets = oracle_secrets()
