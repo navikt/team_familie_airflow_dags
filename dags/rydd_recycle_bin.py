@@ -63,7 +63,6 @@ with DAG(
     task_id='slett_dbt_tabeller_recycle_bin', 
     wait_for_downstream=False,
     provide_context=True,
-    branch=branch,
     python_callable=delete_from_recycle_bin,
     executor_config={
         "pod_override": k8s.V1Pod(
@@ -71,6 +70,7 @@ with DAG(
                 containers=[
                     k8s.V1Container(
                         name="base",
+                        requirements_path="requirements.txt",
                         resources={
                         "requests": {"cpu": "2","memory": "2Gi"}
                         }
@@ -79,8 +79,7 @@ with DAG(
             ),
             metadata=k8s.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
         )
-    },
-    requirements_path="requirements.txt",
+    }
     )
     
 slett_tabeller_recycle_bin
