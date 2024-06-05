@@ -16,6 +16,8 @@ def delete_from_recycle_bin():
 
     #skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
     #for skjema in skjemaer:
+ 
+    print(oracle_secrets['user'] )
     user = oracle_secrets['user'] + '[dvh_fam_ef]'
     print(user)
     with oracledb.connect(user = user, password = secrets['password'], dsn = dsn_tns) as connection:
