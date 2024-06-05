@@ -115,13 +115,13 @@ with DAG(
         message=f"{report_summary}",
         )
 
-# Define the task
-count_task = PythonOperator(
-    task_id='count_successful_dag_runs',
-    python_callable=count_successful_dag_runs,
-    dag=dag,
-)
-post_til_info_slack = info_slack(count_task)
+    # Define the task
+    count_task = PythonOperator(
+        task_id='count_successful_dag_runs',
+        python_callable=count_successful_dag_runs,
+        dag=dag,
+    )
+    post_til_info_slack = info_slack(count_task)
 
-# Set task dependencies
-count_task >> post_til_info_slack
+    # Set task dependencies
+    count_task >> post_til_info_slack
