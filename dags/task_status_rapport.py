@@ -31,7 +31,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': datetime.timedelta(minutes=5),
+    'retry_delay': datetime(minutes=5),
     'sla': timedelta(seconds=1), #Test av SLA
     'email': ['gard.sigurd.troim.henriksen@nav.no'],
     'on_failure_callback': slack_error,
@@ -42,7 +42,7 @@ with DAG(
     dag_id = 'suksessrapport',
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
-    #start_date=datetime(2023, 9, 27),
+    start_date=datetime(2024, 6, 5),
     schedule_interval= "1 1 * * *", # kl 13:00 CEST hver dag
     catchup=False
 ) as dag:
