@@ -15,7 +15,6 @@ def delete_from_recycle_bin():
     dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
 
     skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
-    user = oracle_secrets['user'] + f'[{skjema}]'
     for skjema in skjemaer:
         usr = oracle_secrets['user'] + f'[{skjema}]'
         print(usr)
