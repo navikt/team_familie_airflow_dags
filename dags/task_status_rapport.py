@@ -43,7 +43,7 @@ with DAG(
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
-    schedule_interval= "1 1 * * *", # kl 13:00 CEST hver dag
+    schedule_interval= "1 * * * *", # kl 13:00 CEST hver dag
     catchup=False
 ) as dag:
 
@@ -90,27 +90,38 @@ with DAG(
 
         finally:
             session.close()
+            return string_of_successful_runs
 
-            report_summary = f"""
+
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+        }
+    )
+    def info_slack(string_of_successful_runs):
+        #
+        yesterday = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(days=1) - datetime.timedelta(hours=2)
+        today = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
+        report_summary = f"""
 *Antall suksesfulle {miljo} DAG runs, mellom {yesterday} og {today}:*
 ```
 {string_of_successful_runs}
 ```
 """
-            #Post result to slack
-            slack_info(
-            message=f"{report_summary}",
-            )
+        #Post result to slack
+        slack_info(
+        message=f"{report_summary}",
+        )
 
-    
-    # # Define the task
-    # count_task = PythonOperator(
-    #     task_id='count_successful_dag_runs_task',
-    #     python_callable=count_successful_dag_runs,
-    #     dag=dag,
-    # )
-
-post_til_info_slack = count_successful_dag_runs()
+# Define the task
+count_task = PythonOperator(
+    task_id='count_successful_dag_runs',
+    python_callable=count_successful_dag_runs,
+    dag=dag,
+)
+post_til_info_slack = info_slack(count_task)
 
 # Set task dependencies
-post_til_info_slack
+count_task >> post_til_info_slack
