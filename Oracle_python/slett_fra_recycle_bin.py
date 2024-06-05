@@ -11,13 +11,13 @@ def delete_from_recycle_bin():
     ''')
 
     secrets = oracle_secrets()
-    print(secrets['user'])
+    print("her er user",secrets['user'])
 
     dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
 
-    skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
+    skjemaer = ["DVH_FAM_PP", "DVH_FAM_EF", "DVH_FAM_BT", "DVH_FAM_KS", "DVH_FAM_FP"]
     for skjema in skjemaer:
-        print(f"{secrets['user']}[{skjema}]")
+        print("her er user og skjema",f"{secrets['user']}[{skjema}]")
         with oracledb.connect(user = f"{secrets['user']}[{skjema}]", password = secrets['password'], dsn = dsn_tns) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(send_context_sql)
