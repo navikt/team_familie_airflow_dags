@@ -15,11 +15,11 @@ def delete_from_recycle_bin():
     dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
 
     skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
-
+    user = oracle_secrets['user'] + f'[{skjema}]'
     for skjema in skjemaer:
         usr = oracle_secrets['user'] + f'[{skjema}]'
-        print(user)
-        with oracledb.connect(user = usr, password = secrets['password'], dsn = dsn_tns) as connection:
+        print(usr)
+        with oracledb.connect(user = oracle_secrets['user'] + f'[{skjema}]', password = secrets['password'], dsn = dsn_tns) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(send_context_sql)
                 cursor.execute(f"""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER={skjema} AND ORIGINAL_NAME LIKE '%DBT%') LOOP
