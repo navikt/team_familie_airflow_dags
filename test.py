@@ -1,5 +1,5 @@
 import datetime
-from datetime import timedelta,timezone, date
+from datetime import timedelta,timezone, date, datetime
 
 
 
@@ -8,9 +8,12 @@ from datetime import timedelta,timezone, date
 # print("first ",current_time)
 
 
-tim = datetime.datetime.now(timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) + datetime.timedelta(hours=2)
-print(tim)
+#tim = datetime.datetime.now(timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) + datetime.timedelta(hours=2)
+#print(tim)
 
+today = datetime.now()
+yesterday = datetime.now() #- datetime.timedelta(days=1)
+print(str(today) + " & " + str(yesterday))
 
 # def get_periode():
 #     """
