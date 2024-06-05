@@ -14,14 +14,14 @@ def delete_from_recycle_bin():
 
     dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
 
-    skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
-    for skjema in skjemaer:
-        with oracledb.connect(user = f"{oracle_secrets['user']}[{skjema}]", password = secrets['password'], dsn = dsn_tns) as connection:
-            with connection.cursor() as cursor:
-                cursor.execute(send_context_sql)
-                cursor.execute(f"""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER={skjema} AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;""")
-                connection.commit()
+    #skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
+    #for skjema in skjemaer:
+    with oracledb.connect(user = f"{oracle_secrets['user']}[dvh_fam_ef]", password = secrets['password'], dsn = dsn_tns) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute(send_context_sql)
+            cursor.execute(f"""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER=dvh_fam_ef AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                        EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;""")
+            connection.commit()
 
 if __name__ == "__main__":
     delete_from_recycle_bin()              
