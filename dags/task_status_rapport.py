@@ -31,8 +31,8 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': datetime(minutes=5),
-    'sla': timedelta(seconds=1), #Test av SLA
+    'retry_delay': datetime(minute=5),
+    'sla': timedelta(second=1), #Test av SLA
     'email': ['gard.sigurd.troim.henriksen@nav.no'],
     'on_failure_callback': slack_error,
 
