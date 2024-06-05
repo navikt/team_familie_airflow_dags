@@ -1,7 +1,7 @@
 import oracledb
 from felles_metoder.felles_metoder import oracle_secrets
 
-def delete_from_recycle_bin(schema):
+def delete_from_recycle_bin():
     send_context_sql = (f'''
         begin
             dbms_application_info.set_client_info( client_info => 'Klient_info Familie-Airflow');
@@ -10,18 +10,17 @@ def delete_from_recycle_bin(schema):
         end;
     ''')
 
-    delete_tables_sql = (f"""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER={schema} AND ORIGINAL_NAME LIKE '%DBT%') LOOP
-                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;""")
-
-    
     secrets = oracle_secrets()
 
-    dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
-    with oracledb.connect(user = secrets['user'][schema], password = secrets['password'], dsn = dsn_tns) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(send_context_sql)
-            cursor.execute(delete_tables_sql)
-            connection.commit()
-  
+    for skjema in ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]:
+        dsn_tns = oracledb.makedsn(secrets['host'], 1521, service_name = secrets['service'])
+        with oracledb.connect(user = secrets['user'][skjema], password = secrets['password'], dsn = dsn_tns) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(send_context_sql)
+                cursor.execute(f"""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER={skjema} AND ORIGINAL_NAME LIKE '%DBT%') LOOP
+                            EXECUTE IMMEDIATE 'PURGE TABLE "' || rec.object_name || '"'; END LOOP; END;""")
+                connection.commit()
+
 if __name__ == "__main__":
-    delete_from_recycle_bin()
+    delete_from_recycle_bin()              
+  
