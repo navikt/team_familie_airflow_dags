@@ -17,9 +17,9 @@ def delete_from_recycle_bin():
     skjemaer = ["dvh_fam_pp", "dvh_fam_ef", "dvh_fam_bt", "dvh_fam_ks", "dvh_fam_fp"]
 
     for skjema in skjemaer:
-        user = oracle_secrets['user'] + f'[{skjema}]'
+        usr = oracle_secrets['user'] + f'[{skjema}]'
         print(user)
-        with oracledb.connect(user = user, password = secrets['password'], dsn = dsn_tns) as connection:
+        with oracledb.connect(user = usr, password = secrets['password'], dsn = dsn_tns) as connection:
             with connection.cursor() as cursor:
                 cursor.execute(send_context_sql)
                 cursor.execute(f"""BEGIN FOR rec IN (SELECT object_name, original_name FROM  dba_recyclebin WHERE type = 'TABLE' AND OWNER={skjema} AND ORIGINAL_NAME LIKE '%DBT%') LOOP
