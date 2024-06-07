@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+import datetime
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
@@ -43,7 +44,7 @@ with DAG(
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
-    schedule_interval= "11 * * * *", # kl 13:00 CEST hver dag
+    schedule_interval= "* 11 * * *", # kl 13:00 CEST hver dag
     catchup=False
 ) as dag:
 
