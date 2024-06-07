@@ -30,7 +30,7 @@ default_args = {
     #'start_date': datetime.datetime(2024, 5, 30),
     'email_on_failure': False,
     'email_on_retry': False,
-    'retries': 1,
+    'retries': 0,
     #'retry_delay': datetime(minute=5),
     'sla': timedelta(seconds=1), #Test av SLA
     'email': ['gard.sigurd.troim.***REMOVED***'],
@@ -43,7 +43,7 @@ with DAG(
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
-    schedule_interval= "1 * * * *", # kl 13:00 CEST hver dag
+    schedule_interval= "11 * * * *", # kl 13:00 CEST hver dag
     catchup=False
 ) as dag:
 
@@ -115,12 +115,14 @@ with DAG(
         message=f"{report_summary}",
         )
 
-    # Define the task
-    count_task = PythonOperator(
-        task_id='count_successful_dag_runs',
-        python_callable=count_successful_dag_runs,
-        dag=dag,
-    )
+    # # Define the task
+    # count_task = PythonOperator(
+    #     task_id='count_successful_dag_runs',
+    #     python_callable=count_successful_dag_runs,
+    #     dag=dag,
+    # )
+
+    count_task = count_successful_dag_runs()
     post_til_info_slack = info_slack(count_task)
 
     # Set task dependencies
