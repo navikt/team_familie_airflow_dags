@@ -1,4 +1,4 @@
-import datetime
+#import datetime
 from datetime import timedelta,timezone, date, datetime
 
 
@@ -11,9 +11,14 @@ from datetime import timedelta,timezone, date, datetime
 #tim = datetime.datetime.now(timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) + datetime.timedelta(hours=2)
 #print(tim)
 
-today = datetime.now()
-yesterday = datetime.now() #- datetime.timedelta(days=1)
+today = date.today()
+yesterday = date.today() - timedelta(days = 1)
 print(str(today) + " & " + str(yesterday))
+
+
+# yesterday = datetime.dt.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(days=1) - datetime.timedelta(hours=2)
+# today = datetime.dt.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
+# print(str(today) + " & " + str(yesterday))
 
 # def get_periode():
 #     """
