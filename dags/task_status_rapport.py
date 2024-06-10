@@ -1,5 +1,7 @@
-from datetime import date, datetime, timedelta
-import datetime
+from datetime import datetime
+from datetime import date
+from datetime import timedelta
+import datetime as dt
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
@@ -24,15 +26,11 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev' # Har her ingen verdi, så ønsker å sette verdi for å bruke direkte i string i rapport
 
-# Default arguments for the DAG
+yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) - dt.timedelta(hours=2)
+today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(hours=2)
+
+# Modify default arguments for the DAG
 default_args = {
-    'owner': 'airflow',
-    'depends_on_past': False,
-    #'start_date': datetime.datetime(2024, 5, 30),
-    'email_on_failure': False,
-    'email_on_retry': False,
-    'retries': 0,
-    #'retry_delay': datetime(minute=5),
     'sla': timedelta(seconds=1), #Test av SLA
     'email': ['gard.sigurd.troim.henriksen@nav.no'],
     'on_failure_callback': slack_error,
@@ -44,7 +42,7 @@ with DAG(
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
-    schedule_interval= "* 11 * * *", # kl 13:00 CEST hver dag
+    schedule_interval= "0 11 * * *", # kl 13:00 CEST hver dag
     catchup=False
 ) as dag:
 
@@ -62,8 +60,6 @@ with DAG(
         engine = create_engine(settings.SQL_ALCHEMY_CONN)
         Session.configure(bind=engine)
         session = Session()
-        yesterday = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(days=1) - datetime.timedelta(hours=2)
-        today = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
         string_of_successful_runs = ""
 
         try:
@@ -103,8 +99,6 @@ with DAG(
     )
     def info_slack(string_of_successful_runs):
         #
-        yesterday = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(days=1) - datetime.timedelta(hours=2)
-        today = datetime.datetime.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
         report_summary = f"""
 *Antall suksesfulle {miljo} DAG runs, mellom {yesterday} og {today}:*
 ```
