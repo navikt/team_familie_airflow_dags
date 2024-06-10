@@ -5,26 +5,19 @@ import datetime as dt
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
-from kubernetes import client
-from airflow.operators.python_operator import PythonOperator
+#from kubernetes import client
+#from airflow.operators.python_operator import PythonOperator
 from airflow.models import DagRun
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, func
 from airflow import settings
 from operators.slack_operator import slack_error, slack_info
 #from utils.db.oracle_conn import oracle_conn
-from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack, r_oracle_slack
+#from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack, r_oracle_slack
 
 miljo = Variable.get('miljo')   
-allowlist = []
-
-if miljo == 'Prod':
-    allowlist.extend(prod_oracle_slack)
-elif miljo == 'test_r':
-    allowlist.extend(r_oracle_slack)   									  
-else:
-    allowlist.extend(dev_oracle_slack)
-    miljo = 'dev' # Har her ingen verdi, så ønsker å sette verdi for å bruke direkte i string i rapport
+if miljo != 'Prod' or 'test_r':
+    miljo = 'dev'
 
 # Modify default arguments for the DAG
 default_args = {
@@ -35,7 +28,7 @@ default_args = {
 
 # Define the DAG
 with DAG(
-    dag_id = 'suksessrapport',
+    dag_id = 'Suksessrapport',
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
@@ -43,14 +36,7 @@ with DAG(
     catchup=False
 ) as dag:
 
-    @task(
-            executor_config={
-                "pod_override": client.V1Pod(
-                    metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
-                )
-            }
-        )  
-
+    @task(task_id='count_successful_dag_runs')
     def count_successful_dag_runs():
         # Set up the session
         Session = sessionmaker()
@@ -91,13 +77,7 @@ with DAG(
             return string_of_successful_runs
 
 
-    @task(
-        executor_config={
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
-            )
-        }
-    )
+    @task
     def info_slack(string_of_successful_runs):
         #
         today = date.today()
@@ -113,14 +93,14 @@ with DAG(
         message=f"{report_summary}",
         )
 
-# Define the task
-count_task = PythonOperator(
-    task_id='count_successful_dag_runs',
-    python_callable=count_successful_dag_runs,
-    dag=dag,
-)
+# # Define the task
+# count_task = PythonOperator(
+#     task_id='count_successful_dag_runs',
+#     python_callable=count_successful_dag_runs,
+#     dag=dag,
+# )
 
-#count_task = count_successful_dag_runs()
+count_task = count_successful_dag_runs()
 post_til_info_slack = info_slack(count_task)
 
 # Set task dependencies
