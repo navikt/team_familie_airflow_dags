@@ -26,16 +26,13 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev' # Har her ingen verdi, så ønsker å sette verdi for å bruke direkte i string i rapport
 
-yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) - dt.timedelta(hours=2)
-today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(hours=2)
-
 # Modify default arguments for the DAG
 default_args = {
     'sla': timedelta(seconds=1), #Test av SLA
     'email': ['gard.sigurd.troim.henriksen@nav.no'],
     'on_failure_callback': slack_error,
-
 }
+
 # Define the DAG
 with DAG(
     dag_id = 'suksessrapport',
@@ -61,6 +58,10 @@ with DAG(
         Session.configure(bind=engine)
         session = Session()
         string_of_successful_runs = ""
+        yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) + dt.timedelta(hours=2)
+        today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) + dt.timedelta(hours=2)
+        print(today)
+        print(yesterday)
 
         try:
             #today = datetime.now(datetime.CEST)
@@ -73,10 +74,10 @@ with DAG(
 
             # Process the results (print to log, store in another table, etc.)
             for dag_id, success_count in success_counts:
-                #print(f"DAG ID: {dag_id}, Success Count: {success_count}")
+                print(f"DAG ID: {dag_id}, Success Count: {success_count}")
                 # You can also store this result in another table if needed
-                #string_of_successful_runs += f"DAG ID: {dag_id}, Success Count: {success_count}\n"
-                string_of_successful_runs = "\n ".join(f"DAG ID: {dag_id}, Success Count: {success_count}")
+                string_of_successful_runs += f"DAG ID: {dag_id}, Success Count: {success_count}\n"
+                #string_of_successful_runs = "\n ".join(f"DAG ID: {dag_id}, Success Count: {success_count}")
                 
 
         except Exception as e:
@@ -99,6 +100,8 @@ with DAG(
     )
     def info_slack(string_of_successful_runs):
         #
+        today = date.today()
+        yesterday = date.today() - timedelta(days = 1)
         report_summary = f"""
 *Antall suksesfulle {miljo} DAG runs, mellom {yesterday} og {today}:*
 ```
@@ -110,15 +113,16 @@ with DAG(
         message=f"{report_summary}",
         )
 
-    # # Define the task
-    # count_task = PythonOperator(
-    #     task_id='count_successful_dag_runs',
-    #     python_callable=count_successful_dag_runs,
-    #     dag=dag,
-    # )
+# Define the task
+count_task = PythonOperator(
+    task_id='count_successful_dag_runs',
+    python_callable=count_successful_dag_runs,
+    dag=dag,
+)
 
-    count_task = count_successful_dag_runs()
-    post_til_info_slack = info_slack(count_task)
+#count_task = count_successful_dag_runs()
+post_til_info_slack = info_slack(count_task)
 
-    # Set task dependencies
-    count_task >> post_til_info_slack
+# Set task dependencies
+#count_task >> 
+post_til_info_slack
