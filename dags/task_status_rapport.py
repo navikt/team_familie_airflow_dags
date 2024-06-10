@@ -5,7 +5,7 @@ import datetime as dt
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
-#from kubernetes import client
+from kubernetes import client
 #from airflow.operators.python_operator import PythonOperator
 from airflow.models import DagRun
 from sqlalchemy.orm import sessionmaker
@@ -13,11 +13,18 @@ from sqlalchemy import create_engine, func
 from airflow import settings
 from operators.slack_operator import slack_error, slack_info
 #from utils.db.oracle_conn import oracle_conn
-#from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack, r_oracle_slack
+from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack, r_oracle_slack
 
 miljo = Variable.get('miljo')   
-if miljo != 'Prod' or 'test_r':
-    miljo = 'dev'
+allowlist = []
+
+if miljo == 'Prod':
+    allowlist.extend(prod_oracle_slack)
+elif miljo == 'test_r':
+    allowlist.extend(r_oracle_slack)   									  
+else:
+    allowlist.extend(dev_oracle_slack)
+    miljo = 'dev' # Har her ingen verdi, så ønsker å sette verdi for å bruke direkte i string i rapport
 
 # Modify default arguments for the DAG
 default_args = {
@@ -36,7 +43,13 @@ with DAG(
     catchup=False
 ) as dag:
 
-    @task
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+        }
+    )  
     def count_successful_dag_runs():
         # Set up the session
         Session = sessionmaker()
@@ -77,7 +90,13 @@ with DAG(
             return string_of_successful_runs
 
 
-    @task
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+        }
+    ) 
     def info_slack(string_of_successful_runs):
         #
         today = date.today()
