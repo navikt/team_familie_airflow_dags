@@ -36,7 +36,7 @@ with DAG(
     catchup=False
 ) as dag:
 
-    @task(task_id='count_successful_dag_runs')
+    @task
     def count_successful_dag_runs():
         # Set up the session
         Session = sessionmaker()
