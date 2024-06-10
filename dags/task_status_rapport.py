@@ -35,7 +35,7 @@ default_args = {
 
 # Define the DAG
 with DAG(
-    dag_id = 'Suksessrapport',
+    dag_id = 'suksessrapport',
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
@@ -48,7 +48,9 @@ with DAG(
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
-        }
+        },
+        task_id='count_successful_dag_runs_task',
+        dag=dag,
     )  
     def count_successful_dag_runs():
         # Set up the session
@@ -95,7 +97,9 @@ with DAG(
             "pod_override": client.V1Pod(
                 metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
             )
-        }
+        },
+        task_id='info_slack_task',
+        dag=dag,
     ) 
     def info_slack(string_of_successful_runs):
         #
@@ -112,12 +116,6 @@ with DAG(
         message=f"{report_summary}",
         )
 
-# # Define the task
-# count_task = PythonOperator(
-#     task_id='count_successful_dag_runs',
-#     python_callable=count_successful_dag_runs,
-#     dag=dag,
-# )
 
 count_task = count_successful_dag_runs()
 post_til_info_slack = info_slack(count_task)
