@@ -24,9 +24,6 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev'
 
-yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) - dt.timedelta(hours=2)
-today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(hours=2)
-
 # Modifisere default args for DAG-en
 default_args = {
     'sla': timedelta(seconds=1), # Test av SLA
@@ -59,9 +56,9 @@ with DAG(
         Session.configure(bind=engine)
         session = Session()
         string_of_successful_runs = ""
-        # 00:00:00+00:00 til 00:00:00+00:00
-        #yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) - dt.timedelta(hours=2)
-        #today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(hours=2)
+        # 22:00:00+00:00 til 22:00:00+00:00 UTC
+        yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) - dt.timedelta(hours=2)
+        today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(hours=2)
         print(str(today) + " & " + str(yesterday))
 
         try:
@@ -94,11 +91,11 @@ with DAG(
         dag=dag,
     ) 
     def info_slack(string_of_successful_runs):
-        # Overskriver veriablene til et enklere format
-        #today = date.today()
-        #yesterday = date.today() - timedelta(days = 1)
+        # Overskriver veriablene til et enklere format, merk at dette er ikke samme verdi som veriablene over, dette er CEST ikke UTC 
+        today = date.today()
+        yesterday = date.today() - timedelta(days = 1)
         report_summary = f"""
-*Antall suksesfulle {miljo} DAG runs, mellom {yesterday} og {today}:*
+*Antall suksesfulle {miljo} DAG runs, mellom {yesterday} og {today} CEST:*
 ```
 {string_of_successful_runs}
 ```
