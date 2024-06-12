@@ -24,9 +24,21 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev'
 
+def sla_callback(dag, task_list, blocking_task_list, slas, blocking_tis):
+    print(
+        "The callback arguments are: ",
+        {
+            "dag": dag,
+            "task_list": task_list,
+            "blocking_task_list": blocking_task_list,
+            "slas": slas,
+            "blocking_tis": blocking_tis,
+        },
+    )
+
 # Modifisere default args for DAG-en
 default_args = {
-    #'sla': timedelta(seconds=1), # Test av SLA flyttet til en DAG
+    #'sla': timedelta(seconds=1), # Test av SLA flyttet fra DAG til en task
     'email': ['gard.sigurd.troim.***REMOVED***'],
     'on_failure_callback': slack_error,
 }
@@ -94,6 +106,7 @@ with DAG(
         task_id='info_slack_task',
         dag=dag,
         sla=timedelta(seconds=1), # Test av SLA 
+        sla_miss_callback=sla_callback,
     ) 
     def info_slack(string_of_successful_runs):
         # Henter dato, ikke klokkeslett
