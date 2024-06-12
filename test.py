@@ -8,6 +8,12 @@ today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second =
 print(str(today) + " & " + str(yesterday))
 
 
+string = f"TEST 24\n"
+print(string[:-1])
+
+
+
+
 #current_time = date.today() #now(timezone.utc)
 # current_time =datetime.datetime.now(timezone.utc) + datetime.timedelta(hours=2)
 # print("first ",current_time)
