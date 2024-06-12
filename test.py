@@ -3,8 +3,8 @@ from datetime import date
 from datetime import timedelta
 import datetime as dt
 
-yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1)
-today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) 
+yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1)
+today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
 print(str(today) + " & " + str(yesterday))
 
 
