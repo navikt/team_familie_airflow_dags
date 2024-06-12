@@ -86,8 +86,8 @@ with DAG(
 
         finally:
             session.close()
-            # Fjerner to siste tegn, "\n", fra siste konkatinering
-            return string_of_successful_runs[:-2]
+            # Fjerner to siste tegn, "\n", fra siste konkatinering. NB! "\n" fjernes ved bare -1, ikke -2! Mer vil inkorrekt spise av stringen.
+            return string_of_successful_runs[:-1]
 
     @task(
         executor_config={
@@ -97,7 +97,7 @@ with DAG(
         },
         task_id='info_slack_task',
         dag=dag,
-        sla=timedelta(seconds=1), # Test av SLA 
+        sla=timedelta(seconds=0), # Test av SLA, task har tidligere vart så kort at denne ikke kjørte. Håper 0 sekunder vil hjelpe. 
     ) 
     def info_slack(string_of_successful_runs):
         # Henter dato, ikke klokkeslett
