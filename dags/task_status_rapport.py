@@ -26,7 +26,7 @@ else:
 
 # Modifisere default args for DAG-en
 default_args = {
-    'sla': timedelta(seconds=1), # Test av SLA
+    #'sla': timedelta(seconds=1), # Test av SLA flyttet til en DAG
     'email': ['gard.sigurd.troim.henriksen@nav.no'],
     'on_failure_callback': slack_error,
 }
@@ -56,18 +56,20 @@ with DAG(
         Session.configure(bind=engine)
         session = Session()
         string_of_successful_runs = ""
-        # 22:00:00+00:00 til 22:00:00+00:00 UTC
-        yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1) - dt.timedelta(hours=2)
-        today = dt.datetime.now(dt.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - dt.timedelta(hours=2)
+        # 10:00:00+00:00 til 10:00:00+00:00 UTC (12:00 CEST, DAG kjører 13:00 CEST)
+        yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1)
+        today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
         print(str(today) + " & " + str(yesterday))
 
         try:
             # Query for tellingen av suksessfulle DAG-kjøringer
+            # TODO: Kan i fremtiden også sjekke for failed kjøringer, eller andre 'states'
             success_counts = session.query(
                 DagRun.dag_id, func.count(DagRun.dag_id).label('success_count')
             ).filter(DagRun.state == 'success',  DagRun.execution_date >= yesterday, DagRun.execution_date < today).group_by(DagRun.dag_id).all()
 
-            # Konkatinerer resultatene i en string, kan være intressant å gjøre noe her i fremtiden for å sjekke og gjøre noe med resultat
+            # Konkatinerer resultatene i en string
+            # TODO: Kan være intressant å gjøre noe her i fremtiden, feks. å sjekke eller gjøre noe med resultat vi får
             for dag_id, success_count in success_counts:
                 string_of_successful_runs += f"DAG ID: {dag_id}, Success Count: {success_count}\n"
 
@@ -78,7 +80,7 @@ with DAG(
 
         finally:
             session.close()
-            # Fjerner siste to tegn fra string, nemlig siste "\n"
+            # Fjerner to siste tegn, "\n", fra siste konkatinering
             return string_of_successful_runs[:-2]
 
     @task(
@@ -89,13 +91,15 @@ with DAG(
         },
         task_id='info_slack_task',
         dag=dag,
+        sla=timedelta(seconds=1), # Test av SLA 
     ) 
     def info_slack(string_of_successful_runs):
-        # Overskriver veriablene til et enklere format, merk at dette er ikke samme verdi som veriablene over, dette er CEST ikke UTC 
+        # Henter dato, ikke klokkeslett
         today = date.today()
         yesterday = date.today() - timedelta(days = 1)
+        # Hardkodet noe av string
         report_summary = f"""
-*Antall suksesfulle {miljo} DAG runs, mellom {yesterday} og {today} CEST:*
+*Antall suksesfulle {miljo} DAG runs, som har kjørt mellom {yesterday} og {today} kl 12:00 CEST:*
 ```
 {string_of_successful_runs}
 ```
