@@ -71,6 +71,8 @@ with DAG(
             # Konkatinerer resultatene i en string
             # TODO: Kan være intressant å gjøre noe her i fremtiden, feks. å sjekke eller gjøre noe med resultat vi får
             for dag_id, success_count in success_counts:
+                # Print for å sjekke direkte i loggen i Airflow
+                print(f"DAG ID: {dag_id}, Success Count: {success_count}")
                 string_of_successful_runs += f"DAG ID: {dag_id}, Success Count: {success_count}\n"
 
         except Exception as e:
