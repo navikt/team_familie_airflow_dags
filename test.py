@@ -1,5 +1,16 @@
-import datetime
-from datetime import timedelta,timezone, date, datetime
+from datetime import datetime
+from datetime import date
+from datetime import timedelta
+import datetime as dt
+
+yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1)
+today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
+print(str(today) + " & " + str(yesterday))
+
+
+string = f"TEST 24\n"
+print(string[:-1])
+
 
 
 
@@ -11,9 +22,21 @@ from datetime import timedelta,timezone, date, datetime
 #tim = datetime.datetime.now(timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) + datetime.timedelta(hours=2)
 #print(tim)
 
-today = datetime.now()
-yesterday = datetime.now() #- datetime.timedelta(days=1)
-print(str(today) + " & " + str(yesterday))
+# today = date.today()
+# yesterday = date.today() - timedelta(days = 1)
+# print(str(today) + " & " + str(yesterday))
+
+# string = ""
+
+# for i in range(10):
+#     string = "\n".join("Hei!")
+
+# print(string)
+
+
+# yesterday = datetime.dt.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(days=1) - datetime.timedelta(hours=2)
+# today = datetime.dt.now(datetime.timezone.utc).replace(hour = 0, minute = 0, second = 0, microsecond = 0) - datetime.timedelta(hours=2)
+# print(str(today) + " & " + str(yesterday))
 
 # def get_periode():
 #     """
