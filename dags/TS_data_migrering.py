@@ -3,11 +3,11 @@ from airflow.utils.dates import datetime
 from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
-from operators.slack_operator import slack_info
+from operators.slack_operator import slack_info, slack_error
+from operators.dbt_operator import create_dbt_operator
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
 
 miljo = Variable.get('miljo')
-branch = Variable.get("branch")
 allowlist = []
 
 if miljo == 'Prod':
@@ -16,6 +16,18 @@ elif miljo == 'test_r':
     allowlist.extend(r_oracle_conn_id)
 else:
     allowlist.extend(dev_oracle_conn_id)
+
+default_args = {
+    'owner': 'Team-Familie',
+    'retries': 1,
+    'on_failure_callback': slack_error
+}
+
+# Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_ef_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
+
 
 with DAG(
   dag_id = 'kopier_TS_data_fra_BigQuery_til_Oracle',
@@ -46,7 +58,7 @@ with DAG(
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'TS/kopiere_ts_data_fra_bq_til_oracle.ipynb',
     allowlist=allowlist,
-    branch = branch,
+    branch = v_branch,
     #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
         requests={'memory': '4G'},
@@ -69,6 +81,17 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> ts_data_kopiering >> slutt_alert
+
+    ts_utpakking_dbt = create_dbt_operator(
+    dag=dag,
+    name="utpakking_ts",
+    script_path = 'airflow/dbt_run.py',
+    branch=v_branch,
+    dbt_command= """run --select TS_utpakking.* --exclude TS_utpakking.fam_ts_vilkarsvurderinger""",
+    db_schema=v_schema,
+    allowlist=allowlist
+)
+
+start_alert >> ts_data_kopiering >> [slutt_alert,ts_utpakking_dbt]
 
 
