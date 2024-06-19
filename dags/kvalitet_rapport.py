@@ -43,6 +43,9 @@ with DAG(
     ef_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1
     """
+    ts_md_ant_mottatt_mldinger = """
+      SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE lastet_dato >= sysdate - 1
+    """
     ks_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_KS.fam_ks_meta_data WHERE lastet_dato >= sysdate - 1
     """
@@ -125,6 +128,8 @@ with DAG(
         bt_hull = [str(x) for x in (cur.execute(sjekk_hull_i_BT_meta_data).fetchone() or [])]
         ef_md_ant = cur.execute(ef_md_ant_mottatt_mldinger).fetchone()[0]
         ef_hull = [str(x) for x in (cur.execute(sjekk_hull_i_EF_meta_data).fetchone() or [])]
+        ts_md_ant = cur.execute(ts_md_ant_mottatt_mldinger).fetchone()[0]
+        #
         ks_md_ant = cur.execute(ks_md_ant_mottatt_mldinger).fetchone()[0]
         ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
         pp_md_ant = cur.execute(pp_md_ant_mottatt_mldinger).fetchone()[0]
@@ -138,7 +143,7 @@ with DAG(
         es_dvh_ant = cur.execute(es_dvh_ant_mottatt_mldinger).fetchone()[0]   
         sp_fgsk_ant = cur.execute(sp_fgsk_ant_mottatt_mldinger).fetchone()[0]
         bs_bs_ant = cur.execute(bs_bs_ant_mottatt_mldinger).fetchone()[0]
-    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant]
+    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant,ts_md_ant]
 
 
   @task(
@@ -158,6 +163,7 @@ with DAG(
     [
       bt_md_ant,bt_hull,
       ef_md_ant,ef_hull,
+      ts_md_ant,
       ks_md_ant,ks_hull,
       pp_md_ant,pp_hull,
       fp_md_sum_ant,fp_hull,    
@@ -173,6 +179,8 @@ with DAG(
     bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data:............{str(bt_hull)}"
     ef_md_antall_meldinger = f"Antall mottatt {ef_grafana}......................{str(ef_md_ant)}"
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data:............{str(ef_hull)}"
+    ts_md_antall_meldinger = f"Antall mottatt TS meldinger......................{str(ts_md_ant)}"
+    #
     ks_md_antall_meldinger = f"Antall mottatt {ks_grafana}......................{str(ks_md_ant)}"
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data:............{str(ks_hull)}"
     pp_md_antall_meldinger = f"Antall mottatt {pp_grafana}......................{str(pp_md_ant)}"
@@ -197,6 +205,8 @@ with DAG(
 {bt_hull_i_meta_data}
 {ef_md_antall_meldinger}
 {ef_hull_i_meta_data}
+{ts_md_antall_meldinger}
+#
 {ks_md_antall_meldinger}
 {ks_hull_i_meta_data}
 {fp_md_sum_antall_meldinger}
@@ -209,24 +219,23 @@ with DAG(
 {sp_fgsk_antall_meldinger}
 ```
 """
-    # Hvis topic inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
+    # Slack melding med antall meldinger
+    slack_info(
+      message=f"{konsumenter_summary}",
+      emoji=":newspaper:"
+    )
+
+    # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
     topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull,ef_hull,ks_hull,pp_hull,fp_hull] if sublist)
 
     # Sjekker om noe ble lagt til i string
     if topics_med_hull:
-        # Trenger ikke lenger fjerne siste komma og mellomrom med join
-        #topics_med_hull = topics_med_hull[:-2]
-        # Konkatinerer en notification med navn på topics med hull til konsumenter_summary
-        konsumenter_summary += (f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```")
-
-    kafka_summary = f"*Kafka rapport:*\n{konsumenter_summary}"
-
-
-    slack_info(
-      message=f"{kafka_summary}",
-      emoji=":newspaper:"
-    )
-
+        notification_summary = (f"```<!channel> Minst ett hull oppdaget i {topics_med_hull}!```")
+        # Slack melding med notification. Ønsker å separere meldingene etter problemer med formateringsfeil ved for lange meldinger
+        slack_info(
+          message=f"{notification_summary}",
+          emoji=":newspaper:"
+        )
 
 
   kafka_last = hent_kafka_last()
