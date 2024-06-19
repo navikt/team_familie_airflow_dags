@@ -149,7 +149,7 @@ with DAG(
         es_dvh_ant = cur.execute(es_dvh_ant_mottatt_mldinger).fetchone()[0]   
         sp_fgsk_ant = cur.execute(sp_fgsk_ant_mottatt_mldinger).fetchone()[0]
         bs_bs_ant = cur.execute(bs_bs_ant_mottatt_mldinger).fetchone()[0]
-    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant,ts_md_ant,ts_md_ant_patch]
+    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ts_md_ant,ts_md_ant_patch,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant]
 
 
   @task(
