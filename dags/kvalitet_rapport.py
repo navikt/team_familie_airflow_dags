@@ -46,6 +46,10 @@ with DAG(
     ts_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE lastet_dato >= sysdate - 1
     """
+    # Skiller seg fra resten, ønsker å se om noen ts meldinger har blitt patched
+    ts_md_ant_patchede_mldinger = """
+      SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE opprettet_tid != endret_tid AND endret_tid = sysdate - 1
+    """
     ks_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_KS.fam_ks_meta_data WHERE lastet_dato >= sysdate - 1
     """
@@ -95,6 +99,7 @@ with DAG(
             FROM DVH_FAM_EF.fam_ef_meta_data)
         where lastet_dato > to_date('01.08.2023', 'dd.mm.yyyy') and  neste-kafka_offset > 1
     """
+    #TODO
     sjekk_hull_i_KS_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_offset,
@@ -129,7 +134,8 @@ with DAG(
         ef_md_ant = cur.execute(ef_md_ant_mottatt_mldinger).fetchone()[0]
         ef_hull = [str(x) for x in (cur.execute(sjekk_hull_i_EF_meta_data).fetchone() or [])]
         ts_md_ant = cur.execute(ts_md_ant_mottatt_mldinger).fetchone()[0]
-        #
+        ts_md_ant_patch = cur.execute(ts_md_ant_patchede_mldinger).fetchone()[0]
+        #TODO
         ks_md_ant = cur.execute(ks_md_ant_mottatt_mldinger).fetchone()[0]
         ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
         pp_md_ant = cur.execute(pp_md_ant_mottatt_mldinger).fetchone()[0]
@@ -143,7 +149,7 @@ with DAG(
         es_dvh_ant = cur.execute(es_dvh_ant_mottatt_mldinger).fetchone()[0]   
         sp_fgsk_ant = cur.execute(sp_fgsk_ant_mottatt_mldinger).fetchone()[0]
         bs_bs_ant = cur.execute(bs_bs_ant_mottatt_mldinger).fetchone()[0]
-    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant,ts_md_ant]
+    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant,ts_md_ant,ts_md_ant_patch]
 
 
   @task(
@@ -163,7 +169,7 @@ with DAG(
     [
       bt_md_ant,bt_hull,
       ef_md_ant,ef_hull,
-      ts_md_ant,
+      ts_md_ant,ts_md_ant_patch,#TODO
       ks_md_ant,ks_hull,
       pp_md_ant,pp_hull,
       fp_md_sum_ant,fp_hull,    
@@ -180,7 +186,8 @@ with DAG(
     ef_md_antall_meldinger = f"Antall mottatt {ef_grafana}......................{str(ef_md_ant)}"
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data:............{str(ef_hull)}"
     ts_md_antall_meldinger = f"Antall mottatt TS meldinger......................{str(ts_md_ant)}"
-    #
+    ts_md_antall_patchede_meldinger = f"Antall patchede TS meldinger.....................{str(ts_md_ant_patch)}"
+    #TODO
     ks_md_antall_meldinger = f"Antall mottatt {ks_grafana}......................{str(ks_md_ant)}"
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data:............{str(ks_hull)}"
     pp_md_antall_meldinger = f"Antall mottatt {pp_grafana}......................{str(pp_md_ant)}"
@@ -206,7 +213,8 @@ with DAG(
 {ef_md_antall_meldinger}
 {ef_hull_i_meta_data}
 {ts_md_antall_meldinger}
-#
+{ts_md_antall_patchede_meldinger}
+#TODO
 {ks_md_antall_meldinger}
 {ks_hull_i_meta_data}
 {fp_md_sum_antall_meldinger}
