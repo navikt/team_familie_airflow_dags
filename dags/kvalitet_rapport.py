@@ -186,8 +186,8 @@ with DAG(
       sp_fgsk_ant,    
       bs_bs_ant,
     ] = kafka_last
-    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana}......................{str(bt_md_ant)}"
-    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data:........................{str(bt_hull)}"
+    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana}............................{str(bt_md_ant)}"
+    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data:..................{str(bt_hull)}"
     ef_md_antall_meldinger = f"Antall mottatt {ef_grafana}............................{str(ef_md_ant)}"
     ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data:..................{str(ef_hull)}"
     # Inneholder antall totale meldinger & antallet av dem deretter pakket ut i fagsak. ts_md_ant skal alltid være >= enn ts_fgsk_ant, kan ikke pakke ut flere meldinger enn mottatt!
