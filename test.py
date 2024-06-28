@@ -1,18 +1,18 @@
-from datetime import datetime
-from datetime import date
-from datetime import timedelta
-import datetime as dt
+# from datetime import datetime
+# from datetime import date
+# from datetime import timedelta
+# import datetime as dt
 
-yesterday = dt.datetime.now(dt.timezone.CEST) + dt.timedelta(hours=2) - dt.timedelta(days=1)
-today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
-print(str(today) + " & " + str(yesterday))
+# yesterday = dt.datetime.now(dt.timezone.CEST) + dt.timedelta(hours=2) - dt.timedelta(days=1)
+# today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
+# print(str(today) + " & " + str(yesterday))
 
 
-string = f"TEST 24\n"
-print(string[:-1])
+# string = f"TEST 24\n"
+# print(string[:-1])
 
-gaarsdagensdato = date.today() - timedelta(days = 1)
-print(gaarsdagensdato)
+# gaarsdagensdato = date.today() - timedelta(days = 1)
+# print(gaarsdagensdato)
 
 #current_time = date.today() #now(timezone.utc)
 # current_time =datetime.datetime.now(timezone.utc) + datetime.timedelta(hours=2)
