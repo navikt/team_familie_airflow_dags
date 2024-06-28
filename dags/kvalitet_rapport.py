@@ -1,6 +1,7 @@
 from datetime import datetime
 from datetime import date
 from datetime import timedelta
+import datetime as dt
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
@@ -170,7 +171,10 @@ with DAG(
     pp_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%226xn%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22k9saksbehandling.aapen-k9-stonadstatistikk-v1%5C%22%7D%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*PP meldinger*>"
     ks_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-kontantstotte-vedtak-v1%5C%22%7D+%3E+0+%22%2C%22refId%22%3A%22A%22%2C%22editorMode%22%3A%22code%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*KS meldinger*>"
     fp_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22:%7B%22datasource%22:%22000000021%22,%22queries%22:%5B%7B%22exemplar%22:true,%22expr%22:%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamforeldrepenger.fpsak-dvh-stonadsstatistikk-v1%5C%22%7D%20%3E%200%20%22,%22refId%22:%22A%22,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22000000021%22%7D%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1|*FP meldinger*>"
-    gaarsdagensdato = date.today() - timedelta(days = 1)
+    #gaarsdagensdato = date.today() - timedelta(days = 1)
+    # Ingen query sjekker 00:00-00:00 i går, men heller lastet_dato >= sysdate - 1. Dette betyr at vi må gjøre det klart når vi faktisk rapporterer meldinger fra, nemlig klokkeslettet denne rapporten kjører minus en dag
+    gaarsdagensdato = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=1)
+    gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
     [
       bt_md_ant,bt_hull,
       ef_md_ant,ef_hull,
@@ -207,7 +211,7 @@ with DAG(
     sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger........................{str(sp_fgsk_ant)}"
     bs_bs_antall_meldinger = f"Antall mottatt BS meldinger............................{str(bs_bs_ant)}"
     konsumenter_summary = f"""
-*Leste {miljo} meldinger fra konsumenter på {gaarsdagensdato}:*
+*Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:*
  
 ```
 {bs_bs_antall_meldinger}
