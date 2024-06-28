@@ -1,11 +1,10 @@
-# from datetime import datetime
-# from datetime import date
-# from datetime import timedelta
-# import datetime as dt
+from datetime import datetime
+from datetime import date
+from datetime import timedelta
+import datetime as dt
 
-# yesterday = dt.datetime.now(dt.timezone.CEST) + dt.timedelta(hours=2) - dt.timedelta(days=1)
-# today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
-# print(str(today) + " & " + str(yesterday))
+yesterday = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=1)
+print(yesterday.strftime("%Y-%m-%d %H:%M:%S"))
 
 
 # string = f"TEST 24\n"
