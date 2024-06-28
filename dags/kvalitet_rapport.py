@@ -104,7 +104,7 @@ with DAG(
             FROM DVH_FAM_EF.fam_ef_meta_data)
         where lastet_dato > to_date('01.08.2023', 'dd.mm.yyyy') and  neste-kafka_offset > 1
     """
-    #TODO
+    #TODO Legg til diff mellom BigQuery & Oracle for TS, for å sjekke etter hull
     sjekk_hull_i_KS_meta_data = """
         SELECT * FROM
             (SELECT lastet_dato, kafka_topic, kafka_offset,
@@ -141,7 +141,6 @@ with DAG(
         ts_md_ant = cur.execute(ts_md_ant_mottatt_mldinger).fetchone()[0]
         ts_fgsk_ant = cur.execute(ts_fgsk_ant_mottatt_mldinger).fetchone()[0]
         ts_md_ant_patch = cur.execute(ts_md_ant_patchede_mldinger).fetchone()[0]
-        #TODO
         ks_md_ant = cur.execute(ks_md_ant_mottatt_mldinger).fetchone()[0]
         ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
         pp_md_ant = cur.execute(pp_md_ant_mottatt_mldinger).fetchone()[0]
@@ -194,7 +193,6 @@ with DAG(
     # Inneholder antall totale meldinger & antallet av dem deretter pakket ut i fagsak. ts_md_ant skal alltid være >= enn ts_fgsk_ant, kan ikke pakke ut flere meldinger enn mottatt!
     ts_md_antall_meldinger = f"Antall mottatt totale/pakket ut i fagsak TS meldinger..{str(ts_md_ant)}/{str(ts_fgsk_ant)}"
     ts_md_antall_patchede_meldinger = f"Antall patchede TS meldinger...........................{str(ts_md_ant_patch)}"
-    #TODO 
     ks_md_antall_meldinger = f"Antall mottatt {ks_grafana}............................{str(ks_md_ant)}"
     ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data:..................{str(ks_hull)}"
     pp_md_antall_meldinger = f"Antall mottatt {pp_grafana}............................{str(pp_md_ant)}"
@@ -221,7 +219,6 @@ with DAG(
 {ef_hull_i_meta_data}
 {ts_md_antall_meldinger}
 {ts_md_antall_patchede_meldinger}
-#TODO
 {ks_md_antall_meldinger}
 {ks_hull_i_meta_data}
 {fp_md_sum_antall_meldinger}
