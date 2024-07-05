@@ -18,7 +18,7 @@ with DAG(
   dag_id='ef_arena_kvalitet_maanedlig',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2024, 3, 21),
-  schedule_interval= "0 12 5 * *", # kl 12 den 5. hver måned
+  schedule_interval= "0 11 5 * *", # kl 13:00 CEST den 5. hver måned
   catchup=True
 ) as dag:
     @task(
