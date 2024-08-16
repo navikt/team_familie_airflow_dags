@@ -62,6 +62,59 @@ with DAG(
     pp_md_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_PP.fam_pp_meta_data WHERE lastet_dato >= sysdate - 1
     """
+    # Midlertidig verdi vi ønsker å sjekke i dagsrapporten, vil fjernes over tid
+    pp_temp_soker_67_ikke_pakket_ut= """
+      SELECT
+          COUNT(*)
+      FROM
+          (
+              SELECT
+                  JSON_VALUE(melding, '$.søker') soker_fnr,
+                  trunc(CAST(TO_TIMESTAMP_TZ(JSON_VALUE(meta.melding, '$.vedtakstidspunkt'),
+                      'yyyy-mm-dd"T"hh24:mi:ss.ff3') AT TIME ZONE 'Europe/Belgrade' AS TIMESTAMP),
+                        'dd')                    vedtaks_dag,
+                  kafka_offset,
+                  kafka_partition,
+                  ident.skjermet_kode
+              FROM
+                      fam_pp_meta_data meta
+                  INNER JOIN dt_person.ident_off_id_til_fk_person1 ident ON JSON_VALUE(meta.melding, '$.søker') = ident.off_id
+                                                                            AND trunc(CAST(TO_TIMESTAMP_TZ(JSON_VALUE(meta.melding, '$.vedtakstidspunkt'
+                                                                            ),
+                      'yyyy-mm-dd"T"hh24:mi:ss.ff3') AT TIME ZONE 'Europe/Belgrade' AS TIMESTAMP),
+                                                                                      'dd') BETWEEN gyldig_fra_dato AND gyldig_til_dato
+                                                                            AND ident.skjermet_kode IN ( 6, 7 )
+              WHERE
+                      meta.lastet_dato > sysdate - 1
+                  AND JSON_VALUE(meta.melding, '$.ytelseType') = 'PSB'
+          ); 
+    """
+    pp_temp_pleietrengende_67_ikke_pakket_ut= """
+      SELECT
+          COUNT(*)
+      FROM
+          (
+              SELECT
+                  JSON_VALUE(melding, '$.pleietrengende') pleietrengende_fnr,
+                  trunc(CAST(TO_TIMESTAMP_TZ(JSON_VALUE(meta.melding, '$.vedtakstidspunkt'),
+                      'yyyy-mm-dd"T"hh24:mi:ss.ff3') AT TIME ZONE 'Europe/Belgrade' AS TIMESTAMP),
+                        'dd')                             vedtaks_dag,
+                  kafka_offset,
+                  kafka_partition,
+                  ident.skjermet_kode
+              FROM
+                      fam_pp_meta_data meta
+                  INNER JOIN dt_person.ident_off_id_til_fk_person1 ident ON JSON_VALUE(meta.melding, '$.pleietrengende') = ident.off_id
+                                                                            AND trunc(CAST(TO_TIMESTAMP_TZ(JSON_VALUE(meta.melding, '$.vedtakstidspunkt'
+                                                                            ),
+                      'yyyy-mm-dd"T"hh24:mi:ss.ff3') AT TIME ZONE 'Europe/Belgrade' AS TIMESTAMP),
+                                                                                      'dd') BETWEEN gyldig_fra_dato AND gyldig_til_dato
+                                                                            AND ident.skjermet_kode IN ( 6, 7 )
+              WHERE
+                      meta.lastet_dato > sysdate - 1
+                  AND JSON_VALUE(meta.melding, '$.ytelseType') = 'PSB'
+          );
+    """
     bs_bs_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_HM.brillestonad WHERE lastet_dato >= sysdate - 1
     """
@@ -146,6 +199,8 @@ with DAG(
         ks_hull = [str(x) for x in (cur.execute(sjekk_hull_i_KS_meta_data).fetchone() or [])]
         pp_md_ant = cur.execute(pp_md_ant_mottatt_mldinger).fetchone()[0]
         pp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_PP_meta_data).fetchone() or [])]  
+        pp_soker = cur.execute(pp_temp_soker_67_ikke_pakket_ut).fetchone()[0]
+        pp_pleietrengende = cur.execute(pp_temp_pleietrengende_67_ikke_pakket_ut).fetchone()[0]
         fp_md_sum_ant = cur.execute(fp_md_sum_ant_mottatt_mldinger).fetchone()[0]               
         fp_hull = [str(x) for x in (cur.execute(sjekk_hull_i_FP_meta_data).fetchone() or [])]  
         fp_md_ant = cur.execute(fp_md_ant_mottatt_mldinger).fetchone()[0]  
@@ -155,7 +210,7 @@ with DAG(
         es_dvh_ant = cur.execute(es_dvh_ant_mottatt_mldinger).fetchone()[0]   
         sp_fgsk_ant = cur.execute(sp_fgsk_ant_mottatt_mldinger).fetchone()[0]
         bs_bs_ant = cur.execute(bs_bs_ant_mottatt_mldinger).fetchone()[0]
-    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ts_md_ant,ts_fgsk_ant,ts_md_ant_patch,ks_md_ant,ks_hull,pp_md_ant,pp_hull,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant]
+    return [bt_md_ant,bt_hull,ef_md_ant,ef_hull,ts_md_ant,ts_fgsk_ant,ts_md_ant_patch,ks_md_ant,ks_hull,pp_md_ant,pp_hull,pp_soker,pp_pleietrengende,fp_md_sum_ant,fp_hull,fp_md_ant,es_md_ant,sp_md_ant,fp_fgsk_ant,es_dvh_ant,sp_fgsk_ant,bs_bs_ant]
 
 
   @task(
@@ -181,6 +236,7 @@ with DAG(
       ts_md_ant,ts_fgsk_ant,ts_md_ant_patch,#TODO
       ks_md_ant,ks_hull,
       pp_md_ant,pp_hull,
+      pp_soker,pp_pleietrengende,
       fp_md_sum_ant,fp_hull,    
       fp_md_ant,
       es_md_ant,
@@ -190,26 +246,28 @@ with DAG(
       sp_fgsk_ant,    
       bs_bs_ant,
     ] = kafka_last
-    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana}............................{str(bt_md_ant)}"
-    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data:..................{str(bt_hull)}"
-    ef_md_antall_meldinger = f"Antall mottatt {ef_grafana}............................{str(ef_md_ant)}"
-    ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data:..................{str(ef_hull)}"
+    bt_md_antall_meldinger = f"Antall mottatt {bt_grafana}...........................................{str(bt_md_ant)}"
+    bt_hull_i_meta_data = f"Manglene kafka_offset i BT_meta_data:.................................{str(bt_hull)}"
+    ef_md_antall_meldinger = f"Antall mottatt {ef_grafana}...........................................{str(ef_md_ant)}"
+    ef_hull_i_meta_data = f"Manglene kafka_offset i EF_meta_data:.................................{str(ef_hull)}"
     # Inneholder antall totale meldinger & antallet av dem deretter pakket ut i fagsak. ts_md_ant skal alltid være >= enn ts_fgsk_ant, kan ikke pakke ut flere meldinger enn mottatt!
-    ts_md_antall_meldinger = f"Antall mottatt totale/pakket ut i fagsak TS meldinger..{str(ts_md_ant)}/{str(ts_fgsk_ant)}"
-    ts_md_antall_patchede_meldinger = f"Antall patchede TS meldinger...........................{str(ts_md_ant_patch)}"
-    ks_md_antall_meldinger = f"Antall mottatt {ks_grafana}............................{str(ks_md_ant)}"
-    ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data:..................{str(ks_hull)}"
-    pp_md_antall_meldinger = f"Antall mottatt {pp_grafana}............................{str(pp_md_ant)}"
-    pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data:..................{str(pp_hull)}"
-    fp_md_sum_antall_meldinger = f"Antall mottatt summerte {fp_grafana}...................{str(fp_md_sum_ant)}"
-    fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data:..................{str(fp_hull)}"
-    fp_md_antall_meldinger = f"Antall mottatt FP meldinger............................{str(fp_md_ant)}" 
-    es_md_antall_meldinger = f"Antall mottatt ES meldinger............................{str(es_md_ant)}"
-    sp_md_antall_meldinger = f"Antall mottatt SP meldinger............................{str(sp_md_ant)}"
-    fp_fgsk_antall_meldinger = f"Antall mottatt FP GML meldinger........................{str(fp_fgsk_ant)}" 
-    es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger........................{str(es_dvh_ant)}"
-    sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger........................{str(sp_fgsk_ant)}"
-    bs_bs_antall_meldinger = f"Antall mottatt BS meldinger............................{str(bs_bs_ant)}"
+    ts_md_antall_meldinger = f"Antall mottatt totale/pakket ut i fagsak TS meldinger.................{str(ts_md_ant)}/{str(ts_fgsk_ant)}"
+    ts_md_antall_patchede_meldinger = f"Antall patchede TS meldinger..........................................{str(ts_md_ant_patch)}"
+    ks_md_antall_meldinger = f"Antall mottatt {ks_grafana}...........................................{str(ks_md_ant)}"
+    ks_hull_i_meta_data = f"Manglene kafka_offset i KS_meta_data:.................................{str(ks_hull)}"
+    pp_md_antall_meldinger = f"Antall mottatt {pp_grafana}...........................................{str(pp_md_ant)}"
+    pp_hull_i_meta_data = f"Manglene kafka_offset i PP_meta_data:.................................{str(pp_hull)}"
+    pp_temp_soker = f"Antall mottatt kode 6/7 søker meldinger ikke pakket ut................{str(pp_soker)}"
+    pp_temp_pleietrengende = f"Antall mottatt kode 6/7 pleietrengende meldinger ikke pakket ut.......{str(pp_pleietrengende)}"
+    fp_md_sum_antall_meldinger = f"Antall mottatt summerte {fp_grafana}..................................{str(fp_md_sum_ant)}"
+    fp_hull_i_meta_data = f"Manglene kafka_offset i FP_meta_data:.................................{str(fp_hull)}"
+    fp_md_antall_meldinger = f"Antall mottatt FP meldinger...........................................{str(fp_md_ant)}" 
+    es_md_antall_meldinger = f"Antall mottatt ES meldinger...........................................{str(es_md_ant)}"
+    sp_md_antall_meldinger = f"Antall mottatt SP meldinger...........................................{str(sp_md_ant)}"
+    fp_fgsk_antall_meldinger = f"Antall mottatt FP GML meldinger.......................................{str(fp_fgsk_ant)}" 
+    es_dvh_antall_meldinger = f"Antall mottatt ES GML meldinger.......................................{str(es_dvh_ant)}"
+    sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger.......................................{str(sp_fgsk_ant)}"
+    bs_bs_antall_meldinger = f"Antall mottatt BS meldinger...........................................{str(bs_bs_ant)}"
     konsumenter_summary = f"""
 *Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:*
  
@@ -217,6 +275,8 @@ with DAG(
 {bs_bs_antall_meldinger}
 {pp_md_antall_meldinger}
 {pp_hull_i_meta_data}
+{pp_temp_soker}
+{pp_temp_pleietrengende}
 {bt_md_antall_meldinger}
 {bt_hull_i_meta_data}
 {ef_md_antall_meldinger}
