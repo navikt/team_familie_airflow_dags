@@ -1,4 +1,4 @@
-import os
+import os, requests
 from datetime import timedelta
 from kubernetes import client
 from airflow import DAG
@@ -9,6 +9,16 @@ import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
 from allowlists.allowlist import dev_kafka, prod_kafka
 
+
+def get_latest_image_tag():
+    registry_url = "https://ghcr.io/v2/navikt/dvh-airflow-kafka/tags/list"
+    response = requests.get(registry_url)
+    tags = response.json().get('tags', [])
+    tags.sort()  # Sort tags if they follow a versioning scheme
+    return tags[-1] if tags else "latest"
+
+kafka_consumer_image = f"ghcr.io/navikt/dvh-airflow-kafka:{get_latest_image_tag()}"
+
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
     config: str,
@@ -16,7 +26,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka:2024-04-10-8310685",					
+    kafka_consumer_image: str = kafka_consumer_image,					
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
