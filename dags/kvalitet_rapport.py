@@ -87,7 +87,7 @@ with DAG(
               WHERE
                       meta.lastet_dato > sysdate - 1
                   AND JSON_VALUE(meta.melding, '$.ytelseType') = 'PSB'
-          ); 
+          )
     """
     pp_temp_pleietrengende_67_ikke_pakket_ut= """
       SELECT
@@ -113,7 +113,7 @@ with DAG(
               WHERE
                       meta.lastet_dato > sysdate - 1
                   AND JSON_VALUE(meta.melding, '$.ytelseType') = 'PSB'
-          );
+          )
     """
     bs_bs_ant_mottatt_mldinger = """
       SELECT COUNT(*) FROM DVH_FAM_HM.brillestonad WHERE lastet_dato >= sysdate - 1
