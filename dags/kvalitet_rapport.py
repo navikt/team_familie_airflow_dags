@@ -77,7 +77,7 @@ with DAG(
                   kafka_partition,
                   ident.skjermet_kode
               FROM
-                      fam_pp_meta_data meta
+                      DVH_FAM_PP.fam_pp_meta_data meta
                   INNER JOIN dt_person.ident_off_id_til_fk_person1 ident ON JSON_VALUE(meta.melding, '$.søker') = ident.off_id
                                                                             AND trunc(CAST(TO_TIMESTAMP_TZ(JSON_VALUE(meta.melding, '$.vedtakstidspunkt'
                                                                             ),
@@ -103,7 +103,7 @@ with DAG(
                   kafka_partition,
                   ident.skjermet_kode
               FROM
-                      fam_pp_meta_data meta
+                      DVH_FAM_PP.fam_pp_meta_data meta
                   INNER JOIN dt_person.ident_off_id_til_fk_person1 ident ON JSON_VALUE(meta.melding, '$.pleietrengende') = ident.off_id
                                                                             AND trunc(CAST(TO_TIMESTAMP_TZ(JSON_VALUE(meta.melding, '$.vedtakstidspunkt'
                                                                             ),
