@@ -1,4 +1,5 @@
-import cx_Oracle
+#import cx_Oracle # Deprecated functionality as per 28.08.2024
+import oracledb
 from os import getenv
 import os, json
 from google.cloud import secretmanager
@@ -24,10 +25,10 @@ def oracle_secrets():
   )
 
 def oracle_conn():
-    dsn_tns = cx_Oracle.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
+    dsn_tns = oracledb.makedsn(oracle_secrets()['host'], 1521, service_name = oracle_secrets()['service'])
     try:
-        conn = cx_Oracle.connect(user = oracle_secrets()['user'], password = oracle_secrets()['password'], dsn = dsn_tns)
+        conn = oracledb.connect(user = oracle_secrets()['user'], password = oracle_secrets()['password'], dsn = dsn_tns)
         return conn
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(error)
 
