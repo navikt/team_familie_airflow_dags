@@ -207,7 +207,8 @@ with DAG(
     sp_fgsk_antall_meldinger = f"Antall mottatt SP GML meldinger........................{str(sp_fgsk_ant)}"
     bs_bs_antall_meldinger = f"Antall mottatt BS meldinger............................{str(bs_bs_ant)}"
     konsumenter_summary = f"""
-*Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:*
+*Dagsrapport*
+Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
  
 ```
 {bs_bs_antall_meldinger}
