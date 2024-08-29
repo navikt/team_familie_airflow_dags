@@ -1,4 +1,4 @@
-#import cx_Oracle # Deprecated functionality as per 28.08.2024
+#import cx_Oracle # Deprecated functionality as per 28.08.2024 https://nav-it.slack.com/archives/CGRMQHT50/p1724394289641729
 import oracledb
 from os import getenv
 import os, json
