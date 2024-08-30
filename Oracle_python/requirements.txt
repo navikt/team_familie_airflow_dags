@@ -1,0 +1,2 @@
+oracledb
+google-cloud-secret-manager
