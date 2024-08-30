@@ -57,6 +57,7 @@ with DAG(
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
+        requirements_path="requirements.txt",
         slack_channel=Variable.get("slack_error_channel")
     )
 
