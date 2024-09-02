@@ -23,10 +23,10 @@ else:
 
 with DAG(
   dag_id='ukesrapport',
-  description = 'Ukentlig rapport av verdier vi ikke trenger å sjekke daglig',
+  description = 'Ukentlig rapport av verdier TF DVH ikke trenger å sjekke daglig',
   default_args={'on_failure_callback': slack_error},
-  start_date=datetime(2024, 8, 28),
-  schedule_interval= "0 5 * * 1", # kl 7 mandag CEST hver uke
+  start_date=datetime(2024, 9, 2),
+  schedule_interval= "30 4 * * 1", # kl 06:30 mandag CEST hver uke, 30 min før dagsrapport for å være først
   catchup=False
 ) as dag:
 
@@ -164,9 +164,9 @@ with DAG(
         }
     )
   def info_slack(kafka_last):
-    # 
+    # Dato for nøyaktig tidspunkt en uke siden
     forrigeuke = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=7)
-    forrigeuke = forrigeuke.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
+    forrigeuke = forrigeuke.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund, blir for mye informasjon i rapporten
     [
       kode67_soker_ant,
       kode67_pleie_ant,
@@ -174,7 +174,6 @@ with DAG(
       fp_ny_inntektskategori_ant,
       fp_ny_aktivitet_ant,
     ] = kafka_last
-    #bt_md_antall_meldinger = f"Antall mottatt {bt_grafana}............................{str(bt_md_ant)}"
     soker_antall_string = f"Antall kode67 søker PSB meldinger ikke pakket ut............{str(kode67_soker_ant)}"
     pleie_antall_string = f"Antall kode67 pleietrengende PSB meldinger ikke pakket ut...{str(kode67_pleie_ant)}"
     fp_antall_string = f"Antall FP meldinger ikke pakket ut..........................{str(fp_ikke_pakket_ut_ant)}"
