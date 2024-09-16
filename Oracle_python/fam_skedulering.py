@@ -1,5 +1,5 @@
 import oracledb
-from felles_metoder.felles_metoder import oracle_secrets, get_periode
+from felles_metoder.felles_metoder import oracle_secrets
 
 def fam_skedulering():
 

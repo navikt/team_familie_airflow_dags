@@ -28,8 +28,8 @@ with DAG(
     dag_id = 'Fam_skedulering', 
     description = 'Familie felles skedulering som kaller plsql',
     default_args = default_args,
-    start_date = datetime(2024, 8, 30), # start date for the dag
-    schedule_interval = '0 8 * * *',#'@daily', # 5te hver måned,
+    start_date = datetime(2024, 9, 10), # start date for the dag
+    schedule_interval = '0 2 * * *',#'@daily', # 5te hver måned,
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
