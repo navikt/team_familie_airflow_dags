@@ -28,8 +28,6 @@ def delete_OSPT():
                                                 RAISE;
                                             END IF;
                                     END;
-                                    /
-                                COMMIT; 
                             """)
                 connection.commit()
 
