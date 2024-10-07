@@ -6,7 +6,7 @@ def delete_OSPT():
         begin
             dbms_application_info.set_client_info( client_info => 'Klient_info Familie-Airflow');
             dbms_application_info.set_module( module_name => 'Kjører Team-familie Airflow applikasjon'
-                                            , action_name => 'Sletter O$PT fra alle skjemaer' );
+                                            , action_name => 'Sletter OSPT fra alle skjemaer' );
         end;
     ''')
 
