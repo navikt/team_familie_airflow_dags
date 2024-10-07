@@ -27,7 +27,7 @@ default_args = {
     }
 
 with DAG(
-    dag_id = 'rydd_O$PT', 
+    dag_id = 'rydd_O$PT', # The key 'rydd_O$PT' has to be made of alphanumeric characters, dashes, dots and underscores exclusively
     description = 'An Airflow DAG that deletes O$PT-tables',
     default_args = default_args,
     start_date = datetime(2024, 7, 10),
