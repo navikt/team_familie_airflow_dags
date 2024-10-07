@@ -27,8 +27,8 @@ default_args = {
     }
 
 with DAG(
-    dag_id = 'rydd_O$PT', # The key 'rydd_O$PT' has to be made of alphanumeric characters, dashes, dots and underscores exclusively
-    description = 'An Airflow DAG that deletes O$PT-tables',
+    dag_id = 'rydd_OSPT', # The key 'rydd_O$PT' has to be made of alphanumeric characters, dashes, dots and underscores exclusively
+    description = 'An Airflow DAG that deletes OSPT-tables',
     default_args = default_args,
     start_date = datetime(2024, 7, 10),
     schedule_interval = "0 10 * * *", # kl 12 CEST hver dag, ønsker at denne skal kjøre etter alle daglige konsumenter
@@ -37,9 +37,9 @@ with DAG(
     
     slett_tabeller_recycle_bin = python_operator(
     dag=dag,
-    name="slett_O$PT",
+    name="slett_OSPT",
     repo="navikt/team_familie_airflow_dags",
-    script_path="Oracle_python/slett_O$PT.py",
+    script_path="Oracle_python/slett_OSPT.py",
     branch=branch,
     resources=client.V1ResourceRequirements(
         requests={"memory": "4G"},
