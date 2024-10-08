@@ -31,12 +31,12 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-    dag_id = 'tilleggsstonader_maanedsprosessering',
+    dag_id = 'ts_maanedsprosessering',
     description = 'DAG som kjører insert i fag_ts_mottaker basert på periode', 
     default_args = default_args,
-    start_date = datetime(2024, 10, 8), # start date for the dag
-    schedule_interval = '0 0 5 * *' , #timedelta(days=1), schedule_interval='*/5 * * * *',
-    catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
+    start_date = datetime(2024, 10, 8), 
+    schedule_interval = '0 0 5 * *' , # Den 5. hvert måned
+    catchup = False 
 ) as dag:
 
     @task(
@@ -48,7 +48,7 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = " :rocket:" #TODO
+            message = "Starter månedsprosessering av tilleggsstønader! :rocket:"
         )
 
     start_alert = notification_start()
@@ -72,7 +72,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = " :tada: :tada:" #TODO
+            message = "Måndedsprosessering av tilleggsstønader fullført! :tada: :tada:" #TODO
         )
 
     slutt_alert = notification_end()
