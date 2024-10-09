@@ -50,7 +50,10 @@ with DAG(
         }
 
         with oracle_conn().cursor() as cur:
-            result = {query: cur.execute(query).fetchone()[0] for query in count_queries.values()}
+            result = {}
+            for key, query in count_queries.items():
+                count = cur.execute(query).fetchone()[0]
+                result[key] = count
             return result
     
     @task(
@@ -111,9 +114,12 @@ with DAG(
         }
 
         with oracle_conn().cursor() as cur:
-            result = {query: cur.execute(query).fetchone() or [] for query in gap_queries.values()}
+            result = {}
+            for key, query in gap_queries.items():
+                gap_result = [str(x) for x in cur.execute(query).fetchone() or []]
+                result[key] = gap_result
             return result
-
+        
     @task(
         executor_config={
             "pod_override": client.V1Pod(
@@ -168,8 +174,6 @@ with DAG(
             emoji=":newspaper:"
         )
 
-
-
         # Sjekk for gaps, dette kan kutter etter hvert for en for-loop
         bt_hull = gaps.get("sjekk_hull_i_BT_meta_data")
         ef_hull = gaps.get("sjekk_hull_i_EF_meta_data")
@@ -193,7 +197,6 @@ with DAG(
                 message=f"{notification_summary}",
                 emoji=":newspaper:"
             )
-
 
     kafka_last = fetch_kafka_counts()
     check_gaps = check_for_gaps()
