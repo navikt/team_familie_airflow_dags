@@ -1,4 +1,4 @@
-import os
+import os, requests
 from datetime import timedelta
 from kubernetes import client
 from airflow import DAG
@@ -7,7 +7,17 @@ import kubernetes.client as k8s
 from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
-from allowlists.allowlist import dev_kafka, prod_kafka, r_kafka
+from allowlists.allowlist import dev_kafka, prod_kafka
+
+
+def get_latest_image_tag():
+    registry_url = "https://ghcr.io/v2/navikt/dvh-airflow-kafka/tags/list"
+    response = requests.get(registry_url)
+    tags = response.json().get('tags', [])
+    tags.sort()  # Sort tags if they follow a versioning scheme
+    return tags[-1] if tags else "latest"
+
+kafka_consumer_image = f"ghcr.io/navikt/dvh-airflow-kafka:{get_latest_image_tag()}"
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -16,7 +26,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = "ghcr.io/navikt/dvh-airflow-kafka-feat/fam-encoding:2024-04-17-e150049",					
+    kafka_consumer_image: str = kafka_consumer_image,			
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
@@ -27,7 +37,7 @@ def kafka_consumer_kubernetes_pod_operator(
     delete_on_finish: bool = True,
     startup_timeout_seconds: int = 360,
     retry_delay: timedelta = timedelta(seconds=120),
-    nls_lang: str = "",
+    nls_lang: str = "NORWEGIAN_NORWAY.AL32UTF8",
     depends_on_past: bool = True,
     wait_for_downstream: bool = True,
     do_xcom_push=True,
@@ -65,8 +75,6 @@ def kafka_consumer_kubernetes_pod_operator(
     miljo = Variable.get('miljo')   
     if miljo == 'Prod':
         allowlist.extend(prod_kafka)
-    elif miljo == 'test_r':
-        allowlist.extend(r_kafka)
     else:
         allowlist.extend(dev_kafka)
 
