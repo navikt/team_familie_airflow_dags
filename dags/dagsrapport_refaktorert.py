@@ -192,7 +192,7 @@ with DAG(
                 emoji=":newspaper:"
             )
         else:
-            notification_summary = (f"```Ingen hull oppdaget.```")
+            notification_summary = (f"```Ingen hull oppdaget. :tada: :tada:```")
             slack_info(
                 message=f"{notification_summary}",
                 emoji=":newspaper:"
