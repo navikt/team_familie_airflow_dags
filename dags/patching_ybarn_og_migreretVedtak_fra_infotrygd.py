@@ -4,7 +4,7 @@ from kubernetes import client
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from dataverk_airflow import python_operator
-from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id,r_oracle_conn_id
 
 branch = Variable.get("branch")
 
@@ -12,6 +12,8 @@ miljo = Variable.get('miljo')
 allowlist = []
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'R':
+    allowlist.extend(r_oracle_conn_id)
 else:
     allowlist.extend(dev_oracle_conn_id)
 
