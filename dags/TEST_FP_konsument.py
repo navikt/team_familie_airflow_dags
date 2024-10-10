@@ -13,7 +13,7 @@ allowlist = []
 
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_conn_id)
-elif miljo == 'test_r':
+elif miljo == 'R':
     allowlist.extend(r_oracle_conn_id)
 else:
     allowlist.extend(dev_oracle_conn_id)
