@@ -151,22 +151,22 @@ with DAG(
 
         
         konsumenter_summary = f"""
-        *Dagsrapport*
-        Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
-        
-        ```
-        {bs_count_str}
-        {pp_count_str}
-        {bt_count_str}
-        {ef_count_str}
-        {ts_count_math_str}
-        {ks_count_str}
-        {fp_sum_count_str}
-        {fp_count_str}
-        {es_count_str}
-        {sp_count_str}
-        ```
-        """
+*Dagsrapport*
+Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
+
+```
+{bs_count_str}
+{pp_count_str}
+{bt_count_str}
+{ef_count_str}
+{ts_count_math_str}
+{ks_count_str}
+{fp_sum_count_str}
+{fp_count_str}
+{es_count_str}
+{sp_count_str}
+```
+"""
         
         # Send rapporten til Slack
         slack_info(
@@ -188,13 +188,13 @@ with DAG(
         if topics_med_hull:
             notification_summary = (f"```<!channel> Hull oppdaget i topic {topics_med_hull}!```")
             slack_info(
-                message=f"{notification_summary}",
+                message=notification_summary,
                 emoji=":newspaper:"
             )
         else:
             notification_summary = (f"```Ingen hull oppdaget. :tada: :tada:```")
             slack_info(
-                message=f"{notification_summary}",
+                message=notification_summary,
                 emoji=":newspaper:"
             )
 
