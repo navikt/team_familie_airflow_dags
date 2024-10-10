@@ -194,7 +194,7 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
                 emoji=":newspaper:"
             )
         else:
-            notification_summary = (f"```Ingen hull oppdaget. :tada: :tada:```")
+            notification_summary = (f"```Ingen hull oppdaget i noen av våre topics.```")
             slack_info(
                 message=notification_summary,
                 emoji=":newspaper:"
