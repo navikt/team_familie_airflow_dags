@@ -5,12 +5,14 @@ from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from kubernetes import client
 from felles_metoder.felles_metoder import get_periode
-from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id,r_oracle_conn_id
 
 miljo = Variable.get('miljo')   
 allowlist = []
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'R':
+    allowlist.extend(r_oracle_conn_id)
 else:
     allowlist.extend(dev_oracle_conn_id)
 
