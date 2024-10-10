@@ -13,14 +13,14 @@ allowlist = []
 
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_slack)
-elif miljo == 'test_r':
+elif miljo == 'R':
     allowlist.extend(r_oracle_slack)   
 else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev'  # For formateringsformål
 
 with DAG(
-    dag_id='datakvalitetsrapport_v2',
+    dag_id='dagsrapport_v2',
     default_args={'on_failure_callback': slack_error},
     start_date=datetime(2024, 10, 9),
     schedule_interval="0 5 * * *", 
@@ -50,7 +50,10 @@ with DAG(
         }
 
         with oracle_conn().cursor() as cur:
-            result = {query: cur.execute(query).fetchone()[0] for query in count_queries.values()}
+            result = {}
+            for key, query in count_queries.items():
+                count = cur.execute(query).fetchone()[0]
+                result[key] = count
             return result
     
     @task(
@@ -111,9 +114,12 @@ with DAG(
         }
 
         with oracle_conn().cursor() as cur:
-            result = {query: cur.execute(query).fetchone() or [] for query in gap_queries.values()}
+            result = {}
+            for key, query in gap_queries.items():
+                gap_result = [str(x) for x in cur.execute(query).fetchone() or []]
+                result[key] = gap_result
             return result
-
+        
     @task(
         executor_config={
             "pod_override": client.V1Pod(
@@ -132,6 +138,7 @@ with DAG(
         gaarsdagensdato = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=1)
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
+        # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
         bs_count_str = f"Antall mottatt BS meldinger............................{str(kafka_last['bs_count'])}"
         pp_count_str = f"Antall mottatt {pp_grafana}............................{str(kafka_last['pp_count'])}"
         bt_count_str = f"Antall mottatt {bt_grafana}............................{str(kafka_last['bt_count'])}"
@@ -143,34 +150,32 @@ with DAG(
         es_count_str = f"Antall mottatt ES meldinger............................{str(kafka_last['es_count'])}"
         sp_count_str = f"Antall mottatt SP meldinger............................{str(kafka_last['sp_count'])}"
 
-        
+        # Stringen må formateres sånn som dette for å se riktig ut
         konsumenter_summary = f"""
-        *Dagsrapport*
-        Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
+*Dagsrapport*
+Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
+
+```
+{bs_count_str}
+{pp_count_str}
+{bt_count_str}
+{ef_count_str}
+{ts_count_math_str}
+{ks_count_str}
+{fp_sum_count_str}
+{fp_count_str}
+{es_count_str}
+{sp_count_str}
+```
+"""
         
-        ```
-        {bs_count_str}
-        {pp_count_str}
-        {bt_count_str}
-        {ef_count_str}
-        {ts_count_math_str}
-        {ks_count_str}
-        {fp_sum_count_str}
-        {fp_count_str}
-        {es_count_str}
-        {sp_count_str}
-        ```
-        """
-        
-        # Send rapporten til Slack
+        # Send rapporten til Slack, sjekker etter hull senere
         slack_info(
             message=konsumenter_summary,
             emoji=":newspaper:"
         )
 
-
-
-        # Sjekk for gaps, dette kan kutter etter hvert for en for-loop
+        # Sjekker etter hull
         bt_hull = gaps.get("sjekk_hull_i_BT_meta_data")
         ef_hull = gaps.get("sjekk_hull_i_EF_meta_data")
         ks_hull = gaps.get("sjekk_hull_i_KS_meta_data")
@@ -180,20 +185,20 @@ with DAG(
         # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
         topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
 
-        # Sjekker om noe ble lagt til i string
+        # Sjekker om noe ble lagt til i string, hvis ikke sendes annen string
         if topics_med_hull:
+            # Høy prioritering hvis hull oppdages, ønsker å gjøre alle oppmerk på dette med "!channel"
             notification_summary = (f"```<!channel> Hull oppdaget i topic {topics_med_hull}!```")
             slack_info(
-                message=f"{notification_summary}",
+                message=notification_summary,
                 emoji=":newspaper:"
             )
         else:
-            notification_summary = (f"```Ingen hull oppdaget.```")
+            notification_summary = (f"```Ingen hull oppdaget. :tada: :tada:```")
             slack_info(
-                message=f"{notification_summary}",
+                message=notification_summary,
                 emoji=":newspaper:"
             )
-
 
     kafka_last = fetch_kafka_counts()
     check_gaps = check_for_gaps()
