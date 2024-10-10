@@ -18,7 +18,7 @@ allowlist = []
 
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_slack)
-elif miljo == 'test_r':
+elif miljo == 'R':
     allowlist.extend(r_oracle_slack)   									  
 else:
     allowlist.extend(dev_oracle_slack)

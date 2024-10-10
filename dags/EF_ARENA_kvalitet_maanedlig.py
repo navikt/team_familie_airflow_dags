@@ -5,14 +5,16 @@ from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_error, slack_info
 from utils.db.oracle_conn import oracle_conn
-from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack
+from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack,prod_oracle_conn_id,r_oracle_conn_id,dev_oracle_conn_id
 
 miljo = Variable.get('miljo')
 allowlist = []
 if miljo == 'Prod':
-    allowlist.extend(prod_oracle_slack)
+    allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'R':
+    allowlist.extend(r_oracle_conn_id)
 else:
-    allowlist.extend(dev_oracle_slack)
+    allowlist.extend(dev_oracle_conn_id)
 
 with DAG(
   dag_id='ef_arena_kvalitet_maanedlig',
