@@ -36,8 +36,8 @@ def create_dbt_operator(
       "ORA_PYTHON_DRIVER_TYPE": "thin"
     },
     slack_channel=Variable.get("slack_error_channel"),
-    requirements_path="requirements.txt",
+    #requirements_path="requirements.txt",
     image='ghcr.io/navikt/dvh-images/airflow-dbt:2024-10-11-c0f1e0b',
-    #allowlist = allowlist
+    allowlist = allowlist
   )
 
