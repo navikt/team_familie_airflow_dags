@@ -9,7 +9,7 @@ def create_dbt_operator(
   dag: DAG,
   name: str,
   branch: str,
-  dbt_command: str,
+  dbt_models: str,
   db_schema: str,
   script_path:str,
   allowlist: list = [],
@@ -29,7 +29,7 @@ def create_dbt_operator(
         limits={"memory": "6G"}
         ),
     extra_envs={
-      'DBT_COMMAND': dbt_command,
+      'DBT_MODELS': dbt_models,
       'LOG_LEVEL': 'DEBUG',
       'DB_SCHEMA': db_schema,
       'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
