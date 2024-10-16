@@ -1,7 +1,7 @@
 slack_allowlist = ['slack.com','hooks.slack.com']
 
 prod_oracle_conn_id = ['dm08-scan.adeo.no:1521']
-r_oracle_conn_id = ['dm07-scan.adeo.no:1521']
+r_oracle_conn_id = ['dm07-scan.adeo.no:1521', 'hub.getdbt.com'],
 dev_oracle_conn_id = ['dmv07-scan.adeo.no:1521']
 
 prod_aiven_conn_ip = ['nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-kafka-nav-prod.aivencloud.com:26487']
