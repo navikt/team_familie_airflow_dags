@@ -54,8 +54,7 @@ with DAG(
     name="utpakking_ks",
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    dbt_models="KS_utpakking.*",
-    #dbt_command= """run --select KS_utpakking.*""",
+    dbt_command= """run --select KS_utpakking.*""",
     db_schema=v_schema,
     allowlist=allowlist
 )
