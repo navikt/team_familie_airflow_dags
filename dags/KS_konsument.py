@@ -8,7 +8,6 @@ from operators.slack_operator import slack_error
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, r_oracle_conn_id, dev_oracle_conn_id
 
 miljo = Variable.get('miljo')
-r_oracle_conn_id = ['dm07-scan.adeo.no:1521', 'hub.getdbt.com']
 allowlist = []
 
 
