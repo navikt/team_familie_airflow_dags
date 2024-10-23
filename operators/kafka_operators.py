@@ -7,7 +7,7 @@ import kubernetes.client as k8s
 from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
-from allowlists.allowlist import dev_kafka, prod_kafka
+from allowlists.allowlist import dev_kafka, prod_kafka, r_kafka
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -65,6 +65,8 @@ def kafka_consumer_kubernetes_pod_operator(
     miljo = Variable.get('miljo')   
     if miljo == 'Prod':
         allowlist.extend(prod_kafka)
+    elif miljo == 'R':
+        allowlist.extend(r_kafka)
     else:
         allowlist.extend(dev_kafka)
 
