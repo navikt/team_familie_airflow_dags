@@ -15,7 +15,7 @@ allowlist = []
 
 if miljo == 'Prod':
     allowlist.extend(prod_oracle_slack)
-elif miljo == 'test_r':
+elif miljo == 'R':
     allowlist.extend(r_oracle_slack)   									  
 else:
     allowlist.extend(dev_oracle_slack)
@@ -144,6 +144,17 @@ with DAG(
     WHERE
         mapping.aktivitet IS NULL
     """
+    pp_nye_arbeidsforhold = """
+    select distinct arbeidsforhold_type
+        from dvh_fam_pp.fam_pp_periode_utbet_grader
+            where dagsats > 0
+        and lastet_dato > sysdate - 8
+        and arbeidsforhold_type not in
+        (
+        select distinct arbeidsforhold_type
+            from dvh_fam_pp.fam_pp_aktivitet_underkonto_mapping
+        )
+    """
 
     with oracle_conn().cursor() as cur:
         kode67_soker_ant = cur.execute(kode67_soker).fetchone()[0]
@@ -151,9 +162,10 @@ with DAG(
         fp_ikke_pakket_ut_ant = cur.execute(fp_ikke_pakket_ut).fetchone()[0]
         fp_ny_inntektskategori_ant = [str(x) for x in (cur.execute(fp_ny_inntektskategori).fetchone() or [])]
         fp_ny_aktivitet_ant = [str(x) for x in (cur.execute(fp_ny_aktivitet).fetchone() or [])]
+        pp_nye_arbeidsforhold_ant = [str(x) for x in (cur.execute(pp_nye_arbeidsforhold).fetchone() or [])]
 
     # MÅ stå i riktig rekkefølge!
-    return [kode67_soker_ant,kode67_pleie_ant,fp_ikke_pakket_ut_ant,fp_ny_inntektskategori_ant,fp_ny_aktivitet_ant]
+    return [kode67_soker_ant,kode67_pleie_ant,fp_ikke_pakket_ut_ant,fp_ny_inntektskategori_ant,fp_ny_aktivitet_ant,pp_nye_arbeidsforhold_ant]
 
 
   @task(
@@ -173,12 +185,14 @@ with DAG(
       fp_ikke_pakket_ut_ant,
       fp_ny_inntektskategori_ant,
       fp_ny_aktivitet_ant,
+      pp_nye_arbeidsforhold_ant,
     ] = kafka_last
     soker_antall_string = f"Antall kode67 søker PSB meldinger ikke pakket ut............{str(kode67_soker_ant)}"
     pleie_antall_string = f"Antall kode67 pleietrengende PSB meldinger ikke pakket ut...{str(kode67_pleie_ant)}"
     fp_antall_string = f"Antall FP meldinger ikke pakket ut..........................{str(fp_ikke_pakket_ut_ant)}"
     fp_ny_inntektskategori_string = f"FP ny inntektskategori......................................{str(fp_ny_inntektskategori_ant)}"
     fp_ny_aktivitet_string = f"FP ny aktivitet.............................................{str(fp_ny_aktivitet_ant)}"
+    pp_nye_arbeidsforhold_string = f"PP nye arbeidsforhold........................................{str(pp_nye_arbeidsforhold_ant)}"
     konsumenter_summary = f"""
 *Ukesrapport*
 Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
@@ -189,6 +203,7 @@ Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
 {fp_antall_string}
 {fp_ny_inntektskategori_string}
 {fp_ny_aktivitet_string}
+{pp_nye_arbeidsforhold_string}
 ```
 """
     # Slack melding med antall meldinger
