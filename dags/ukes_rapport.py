@@ -26,7 +26,7 @@ with DAG(
   description = 'Ukentlig rapport av verdier TF DVH ikke trenger å sjekke daglig',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2024, 9, 2),
-  schedule_interval= "30 4 * * 1", # kl 06:30 mandag CEST hver uke, 30 min før dagsrapport for å være først
+  schedule_interval= "30 5 * * 1", # kl 06:30 mandag CET hver uke, 30 min før dagsrapport for å være først
   catchup=False
 ) as dag:
 
@@ -192,7 +192,7 @@ with DAG(
     fp_antall_string = f"Antall FP meldinger ikke pakket ut..........................{str(fp_ikke_pakket_ut_ant)}"
     fp_ny_inntektskategori_string = f"FP ny inntektskategori......................................{str(fp_ny_inntektskategori_ant)}"
     fp_ny_aktivitet_string = f"FP ny aktivitet.............................................{str(fp_ny_aktivitet_ant)}"
-    pp_nye_arbeidsforhold_string = f"PP nye arbeidsforhold........................................{str(pp_nye_arbeidsforhold_ant)}"
+    pp_nye_arbeidsforhold_string = f"PP nye arbeidsforhold.......................................{str(pp_nye_arbeidsforhold_ant)}"
     konsumenter_summary = f"""
 *Ukesrapport*
 Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
