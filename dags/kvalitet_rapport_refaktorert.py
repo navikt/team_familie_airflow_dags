@@ -23,7 +23,7 @@ with DAG(
     dag_id='dagsrapport_v2',
     default_args={'on_failure_callback': slack_error},
     start_date=datetime(2024, 10, 9),
-    schedule_interval="0 6 * * *", # 7 CET
+    schedule_interval="0 5 * * *", # 6 CET
     catchup=False,
 ) as dag:
 
@@ -135,7 +135,7 @@ with DAG(
         ks_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-kontantstotte-vedtak-v1%5C%22%7D+%3E+0+%22%2C%22refId%22%3A%22A%22%2C%22editorMode%22%3A%22code%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*KS meldinger*>"
         fp_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22:%7B%22datasource%22:%22000000021%22,%22queries%22:%5B%7B%22exemplar%22:true,%22expr%22:%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamforeldrepenger.fpsak-dvh-stonadsstatistikk-v1%5C%22%7D%20%3E%200%20%22,%22refId%22:%22A%22,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22000000021%22%7D%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1|*FP meldinger*>"
         
-        gaarsdagensdato = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=1)
+        gaarsdagensdato = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=1) - dt.timedelta(days=1) # 2 timer hvis CEST
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
@@ -143,14 +143,14 @@ with DAG(
         pp_count_str = f"Antall mottatt {pp_grafana}............................{str(kafka_last['pp_count'])}"
         bt_count_str = f"Antall mottatt {bt_grafana}............................{str(kafka_last['bt_count'])}"
         ef_count_str = f"Antall mottatt {ef_grafana}............................{str(kafka_last['ef_count'])}"
-        ts_count_math_str = f"Antall mottatt totale/pakket ut i fagsak TS meldinger..{str(kafka_last['ts_count'])}/{str(kafka_last['ts_fgsk_count'])}" # TODO: Check this!
+        ts_count_math_str = f"Antall mottatt totale/pakket ut i fagsak TS meldinger..{str(kafka_last['ts_count'])}/{str(kafka_last['ts_fgsk_count'])}"
         ks_count_str = f"Antall mottatt {ks_grafana}............................{str(kafka_last['ks_count'])}"
         fp_sum_count_str = f"Antall mottatt summerte {fp_grafana}...................{str(kafka_last['fp_sum_count'])}"
         fp_count_str = f"Antall mottatt FP meldinger............................{str(kafka_last['fp_count'])}" 
         es_count_str = f"Antall mottatt ES meldinger............................{str(kafka_last['es_count'])}"
         sp_count_str = f"Antall mottatt SP meldinger............................{str(kafka_last['sp_count'])}"
 
-        # Stringen må formateres sånn som dette for å se riktig ut
+        # Stringen må formateres sånn som dette for å se riktig ut, se bort fra tab indent 
         konsumenter_summary = f"""
 *Dagsrapport*
 Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
