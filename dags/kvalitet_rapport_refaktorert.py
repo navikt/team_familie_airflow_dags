@@ -183,12 +183,12 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         fp_hull = gaps.get("sjekk_hull_i_FP_meta_data")
 
         # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
-        topics_med_hull = ", ".join(str(sublist[1]) for sublist in [bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
+        topics_med_hull = ", ".join(str(sublist) for sublist in [bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
 
         # Sjekker om noe ble lagt til i string, hvis ikke sendes annen string
         if topics_med_hull:
             # Høy prioritering hvis hull oppdages, ønsker å gjøre alle oppmerk på dette med "!channel"
-            notification_summary = (f"```<!channel> Hull oppdaget i topic {topics_med_hull}!```")
+            notification_summary = (f"```<!channel> Hull oppdaget i topic: \n" + "\n".join(topics_med_hull) + "```")
             slack_info(
                 message=notification_summary,
                 emoji=":newspaper:"
