@@ -174,21 +174,17 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
             message=konsumenter_summary,
             emoji=":newspaper:"
         )
-
-        # Sjekker etter hull
-        bt_hull = gaps.get("sjekk_hull_i_BT_meta_data")
-        ef_hull = gaps.get("sjekk_hull_i_EF_meta_data")
-        ks_hull = gaps.get("sjekk_hull_i_KS_meta_data")
-        pp_hull = gaps.get("sjekk_hull_i_PP_meta_data")
-        fp_hull = gaps.get("sjekk_hull_i_FP_meta_data")
-
-        # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
-        topics_med_hull = ", ".join(str(sublist) for sublist in [bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
-
-        # Sjekker om noe ble lagt til i string, hvis ikke sendes annen string
+        
+        # Lag en liste for topics med hull
+        topics_med_hull = []
+        for topic, hull in gaps.items():
+            if hull:
+                topics_med_hull.append(str({hull}))
+        
+        # Sjekker om noe ble lagt til i listen, hvis ikke sendes annen string
         if topics_med_hull:
             # Høy prioritering hvis hull oppdages, ønsker å gjøre alle oppmerk på dette med "!channel"
-            notification_summary = (f"```<!channel> Hull oppdaget i topic: \n" + "\n".join(topics_med_hull) + "```")
+            notification_summary = f"```<!channel> Hull oppdaget i topic:\n" + "\n".join(topics_med_hull) + "```"
             slack_info(
                 message=notification_summary,
                 emoji=":newspaper:"
