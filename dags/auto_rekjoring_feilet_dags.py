@@ -40,13 +40,6 @@ with DAG(
     start_alert = notification_start()
 
 
-    def notification_start():
-        slack_info(
-            message = "kjøring av feilet dag runs starter nå! :rocket:"
-        )
-
-    start_alert = notification_start()
-
     check_failed_dags_task = python_operator(
         dag=dag,
         name="rekjør_failet_dager",
@@ -72,6 +65,6 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> check_failed_dags_task >> slutt_alert
+check_failed_dags_task
 
 
