@@ -17,8 +17,8 @@ default_args = {
     }
 
 with DAG(
-    dag_id = 'rekjør_feilet_dags', 
-    description = 'An Airflow DAG that invokes "FAM_EF.fam_ef_patch_infotrygd_arena" og "FAM_EF.fam_ef_patch_migrering_vedtak" stored procedures',
+    dag_id = 'rekjor_feilet_dags', 
+    description = 'En dag som rekjorer alle dag-runs som feilet i den siste uken',
     default_args = default_args,
     start_date = datetime(2024, 11, 4), # start date for the dag
     schedule_interval = None , # 5te hver måned,
@@ -34,7 +34,7 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = "Patching av ybarn og migrerte_vedtak starter nå ved hjelp av Airflow! :rocket:"
+            message = "kjoring av feilet dag-runs starter noo! :rocket:"
         )
 
     start_alert = notification_start()
@@ -42,7 +42,7 @@ with DAG(
 
     check_failed_dags_task = python_operator(
         dag=dag,
-        name="rekjør_failet_dager",
+        name="rekjor_failet_dager",
         repo="navikt/team_familie_airflow_dags",
         script_path="Oracle_python/rekjoring_dags.py",
         branch=branch,
@@ -61,7 +61,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = "kjøring av feilet dag runs er ferdig! :tada: :tada:"
+            message = "kjoring av feilet dag runs er ferdig! :tada: :tada:"
         )
     slutt_alert = notification_end()
 
