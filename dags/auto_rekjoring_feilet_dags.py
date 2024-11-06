@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 def check_and_rerun_failed_dags(dag_id_list):
     # Airflow API endpoint (adjust the URL to match your Airflow web server)
-    airflow_api_url = 'http://team-familie-test-r.airflow.knada.io/api/v1/dags/{dag_id}/dagRuns'
+    airflow_api_url = 'http://airflow-webserver.team-familie-test-r-avzk.svc.cluster.local:8080/api/v1/dags/{dag_id}/dagRuns'
 
     # Get the date range for the last week
     one_week_ago = datetime.now() - timedelta(weeks=1)
