@@ -3,10 +3,7 @@ from airflow.operators.python_operator import PythonOperator
 import requests
 from datetime import datetime, timedelta
 
-def check_and_rerun_failed_dags():
-
-    dag_id_list = ['EF_konsument']  # Replace with your actual DAG IDs
-
+def check_and_rerun_failed_dags(dag_id_list):
     # Airflow API endpoint (adjust the URL to match your Airflow web server)
     airflow_api_url = 'http://team-familie-test-r.airflow.knada.io/api/v1/dags/{dag_id}/dagRuns'
 
@@ -37,12 +34,13 @@ def check_and_rerun_failed_dags():
         else:
             print(f"Failed to fetch runs for DAG {dag_id}: {response.status_code}")
 
+dag_id_list = ['BT_konsument', 'KS_konsument', 'EF_konsument']  # Replace with your actual DAG IDs
 
 default_args = {
     'owner': 'Team-Familie',
     'start_date': datetime(2024, 11, 6),
-    'retries': 1,
-    'retry_delay': timedelta(minutes=2),
+    'retries': 2,
+    'retry_delay': timedelta(minutes=1),
 }
 
 dag = DAG(
@@ -54,7 +52,7 @@ dag = DAG(
 check_failed_dags_task = PythonOperator(
     task_id='rekjor_failet_dager',
     python_callable=check_and_rerun_failed_dags,
-    #op_kwargs={'dag_id_list': dag_id_list},
+    op_kwargs={'dag_id_list': dag_id_list},
     dag=dag,
 )
 
