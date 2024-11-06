@@ -40,7 +40,7 @@ default_args = {
     'owner': 'Team-Familie',
     'start_date': datetime(2024, 11, 6),
     'retries': 1,
-    'retry_delay': timedelta(minutes=1),
+    'retry_delay': timedelta(minutes=2),
 }
 
 dag = DAG(
