@@ -24,8 +24,11 @@ def check_and_rerun_failed_dags(dag_id_list):
     auth = (user,passord)
     
     for dag_id in dag_id_list:
+        print(user)
         # Request to get the DAG runs for the given DAG
         response = requests.get(airflow_api_url.format(dag_id=dag_id), auth=auth)
+
+        print(response)
 
         if response.status_code == 200:
             dag_runs = response.json().get('dagRuns', [])
