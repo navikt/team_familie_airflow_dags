@@ -1,7 +1,14 @@
 from airflow import DAG
+from airflow.models import Variable
 from airflow.operators.python_operator import PythonOperator
+from airflow.hooks.base_hook import BaseHook
 import requests
 from datetime import datetime, timedelta
+
+# Bygger parameter med logging, modeller og miljø
+api_conn = Variable.get("api_conn", deserialize_json=True)
+user = api_conn["user"]
+passord = api_conn["passord"]
 
 def check_and_rerun_failed_dags(dag_id_list):
     # Airflow API endpoint (adjust the URL to match your Airflow web server)
@@ -9,10 +16,16 @@ def check_and_rerun_failed_dags(dag_id_list):
 
     # Get the date range for the last week
     one_week_ago = datetime.now() - timedelta(weeks=1)
+
+    # Get the Airflow connection for authentication if needed
+    #airflow_conn = BaseHook.get_connection('your_airflow_connection')
+    #auth = (airflow_conn.login, airflow_conn.password)
+
+    auth = (user,passord)
     
     for dag_id in dag_id_list:
         # Request to get the DAG runs for the given DAG
-        response = requests.get(airflow_api_url.format(dag_id=dag_id))
+        response = requests.get(airflow_api_url.format(dag_id=dag_id), auth=auth)
 
         if response.status_code == 200:
             dag_runs = response.json().get('dagRuns', [])
@@ -25,7 +38,7 @@ def check_and_rerun_failed_dags(dag_id_list):
                     # Rerun the failed DAG run
                     rerun_url = f'{airflow_api_url.format(dag_id=dag_id)}/run'
                     payload = {"execution_date": run['execution_date']}
-                    rerun_response = requests.post(rerun_url, json=payload)
+                    rerun_response = requests.post(rerun_url, json=payload, auth=auth)
 
                     if rerun_response.status_code == 200:
                         print(f"Successfully reran failed DAG {dag_id} for execution_date {run['execution_date']}")
