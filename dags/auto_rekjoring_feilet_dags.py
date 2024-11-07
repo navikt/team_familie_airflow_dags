@@ -25,13 +25,16 @@ def check_and_rerun_failed_dags(dag_id_list):
     
     for dag_id in dag_id_list:
         # Request for å hente DAG runs for en DAG
-        response = requests.get(airflow_api_url.format(dag_id=dag_id), auth=auth)
+        response = requests.post(airflow_api_url.format(dag_id=dag_id), auth=auth)
 
         if response.status_code == 200:
             dag_runs = response.json().get('dagRuns', [])
+            print(dag_runs)
             for run in dag_runs:
                 # hent execution_date og så konverter den til datetime
                 execution_date = datetime.fromisoformat(run['execution_date'].replace('Z', '+00:00'))
+
+                print("execution_date: .:{}".format(execution_date))
                 
                 # Sjekk om denne kjøringen er feilet og at den har skjedd i den siste uka
                 if execution_date >= one_week_ago and run['state'] == 'failed':
