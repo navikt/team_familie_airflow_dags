@@ -5,16 +5,16 @@ from airflow.hooks.base_hook import BaseHook
 import requests
 from datetime import datetime, timedelta
 
-# Bygger parameter med logging, modeller og miljø
+# api_conn variabler
 api_conn = Variable.get("api_conn", deserialize_json=True)
 user = api_conn["user"]
 passord = api_conn["passord"]
 
 def check_and_rerun_failed_dags(dag_id_list):
-    # Airflow API endpoint (adjust the URL to match your Airflow web server)
-    airflow_api_url = 'http://airflow-webserver.team-familie-test-r-avzk.svc.cluster.local:8080/api/v1/dags/{dag_id}/dagRuns'
+    # Airflow API endpoint 
+    airflow_api_url = 'http://airflow-webserver:8080/api/v1/dags/{dag_id}/dagRuns'
 
-    # Get the date range for the last week
+    # hent dato for siste 7 dager
     one_week_ago = datetime.now() - timedelta(weeks=1)
 
     # Get the Airflow connection for authentication if needed
@@ -24,31 +24,28 @@ def check_and_rerun_failed_dags(dag_id_list):
     auth = (user,passord)
     
     for dag_id in dag_id_list:
-        print(user)
-        # Request to get the DAG runs for the given DAG
+        # Request for å hente DAG runs for en DAG
         response = requests.get(airflow_api_url.format(dag_id=dag_id), auth=auth)
-
-        print(response)
 
         if response.status_code == 200:
             dag_runs = response.json().get('dagRuns', [])
             for run in dag_runs:
-                # Get the execution_date and convert it from string to datetime
+                # hent execution_date og så konverter den til datetime
                 execution_date = datetime.fromisoformat(run['execution_date'].replace('Z', '+00:00'))
                 
-                # Check if the run is in the last week and has failed
+                # Sjekk om denne kjøringen er feilet og at den har skjedd i den siste uka
                 if execution_date >= one_week_ago and run['state'] == 'failed':
-                    # Rerun the failed DAG run
+                    # Rekjører den DAG run som feilet
                     rerun_url = f'{airflow_api_url.format(dag_id=dag_id)}/run'
                     payload = {"execution_date": run['execution_date']}
                     rerun_response = requests.post(rerun_url, json=payload, auth=auth)
 
                     if rerun_response.status_code == 200:
-                        print(f"Successfully reran failed DAG {dag_id} for execution_date {run['execution_date']}")
+                        print(f"DAG-en {dag_id} som feilet er blitt rekjørt for execution_date {run['execution_date']}")
                     else:
-                        print(f"Failed to rerun DAG {dag_id} for execution_date {run['execution_date']}: {rerun_response.status_code}")
+                        print(f"Klarte ikke å rekjøre DAG-en {dag_id} for execution_date {run['execution_date']}: {rerun_response.status_code}")
         else:
-            print(f"Failed to fetch runs for DAG {dag_id}: {response.status_code}")
+            print(f"Failet å hente dag-runs for DAG-en {dag_id}: {response.status_code}")
 
 dag_id_list = ['BT_konsument', 'KS_konsument', 'EF_konsument']  # Replace with your actual DAG IDs
 
@@ -62,7 +59,7 @@ default_args = {
 dag = DAG(
     'rekjor_feilet_dags',
     default_args=default_args,
-    schedule_interval = None,  # Adjust as needed
+    schedule_interval = None,  
 )
 
 check_failed_dags_task = PythonOperator(
