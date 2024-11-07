@@ -15,7 +15,7 @@ def check_and_rerun_failed_dags(dag_id_list):
     airflow_api_url = 'http://airflow-webserver:8080/api/v1/dags/{dag_id}/dagRuns'
 
     # hent dato for siste 7 dager
-    one_week_ago = datetime.now() - timedelta(weeks=1)
+    one_month_ago = datetime.now() - timedelta(days=30)
 
     # Get the Airflow connection for authentication if needed
     #airflow_conn = BaseHook.get_connection('your_airflow_connection')
@@ -37,7 +37,7 @@ def check_and_rerun_failed_dags(dag_id_list):
                 print("execution_date: .:{}".format(execution_date))
                 
                 # Sjekk om denne kjøringen er feilet og at den har skjedd i den siste uka
-                if execution_date >= one_week_ago and run['state'] == 'failed':
+                if execution_date >= one_month_ago and run['state'] == 'failed':
                     # Rekjører den DAG run som feilet
                     rerun_url = f'{airflow_api_url.format(dag_id=dag_id)}/run'
                     payload = {"execution_date": run['execution_date']}
