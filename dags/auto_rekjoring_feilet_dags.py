@@ -25,7 +25,7 @@ def check_and_rerun_failed_dags(dag_id_list):
     
     for dag_id in dag_id_list:
         # Request for å hente DAG runs for en DAG
-        response = requests.post(airflow_api_url.format(dag_id=dag_id), auth=auth)
+        response = requests.get(airflow_api_url.format(dag_id=dag_id), auth=auth)
 
         if response.status_code == 200:
             dag_runs = response.json().get('dagRuns', [])
