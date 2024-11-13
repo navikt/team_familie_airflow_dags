@@ -34,9 +34,9 @@ with DAG(
     dag_id = 'ts_maanedsprosessering',
     description = 'DAG som kjører insert i fag_ts_mottaker basert på periode', 
     default_args = default_args,
-    start_date = datetime(2024, 10, 8), 
+    start_date = datetime(2024, 10, 4), 
     schedule_interval = '0 0 5 * *' , # Den 5. hvert måned
-    catchup = False 
+    catchup = True 
 ) as dag:
 
     @task(
