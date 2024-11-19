@@ -87,11 +87,11 @@ with DAG(
     name="utpakking_ts",
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    dbt_command= """run --select TS_utpakking.* --exclude TS_utpakking.fam_ts_vilkarsvurderinger""",
+    dbt_command= """run --select TS_utpakking.*""",
     db_schema=v_schema,
     allowlist=allowlist
 )
 
-start_alert >> ts_data_kopiering >> [slutt_alert,ts_utpakking_dbt]
+start_alert >> ts_data_kopiering >> ts_utpakking_dbt >> slutt_alert
 
 
