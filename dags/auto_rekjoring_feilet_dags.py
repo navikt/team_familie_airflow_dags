@@ -4,6 +4,7 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.hooks.base_hook import BaseHook
 import requests
 from datetime import datetime, timedelta
+import pytz
 
 # api_conn variabler
 api_conn = Variable.get("api_conn", deserialize_json=True)
@@ -16,6 +17,7 @@ def check_and_rerun_failed_dags(dag_id_list):
 
     # hent dato for siste 7 dager
     one_month_ago = datetime.now() - timedelta(days=30)
+    one_month_ago = datetime.strptime(one_month_ago, '%Y-%m-%d %H:%M:%S.%f').replace(tzinfo=pytz.UTC).strftime('%Y-%m-%dT%H:%M:%S.%f%z') # formatted_datetime_str
 
     # Get the Airflow connection for authentication if needed
     #airflow_conn = BaseHook.get_connection('your_airflow_connection')
@@ -54,7 +56,7 @@ dag_id_list = ['BT_konsument', 'KS_konsument', 'EF_konsument']  # Replace with y
 
 default_args = {
     'owner': 'Team-Familie',
-    'start_date': datetime(2024, 11, 6),
+    'start_date': datetime(2024, 11, 19),
     'retries': 2,
     'retry_delay': timedelta(minutes=1),
 }
