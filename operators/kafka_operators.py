@@ -17,7 +17,8 @@ def get_latest_image_tag():
     tags.sort()  # Sort tags if they follow a versioning scheme
     return tags[-1] if tags else "latest"
 
-kafka_consumer_image = f"ghcr.io/navikt/dvh-airflow-kafka:{get_latest_image_tag()}"
+#kafka_consumer_image = f"ghcr.io/navikt/dvh-airflow-kafka:{get_latest_image_tag()}"
+kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:latest"
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
