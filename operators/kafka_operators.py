@@ -18,7 +18,8 @@ def get_latest_image_tag():
     return tags[-1] if tags else "latest"
 
 #kafka_consumer_image = f"ghcr.io/navikt/dvh-airflow-kafka:{get_latest_image_tag()}"
-kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:latest"
+#kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:latest"
+kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-12-02-d2d37db"
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
