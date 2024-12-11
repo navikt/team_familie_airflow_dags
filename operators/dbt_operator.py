@@ -10,6 +10,7 @@ def create_dbt_operator(
   name: str,
   branch: str,
   dbt_command: str,
+  repo:str,
   db_schema: str,
   script_path:str,
   allowlist: list = [],
@@ -20,7 +21,7 @@ def create_dbt_operator(
   return python_operator(
     dag=dag,
     name=name,
-    repo='navikt/dvh_familie_dbt',
+    repo=repo, #'navikt/dvh_familie_dbt',
     script_path=script_path,#'airflow/dbt_run_test.py',
     branch=branch,
     do_xcom_push=True,
