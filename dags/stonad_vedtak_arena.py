@@ -54,6 +54,7 @@ with DAG(
     dbt_run_stonad_arena = create_dbt_operator(
         dag=dag,
         name="dbt-run_stonad_arena",
+        repo='navikt/dvh_familie_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
         dbt_command=f"""run --select EF_arena.*  --vars '{{"periode":{periode}}}' """,

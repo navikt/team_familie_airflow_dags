@@ -85,6 +85,7 @@ with DAG(
     ts_utpakking_dbt = create_dbt_operator(
     dag=dag,
     name="utpakking_ts",
+    repo='navikt/dvh_fam_ts_dbt',
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
     dbt_command= """run --select TS_utpakking.*""",
