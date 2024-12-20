@@ -30,11 +30,11 @@ topic = Variable.get("BB_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="BB_konsument",
-  start_date=datetime(2024, 12, 19),
+  start_date=datetime(2024, 12, 20),
   default_args = default_args,
-  schedule_interval= None,#"@hourly",
+  schedule_interval= "@hourly",
   max_active_runs=1,
-  catchup = True
+  catchup = False
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
