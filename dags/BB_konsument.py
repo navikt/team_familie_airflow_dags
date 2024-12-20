@@ -32,7 +32,7 @@ with DAG(
   dag_id="BB_konsument",
   start_date=datetime(2024, 12, 19),
   default_args = default_args,
-  schedule_interval= "@hourly",
+  schedule_interval= None,#"@hourly",
   max_active_runs=1,
   catchup = True
 ) as dag:
