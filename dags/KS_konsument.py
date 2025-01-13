@@ -53,7 +53,7 @@ with DAG(
     name="utpakking_ks",
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    dbt_command= """run --select KS_utpakking/fam_ks_vilkaar_resultat.sql""",
+    dbt_command= """run --select KS_utpakking/fam_ks_vilkaar_resultat""",
     db_schema=v_schema,
     allowlist=allowlist
 )
