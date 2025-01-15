@@ -53,8 +53,7 @@ with DAG(
     repo='navikt/dvh_familie_dbt',
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    #dbt_command= """run --select KS_utpakking.*""",
-    dbt_command= """run --select ks_meldinger_til_aa_pakke_ut fam_ks_vilkaar_resultat""",
+    dbt_command= """run --select KS_utpakking.*""",
     db_schema=v_schema,
     allowlist=allowlist
 )
