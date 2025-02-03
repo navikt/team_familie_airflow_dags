@@ -37,7 +37,7 @@ with DAG(
     # Husk å grante rettigheter ved bruk av nye konsumenter, e.g. "GRANT SELECT ON DVH_FAM_BB.fam_bb_meta_data TO DVH_FAM_Airflow;"
     def fetch_kafka_counts():
         count_queries = {
-            "bb_count": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1;",
+            "bb_count": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1",
             "bt_count": "SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1",
             "ef_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1",
             "ts_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE lastet_dato >= sysdate - 1",
