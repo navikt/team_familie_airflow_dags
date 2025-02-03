@@ -34,8 +34,10 @@ with DAG(
             )
         }
     )
+    # Husk å grante rettigheter ved bruk av nye konsumenter, e.g. "GRANT SELECT ON DVH_FAM_BB.fam_bb_meta_data TO DVH_FAM_Airflow;"
     def fetch_kafka_counts():
         count_queries = {
+            "bb_count": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1;",
             "bt_count": "SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1",
             "ef_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1",
             "ts_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE lastet_dato >= sysdate - 1",
@@ -65,6 +67,15 @@ with DAG(
     )
     def check_for_gaps():
         gap_queries = {
+            "sjekk_hull_i_BB_meta_data": """
+                SELECT * FROM
+                    (SELECT lastet_dato, kafka_topic, kafka_offset,
+                        LEAD(kafka_offset) 
+                        OVER(PARTITION BY kafka_topic
+                        ORDER BY kafka_offset) neste
+                    FROM DVH_FAM_BB.fam_bb_meta_data)
+                WHERE neste - kafka_offset > 1
+            """, 
             "sjekk_hull_i_BT_meta_data": """
                 SELECT * FROM
                     (SELECT lastet_dato, kafka_topic, kafka_offset,
@@ -129,6 +140,7 @@ with DAG(
     )
     def info_slack(kafka_last, gaps):
         # Hardkodede Grafana-lenker
+        bb_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%226xn%22:%7B%22datasource%22:%22000000021%22,%22queries%22:%5B%7B%22exemplar%22:true,%22expr%22:%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22bidrag.statistikk%5C%22%7D%20%3E%200%22,%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22000000021%22%7D,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1|*BB meldinger*>"
         bt_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22fll%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-barnetrygd-vedtak-v2%5C%22%7D+%3E+0+%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*BT meldinger*>"
         ef_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22od5%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-ensligforsorger-vedtak-v1%5C%22%7D%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*EF meldinger*>"
         pp_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%226xn%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22k9saksbehandling.aapen-k9-stonadstatistikk-v1%5C%22%7D%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*PP meldinger*>"
@@ -139,6 +151,7 @@ with DAG(
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
+        bb_count_str = f"Antall mottatt {bb_grafana}............................{str(kafka_last['bb_count'])}" #TODO link
         bs_count_str = f"Antall mottatt BS meldinger............................{str(kafka_last['bs_count'])}"
         pp_count_str = f"Antall mottatt {pp_grafana}............................{str(kafka_last['pp_count'])}"
         bt_count_str = f"Antall mottatt {bt_grafana}............................{str(kafka_last['bt_count'])}"
@@ -150,12 +163,13 @@ with DAG(
         es_count_str = f"Antall mottatt ES meldinger............................{str(kafka_last['es_count'])}"
         sp_count_str = f"Antall mottatt SP meldinger............................{str(kafka_last['sp_count'])}"
 
-        # Stringen må formateres sånn som dette for å se riktig ut, se bort fra tab indent 
+        # Stringen må formateres sånn som dette for å se riktig ut, se bort fra merkelig tab indent i IDE
         konsumenter_summary = f"""
 *Dagsrapport*
 Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
 
 ```
+{bb_count_str}
 {bs_count_str}
 {pp_count_str}
 {bt_count_str}
@@ -176,6 +190,7 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         )
 
         # Sjekker etter hull
+        bb_hull = gaps.get("sjekk_hull_i_BB_meta_data")
         bt_hull = gaps.get("sjekk_hull_i_BT_meta_data")
         ef_hull = gaps.get("sjekk_hull_i_EF_meta_data")
         ks_hull = gaps.get("sjekk_hull_i_KS_meta_data")
@@ -183,7 +198,7 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         fp_hull = gaps.get("sjekk_hull_i_FP_meta_data")
 
         # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
-        topics_med_hull = ", ".join(str(sublist) for sublist in [bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
+        topics_med_hull = ", ".join(str(sublist) for sublist in [bb_hull, bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
 
         # Sjekker om noe ble lagt til i string, hvis ikke sendes annen string
         if topics_med_hull:
