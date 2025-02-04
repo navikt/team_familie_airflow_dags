@@ -30,18 +30,18 @@ topic = Variable.get("BB_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="BB_konsument",
-  start_date=datetime(2025, 2, 3),
+  start_date=datetime(2025, 1, 31, 10),
   default_args = default_args,
-  schedule_interval= None, #"@hourly",
+  schedule_interval= "@hourly",
   max_active_runs=1,
-  catchup = False
+  catchup = True
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "barnebidrag_hent_kafka_data",
     config = bb.config.format(topic),
-    data_interval_start_timestamp_milli="1738281600000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1738587540000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    #data_interval_start_timestamp_milli="1738281600000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    #data_interval_end_timestamp_milli="1738587540000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
