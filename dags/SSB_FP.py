@@ -22,6 +22,12 @@ default_args = {
     'on_failure_callback': slack_error
     }
 
+executor_config = {
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
+            )
+        }
+
 with DAG(
     dag_id = 'SSB_FP', 
     description = 'SSB dag for foreldrepenger',
@@ -41,7 +47,8 @@ with DAG(
         resources=client.V1ResourceRequirements(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel")
+        slack_channel=Variable.get("slack_error_channel"),
+        executor_config=executor_config
     )
 
 ssb_fp_hent_data_fra_oracle
