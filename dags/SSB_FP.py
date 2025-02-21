@@ -2,7 +2,7 @@ from airflow.models import DAG, Variable
 from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id
 from airflow.utils.dates import datetime, timedelta
 from operators.slack_operator import slack_info, slack_error
-from dataverk_airflow import python_operator
+from airflow.operators.python_operator import PythonOperator
 from kubernetes import client
 from Oracle_python import ssb_fp
 
@@ -37,7 +37,7 @@ with DAG(
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
-    ssb_fp_hent_data_fra_oracle = python_operator(
+    ssb_fp_hent_data_fra_oracle = PythonOperator(
         dag=dag,
         name="ssb_fp_hent_data_fra_oracle",
         repo="navikt/team_familie_airflow_dags",
