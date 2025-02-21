@@ -45,7 +45,7 @@ with DAG(
             print('Test')
             oracle_conn().commit
 
-        hent_data_fra_oracle = python_operator(
+        python_operator(
             dag=dag,
             name="ssb_fp_hent_data_fra_oracle",
             repo="navikt/team_familie_airflow_dags",
