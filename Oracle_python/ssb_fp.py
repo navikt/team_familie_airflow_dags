@@ -13,7 +13,9 @@ def hent_data_fra_oracle():
           sql_query = f"select count(1) from vfam_fp_sp_ssb_2024_m"
           cursor.execute(sql_query)
           print(sql_query)
-          for row in cursor:
+
+          rows = cursor.fetchone()
+          for row in rows:
              print(row)
           conn.commit()
 
