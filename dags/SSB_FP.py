@@ -6,6 +6,7 @@ from dataverk_airflow import python_operator
 from airflow.decorators import task
 from kubernetes import client
 from Oracle_python import ssb_fp
+from utils.db.oracle_conn import oracle_conn
 
 branch = Variable.get("branch")
 
@@ -40,6 +41,10 @@ with DAG(
          }
         )
     def hent_data_fra_oracle():
+        with oracle_conn().cursor() as cur:
+            print('Test')
+            oracle_conn().commit
+
         hent_data_fra_oracle = python_operator(
             dag=dag,
             name="ssb_fp_hent_data_fra_oracle",
