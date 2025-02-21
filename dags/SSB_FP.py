@@ -2,7 +2,8 @@ from airflow.models import DAG, Variable
 from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id
 from airflow.utils.dates import datetime, timedelta
 from operators.slack_operator import slack_info, slack_error
-from airflow.operators.python_operator import PythonOperator
+from dataverk_airflow import python_operator
+from airflow.decorators import task
 from kubernetes import client
 from Oracle_python import ssb_fp
 
@@ -22,12 +23,6 @@ default_args = {
     'on_failure_callback': slack_error
     }
 
-executor_config = {
-            "pod_override": client.V1Pod(
-                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(allowlist)})
-            )
-        }
-
 with DAG(
     dag_id = 'SSB_FP', 
     description = 'SSB dag for foreldrepenger',
@@ -37,18 +32,26 @@ with DAG(
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
-    ssb_fp_hent_data_fra_oracle = PythonOperator(
-        dag=dag,
-        name="ssb_fp_hent_data_fra_oracle",
-        repo="navikt/team_familie_airflow_dags",
-        script_path="Oracle_python/ssb_fp.py",
-        branch=branch,
-        allowlist=allowlist,
-        resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
-        slack_channel=Variable.get("slack_error_channel"),
-        executor_config=executor_config
-    )
+    @task(
+         executor_config={
+            "pod_override": client.V1Pod(
+               metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
+            )
+         }
+        )
+    def hent_data_fra_oracle():
+        hent_data_fra_oracle = python_operator(
+            dag=dag,
+            name="ssb_fp_hent_data_fra_oracle",
+            repo="navikt/team_familie_airflow_dags",
+            script_path="Oracle_python/ssb_fp.py",
+            branch=branch,
+            allowlist=allowlist,
+            resources=client.V1ResourceRequirements(
+                requests={"memory": "4G"},
+                limits={"memory": "4G"}),
+            slack_channel=Variable.get("slack_error_channel")
+        )
+    ssb_fp_hent_data_fra_oracle = hent_data_fra_oracle()
 
 ssb_fp_hent_data_fra_oracle
