@@ -44,8 +44,9 @@ with DAG(
         with oracle_conn().cursor() as cur:
             print('Test')
             oracle_conn().commit
+    ssb_fp_hent_data_fra_oracle = hent_data_fra_oracle()
 
-        python_operator(
+    test_connect_oracle = python_operator(
             dag=dag,
             name="ssb_fp_hent_data_fra_oracle",
             repo="navikt/team_familie_airflow_dags",
@@ -55,8 +56,8 @@ with DAG(
             resources=client.V1ResourceRequirements(
                 requests={"memory": "4G"},
                 limits={"memory": "4G"}),
-            slack_channel=Variable.get("slack_error_channel")
+            slack_channel=Variable.get("slack_error_channel"),
+            requirements_path="Oracle_python/requirements.txt"
         )
-    ssb_fp_hent_data_fra_oracle = hent_data_fra_oracle()
 
-ssb_fp_hent_data_fra_oracle
+ssb_fp_hent_data_fra_oracle >> test_connect_oracle
