@@ -1,7 +1,7 @@
 from felles_metoder.felles_metoder import oracle_secrets
 import oracledb, os, json
 
-def hent_data_fra_oracle_fp():
+def hent_data_fra_oracle():
   print('Test1')
   oracle_info = oracle_secrets()
   print('Test2')
@@ -21,4 +21,4 @@ def hent_data_fra_oracle_fp():
           conn.commit()
 
 if __name__ == "__main__":
-   hent_data_fra_oracle_fp
+   hent_data_fra_oracle()

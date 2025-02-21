@@ -32,23 +32,9 @@ with DAG(
     schedule_interval = None,#'0 0 5 * *' , # 5te hver måned,
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
-
-    @task(
-         executor_config={
-            "pod_override": client.V1Pod(
-               metadata=client.V1ObjectMeta(annotations={"allowlist":  ",".join(allowlist)})
-            )
-         }
-        )
-    def hent_data_fra_oracle():
-        with oracle_conn().cursor() as cur:
-            print('Test')
-            oracle_conn().commit
-    test_connect_oracle = hent_data_fra_oracle()
-
-    hent_data_fra_oracle_task = python_operator(
+    hent_data_fra_oracle_fp_task = python_operator(
             dag=dag,
-            name="hent_data_fra_oracle_task",
+            name="hent_data_fra_oracle_fp",
             repo="navikt/team_familie_airflow_dags",
             script_path="Oracle_python/ssb_fp.py",
             branch=branch,
@@ -60,4 +46,4 @@ with DAG(
             requirements_path="Oracle_python/requirements.txt"
         )
 
-    test_connect_oracle >> hent_data_fra_oracle_task
+hent_data_fra_oracle_fp_task
