@@ -24,7 +24,7 @@ def hent_data_fra_oracle():
 
             #koble til sftp:
             sftpkey = os.getenv('SFTPKEY')
-            keyfile = StringIO(oracle_info['sftpkey'])
+            keyfile = StringIO(sftpkey)
             mykey = paramiko.RSAKey.from_private_key(keyfile, password=None)
             #Open a transport
             host,port = "a01drvl099.adeo.no",22
