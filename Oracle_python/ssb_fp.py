@@ -35,7 +35,6 @@ def hent_data_fra_oracle():
             with paramiko.SFTPClient.from_transport(transport) as sftp:
                 print("connected") #Test
                 print(sftp.get_channel()) #Test
-                sftp.get(f'./inbound/kildefiler/bidrag/BIDRAG_BERM_M2024{i}', f'../data/BIDRAG_BERM_M2024{i}')
                 print(sftp.listdir(path='.')) #Test
 
                 #Konvert data from database to csv format
