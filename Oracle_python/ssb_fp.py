@@ -38,7 +38,7 @@ def hent_data_fra_oracle():
                 print(sftp.listdir(path='.')) #Test
 
                 #Konvert data from database to csv format
-                with open("test_fp.csv", "w") as text_file:
+                with open("./inbound/kildefiler/bidrag/test_fp.csv", "w") as text_file:
                     text_file.write(df.to_csv(index=False))
 
                 # Close sftp
