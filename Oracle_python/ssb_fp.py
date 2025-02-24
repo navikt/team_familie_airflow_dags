@@ -17,8 +17,9 @@ def hent_data_fra_oracle():
             print(sql_query) #Test
             #cursor.execute(sql_query)
             #Konvert resultat av sql til Pandas DataFrame
-            odf = cursor.connection.fetch_df_all(statement=sql_query, arraysize=1000)
-            df = pd.api.interchange.from_dataframe(odf)
+            #odf = cursor.connection.fetch_df_all(statement=sql_query, arraysize=1000)
+            #df = pd.api.interchange.from_dataframe(odf)
+            df = pd.read_sql(sql_query, conn)
             
 
             #koble til sftp:
