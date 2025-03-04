@@ -6,7 +6,6 @@ from airflow.providers.google.cloud.transfers.oracle_to_gcs import OracleToGCSOp
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDeleteOperator
 from datetime import datetime
-import oracledb
 
 settings = Variable.get("oracle_table", deserialize_json=True)
 
@@ -32,7 +31,7 @@ def oracle_to_bigquery(
         export_format="csv",
         executor_config={
             "pod_override": k8s.V1Pod(
-                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "dmv09-scan.adeo.no:1521"})
+                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "dmv09-scan.adeo.no"})
             )
         }
     )
