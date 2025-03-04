@@ -6,6 +6,7 @@ from airflow.providers.google.cloud.transfers.oracle_to_gcs import OracleToGCSOp
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDeleteOperator
 from datetime import datetime
+from utils.db.oracle_conn import oracle_conn
 
 settings = Variable.get("oracle_table", deserialize_json=True)
 
@@ -22,7 +23,7 @@ def oracle_to_bigquery(
 
     oracle_to_bucket = OracleToGCSOperator(
         task_id=f"{oracle_table}-oracle-to-bucket",
-        oracle_conn_id=oracle_con_id,
+        oracle_conn_id=oracle_conn(), #oracle_con_id,
         gcp_conn_id=gcp_con_id,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
         sql=sql,
