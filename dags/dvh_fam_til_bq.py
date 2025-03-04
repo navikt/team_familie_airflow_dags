@@ -25,7 +25,7 @@ def oracle_to_bigquery(
 
     oracle_to_bucket = OracleToGCSOperator(
         task_id=f"{oracle_table}-oracle-to-bucket",
-        oracle_conn_id=oracle_con, #oracle_con_id,
+        oracle_conn_id=oracle_con_id,
         gcp_conn_id=gcp_con_id,
         impersonation_chain=f"{os.getenv('TEAM')}@knada-gcp.iam.gserviceaccount.com",
         sql=sql,
@@ -66,7 +66,7 @@ with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule='0 
         tabellnavn = v["tabellnavn"]
         schema = v["schema"]
         agg_fam = oracle_to_bigquery(
-            oracle_con_id="oracle_con",
+            oracle_con_id=oracle_con,
             oracle_table= f"{schema}.{tabellnavn}", # oracle_table hentes fra airflow->admin->variables. Det går sjappere å endre tabellnavn der enn å gjøre det i selv dagen!    "agg_fam_bt_eos_kpi", 
             gcp_con_id="google_con_different_project",
             bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{tabellnavn}",
