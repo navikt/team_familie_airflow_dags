@@ -6,9 +6,6 @@ from airflow.providers.google.cloud.transfers.oracle_to_gcs import OracleToGCSOp
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
 from airflow.contrib.operators.gcs_delete_operator import GoogleCloudStorageDeleteOperator
 from datetime import datetime
-from utils.db.oracle_conn import oracle_conn
-
-oracle_con = oracle_conn()
 
 settings = Variable.get("oracle_table", deserialize_json=True)
 
@@ -34,7 +31,7 @@ def oracle_to_bigquery(
         export_format="csv",
         executor_config={
             "pod_override": k8s.V1Pod(
-                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "dmv09-scan.adeo.no"})
+                metadata=k8s.V1ObjectMeta(annotations={"allowlist": "dm08-scan.adeo.no:1521"})
             )
         }
     )
@@ -66,7 +63,7 @@ with DAG('DVH_FAM_Til_BigQuery', start_date=datetime(2023, 11, 29), schedule='0 
         tabellnavn = v["tabellnavn"]
         schema = v["schema"]
         agg_fam = oracle_to_bigquery(
-            oracle_con_id=oracle_con,
+            oracle_con_id="oracle_con",
             oracle_table= f"{schema}.{tabellnavn}", # oracle_table hentes fra airflow->admin->variables. Det går sjappere å endre tabellnavn der enn å gjøre det i selv dagen!    "agg_fam_bt_eos_kpi", 
             gcp_con_id="google_con_different_project",
             bigquery_dest_uri=f"dv-familie-prod-17e7.dvh_fam.{tabellnavn}",
