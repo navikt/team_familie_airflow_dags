@@ -33,13 +33,10 @@ v_periode_type = settings["periode_type"]
 
 periode_fom, periode_tom, max_vedtaksdato, periode_type  = None, None, None, None
 
-periode = get_periode()
-max_vedtaks_dato = get_siste_dag_i_perioden()
-
-if v_periode_fom is None:
-    periode_fom = periode
-    periode_tom = periode
-    max_vedtaksdato = max_vedtaks_dato
+if v_periode_fom == '':
+    periode_fom = get_periode()
+    periode_tom = get_periode()
+    max_vedtaksdato = get_siste_dag_i_perioden()
     periode_type = 'M'
 else:
     periode_fom = v_periode_fom
