@@ -1,6 +1,7 @@
 import datetime, os, json
 from os import getenv
 from google.cloud import secretmanager
+import calendar
 
 def get_periode():
     """
@@ -13,6 +14,12 @@ def get_periode():
     lastMonth = first - datetime.timedelta(days=1) # dato for siste dag i tidligere måneden
 
     return lastMonth.strftime("%Y%m") # henter bare aar og maaned
+
+def get_siste_dag_i_perioden():
+    today = datetime.datetime.now()
+    last_day = calendar.monthrange(today.year, today.month)[1]
+    return today.replace(day=last_day, hour=0, minute=0, second=0).strftime('%Y%m%d')
+
 
 
 def set_secrets_as_envs():
