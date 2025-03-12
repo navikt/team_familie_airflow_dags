@@ -37,15 +37,16 @@ periode = get_periode()
 max_vedtaks_dato = get_siste_dag_i_perioden()
 
 if v_periode_fom is None:
-    periode_fom == periode
-    periode_tom == periode
-    max_vedtaksdato == max_vedtaks_dato
-    periode_type == 'M'
+    periode_fom = periode
+    periode_tom = periode
+    max_vedtaksdato = max_vedtaks_dato
+    periode_type = 'M'
 else:
-    periode_fom == v_periode_fom
-    periode_tom ==v_periode_fom
-    max_vedtaksdato == v_max_vedtaksdato
-    periode_type == 'M'
+    periode_fom = v_periode_fom
+    periode_tom = v_periode_fom
+    max_vedtaksdato = v_max_vedtaksdato
+    periode_type = 'M'
+
 
 # Bygger parameter med logging, modeller og miljø
 settings = Variable.get("dbt_bb_schema", deserialize_json=True)
