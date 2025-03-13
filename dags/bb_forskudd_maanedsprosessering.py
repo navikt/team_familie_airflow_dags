@@ -4,7 +4,7 @@ from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from kubernetes import client
-from felles_metoder.felles_metoder import get_periode, get_siste_dag_i_perioden
+from felles_metoder.felles_metoder import get_periode, get_siste_dag_i_forrige_maaned()
 from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id,r_oracle_conn_id
 
 miljo = Variable.get('miljo')
@@ -36,7 +36,7 @@ periode_fom, periode_tom, max_vedtaksdato, periode_type  = None, None, None, Non
 if v_periode_fom == '':
     periode_fom = get_periode()
     periode_tom = get_periode()
-    max_vedtaksdato = get_siste_dag_i_perioden()
+    max_vedtaksdato = get_siste_dag_i_forrige_maaned()
     periode_type = 'M'
 else:
     periode_fom = v_periode_fom
