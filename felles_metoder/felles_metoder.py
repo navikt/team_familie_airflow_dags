@@ -2,6 +2,9 @@ import datetime, os, json
 from os import getenv
 from google.cloud import secretmanager
 import calendar
+import datetime
+import calendar
+from dateutil.relativedelta import relativedelta
 
 def get_periode():
     """
@@ -15,10 +18,14 @@ def get_periode():
 
     return lastMonth.strftime("%Y%m") # henter bare aar og maaned
 
-def get_siste_dag_i_perioden():
+
+def get_siste_dag_i_forrige_maaned():
     today = datetime.datetime.now()
-    last_day = calendar.monthrange(today.year, today.month)[1]
-    return today.replace(day=last_day, hour=0, minute=0, second=0).strftime('%Y%m%d')
+    first_day_of_this_month = today.replace(day=1)
+    last_day_of_last_month = first_day_of_this_month - datetime.timedelta(days=1)
+    last_day = last_day_of_last_month.day
+    return last_day_of_last_month.replace(day=last_day, hour=0, minute=0, second=0).strftime('%Y%m%d')
+
 
 
 
