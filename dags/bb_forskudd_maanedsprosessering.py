@@ -25,24 +25,27 @@ default_args = {
     }
 
 # Bygger parameter med logging, modeller og miljø
-settings = Variable.get("periode_variabler", deserialize_json=True)
+settings = Variable.get("bb_forskudd_variabler", deserialize_json=True)
 v_periode_fom = settings["periode_fom"]
 v_periode_fom = settings["periode_tom"]
 v_max_vedtaksdato = settings["max_vedtaksdato"]
 v_periode_type = settings["periode_type"]
+v_gyldig_flagg = settings["gyldig_flagg"]
 
-periode_fom, periode_tom, max_vedtaksdato, periode_type  = None, None, None, None
+periode_fom, periode_tom, max_vedtaksdato, periode_type, gyldig_flagg  = None, None, None, None, None
 
 if v_periode_fom == '':
     periode_fom = get_periode()
     periode_tom = get_periode()
     max_vedtaksdato = get_siste_dag_i_forrige_maaned()
     periode_type = 'M'
+    gyldig_flagg = 1
 else:
     periode_fom = v_periode_fom
     periode_tom = v_periode_fom
     max_vedtaksdato = v_max_vedtaksdato
-    periode_type = 'M'
+    periode_type = v_periode_type
+    gyldig_flagg = v_gyldig_flagg
 
 
 # Bygger parameter med logging, modeller og miljø
@@ -79,7 +82,7 @@ with DAG(
         repo='navikt/dvh_fam_bb_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select BB_maanedsprosessering.*  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}}}' """,
+        dbt_command=f"""run --select BB_maanedsprosessering.*  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
         allowlist=allowlist, 
         db_schema=v_schema
     )
