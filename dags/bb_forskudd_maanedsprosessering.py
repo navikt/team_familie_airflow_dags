@@ -27,7 +27,7 @@ default_args = {
 # Bygger parameter med logging, modeller og miljø
 settings = Variable.get("bb_forskudd_variabler", deserialize_json=True)
 v_periode_fom = settings["periode_fom"]
-v_periode_fom = settings["periode_tom"]
+v_periode_tom = settings["periode_tom"]
 v_max_vedtaksdato = settings["max_vedtaksdato"]
 v_periode_type = settings["periode_type"]
 v_gyldig_flagg = settings["gyldig_flagg"]
@@ -42,7 +42,7 @@ if v_periode_fom == '':
     gyldig_flagg = 1
 else:
     periode_fom = v_periode_fom
-    periode_tom = v_periode_fom
+    periode_tom = v_periode_tom
     max_vedtaksdato = v_max_vedtaksdato
     periode_type = v_periode_type
     gyldig_flagg = v_gyldig_flagg
