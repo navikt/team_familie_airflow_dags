@@ -58,7 +58,7 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = "Starter månedsprosessering {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader! :rocket:"
+            message = f"Starter månedsprosessering {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader! :rocket:"
         )
 
     start_alert = notification_start()
@@ -83,7 +83,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = "Måndedsprosessering {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader fullført! :tada: :tada:" #TODO
+            message = f"Måndedsprosessering {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader fullført! :tada: :tada:" #TODO
         )
 
     slutt_alert = notification_end()
