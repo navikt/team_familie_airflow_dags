@@ -29,13 +29,16 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 v_periode = settings["periode"]
+v_gyldig_flagg = settings["gyldig_flagg"]
 
-periode = None #Initialize variabel
+periode, gyldig_flagg = None, None #Initialize variabler
 
 if v_periode == '':
     periode = get_periode()
+    gyldig_flagg = 1 #Default verdi
 else:
     periode = v_periode
+    gyldig_flagg = v_gyldig_flagg
 
 with DAG(
     dag_id = 'ts_maanedsprosessering',
@@ -66,7 +69,7 @@ with DAG(
         repo='navikt/dvh_fam_ts_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select TS_maanedsprosessering_v2.*  --vars '{{"periode":{periode}}}' """,
+        dbt_command=f"""run --select TS_maanedsprosessering_v2.*  --vars '{{"periode":{periode}, "gyldig_flagg":{gyldig_flagg}}}' """,
         allowlist=allowlist, 
         db_schema=v_schema
     )
