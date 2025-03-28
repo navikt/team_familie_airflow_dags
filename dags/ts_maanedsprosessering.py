@@ -66,7 +66,7 @@ with DAG(
         repo='navikt/dvh_fam_ts_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select TS_maanedsprosessering.*  --vars '{{"periode":{periode}}}' """,
+        dbt_command=f"""run --select TS_maanedsprosessering_v2.*  --vars '{{"periode":{periode}}}' """,
         allowlist=allowlist, 
         db_schema=v_schema
     )
