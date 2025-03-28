@@ -5,17 +5,11 @@ from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from kubernetes import client
 from felles_metoder.felles_metoder import get_periode, get_siste_dag_i_forrige_maaned
-from allowlists.allowlist import slack_allowlist, dev_oracle_conn_id, prod_oracle_conn_id,r_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, sftp_ip
 
 miljo = Variable.get('miljo')
 
-allowlist = []
-if miljo == 'Prod':
-    allowlist.extend(prod_oracle_conn_id)
-elif miljo == 'test_r':
-    allowlist.extend(r_oracle_conn_id)
-else:
-    allowlist.extend(dev_oracle_conn_id)
+allowlist = [prod_oracle_conn_id, sftp_ip]
 
 default_args = {
     'owner': 'Team-Familie', 

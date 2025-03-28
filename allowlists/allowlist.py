@@ -8,6 +8,7 @@ prod_aiven_conn_ip = ['nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-
 r_aiven_conn_ip = ['nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-kafka-nav-prod.aivencloud.com:26487']
 dev_aiven_conn_ip = ['nav-dev-kafka-nav-dev.aivencloud.com:26484', 'nav-dev-kafka-nav-dev.aivencloud.com:26487']
 
+sftp_ip = ['a01drvl099.adeo.no:22']
 
 prod_kafka = prod_oracle_conn_id + prod_aiven_conn_ip
 r_kafka = r_oracle_conn_id + r_aiven_conn_ip
