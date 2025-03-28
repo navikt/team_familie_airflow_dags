@@ -23,12 +23,19 @@ default_args = {
     'on_failure_callback': slack_error
     }
 
-periode = get_periode() 
-
 # Bygger parameter med logging, modeller og miljø
 settings = Variable.get("dbt_ef_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
+
+v_periode = settings["periode"]
+
+periode = None #Initialize variabel
+
+if v_periode == '':
+    periode = get_periode()
+else:
+    periode = v_periode
 
 with DAG(
     dag_id = 'ts_maanedsprosessering',
