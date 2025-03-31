@@ -76,6 +76,16 @@ with DAG(
 
 
     # Task-level params take precedence over DAG-level params, and user-supplied params (when triggering the DAG) take precedence over task-level params.
+    @task(
+        executor_config={
+            "pod_override": client.V1Pod(
+                metadata=client.V1ObjectMeta(annotations={"allowlist": ",".join(slack_allowlist)})
+            )
+        }
+    )
+    def get_params(**kwargs) -> list[str]:
+        params: ParamsDict = kwargs["params"]
+        print(params['periode'])
 
     ts_dbt_insert = create_dbt_operator(
         dag=dag,
