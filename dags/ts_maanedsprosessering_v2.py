@@ -38,28 +38,34 @@ with DAG(
     description='DAG som kjører insert i fag_ts_mottaker basert på periode',
     default_args=default_args,
     start_date=datetime(2024, 10, 4),
-    schedule_interval = '0 0 5 * *' , # Den 5. hvert måned
+    schedule_interval='0 0 5 * *',  # Den 5. hvert måned
     catchup=False,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
     # Legger til DAG-nivå parametere
-    params = { 
+    params={ 
         "periode": None,  # Standardverdi er tom, vil bli satt dynamisk hvis tom
         "gyldig_flagg": None  # Standardverdi er tom, vil bli satt dynamisk hvis tom
     },   
 ) as dag:
 
     # Debugging: Logg parametere
-    logger.info(f"dag.params: {dag.params}")
+    logger.info(f"dag.params mottatt: {dag.params}")
 
     # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
     periode = dag.params.get("periode")
     if not periode:  # Sjekker om periode er None eller tom
+        logger.info("Parameter 'periode' er ikke satt eller tom. Bruker fallback til get_periode().")
         periode = get_periode()  # Standardverdi
 
     gyldig_flagg = dag.params.get("gyldig_flagg")
     if not gyldig_flagg:  # Sjekker om gyldig_flagg er None eller tom
+        logger.info("Parameter 'gyldig_flagg' er ikke satt eller tom. Bruker fallback til 1.")
         gyldig_flagg = 1  # Standardverdi
     else:
-        gyldig_flagg = int(gyldig_flagg)  # Konverterer til heltall
+        try:
+            gyldig_flagg = int(gyldig_flagg)  # Konverterer til heltall
+        except ValueError:
+            logger.error(f"Ugyldig verdi for gyldig_flagg: {gyldig_flagg}. Bruker fallback til 1.")
+            gyldig_flagg = 1
 
     @task(
         executor_config={
