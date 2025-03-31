@@ -40,8 +40,8 @@ with DAG(
     description='DAG som kjører insert i fag_ts_mottaker basert på periode',
     default_args=default_args,
     start_date=datetime(2024, 10, 4),
-    schedule_interval='*/10 * * * *',  # Hvert 10. minutt for test av mangel på manuell parameter for automatisk kjøring
-    catchup=True,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
+    schedule_interval='*/15 * * * *',  # Hvert 15. minutt for test av mangel på manuell parameter for automatisk kjøring
+    catchup=False,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
     params=dag_params  # Legger til DAG-nivå parametere
 ) as dag:
 
