@@ -33,12 +33,6 @@ settings = Variable.get("dbt_ef_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
-# Definerer DAG-nivå standardverdier for periode og gyldig_flagg
-dag_params = {
-    "periode": None,  # Standardverdi er tom, vil bli satt dynamisk hvis tom
-    "gyldig_flagg": None  # Standardverdi er tom, vil bli satt dynamisk hvis tom
-}
-
 with DAG(
     dag_id='ts_maanedsprosessering_v2',
     description='DAG som kjører insert i fag_ts_mottaker basert på periode',
@@ -46,10 +40,14 @@ with DAG(
     start_date=datetime(2024, 10, 4),
     schedule_interval='*/15 * * * *',  # Hvert 15. minutt for test av mangel på manuell parameter for automatisk kjøring
     catchup=False,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
-    params=dag_params  # Legger til DAG-nivå parametere
+    # Legger til DAG-nivå parametere
+    params = { 
+        "periode": None,  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+        "gyldig_flagg": None  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+    },   
 ) as dag:
 
-    # Debugging: Log the parameters
+    # Debugging: Logg parametere
     logger.info(f"dag.params: {dag.params}")
 
     # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
