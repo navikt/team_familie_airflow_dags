@@ -15,6 +15,7 @@ elif miljo == 'test_r':
     allowlist.extend(r_oracle_conn_id)
 else:
     allowlist.extend(dev_oracle_conn_id)
+    miljo = 'dev'
 
 default_args = {
     'owner': 'Team-Familie', 
@@ -32,8 +33,8 @@ v_schema = settings["schema"]
 
 # Definerer DAG-nivå standardverdier for periode og gyldig_flagg
 dag_params = {
-    "periode": None,  # Standardverdi er None, vil bli satt dynamisk hvis tom
-    "gyldig_flagg": None  # Standardverdi er None, vil bli satt dynamisk hvis tom
+    "periode": "",  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+    "gyldig_flagg": ""  # Standardverdi er tom, vil bli satt dynamisk hvis tom
 }
 
 with DAG(
@@ -46,16 +47,17 @@ with DAG(
     params=dag_params  # Legger til DAG-nivå parametere
 ) as dag:
 
-    # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
-    if dag.params.get("periode") is None or dag.params.get("periode") == '':
-        periode = get_periode()
-    else:
-        periode = dag.params.get("periode")
+    # Debugging: Log the parameters
+    print(f"dag.params: {dag.params}")
 
-    if dag.params.get("gyldig_flagg") is None or dag.params.get("gyldig_flagg") == '':
+    # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
+    periode = dag.params.get("periode")
+    if not periode:  # Sjekker om periode er None eller tom
+        periode = get_periode()  # Standardverdi
+
+    gyldig_flagg = dag.params.get("gyldig_flagg")
+    if gyldig_flagg is None:  # Sjekker eksplisitt for None
         gyldig_flagg = 1  # Standardverdi
-    else:
-        gyldig_flagg = dag.params.get("gyldig_flagg")
 
     @task(
         executor_config={
@@ -66,7 +68,7 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message=f"Starter månedsprosessering {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader! :rocket:"
+            message=f"Starter månedsprosessering v2 {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader for {miljo}! :rocket:"
         )
 
     start_alert = notification_start()
@@ -91,7 +93,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message=f"Måndedsprosessering {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader fullført! :tada: :tada:"
+            message=f"Måndedsprosessering v2 {periode} med gyldig_flagg={gyldig_flagg} av tilleggsstønader fullført! :tada: :tada:"
         )
 
     slutt_alert = notification_end()
