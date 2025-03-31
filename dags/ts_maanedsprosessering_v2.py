@@ -33,6 +33,36 @@ settings = Variable.get("dbt_ef_schema_v2", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
+# Oppgave for å lese og bruke parametere. Se følgende dokumentasjon under for hvorfor:
+"""DAG-level parameters are the default values passed on to tasks. These should not be confused with values manually provided through the UI form or CLI, 
+which exist solely within the context of a DagRun and a TaskInstance. This distinction is crucial for TaskFlow DAGs, which may include logic within the with DAG(...) as dag: block. 
+In such cases, users might try to access the manually-provided parameter values using the dag object, but this will only ever contain the default values. 
+To ensure that the manually-provided values are accessed, use a template variable such as params or ti within your task.
+https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/params.html"""
+@task
+def process_params(params):
+    # Les parametere fra TaskInstance (ikke dag.params)
+    periode = params.get("periode")
+    if not periode:  # Sjekker om periode er None eller tom
+        logger.info("Parameter 'periode' er ikke satt eller tom. Bruker fallback til get_periode().")
+        periode = get_periode()  # Standardverdi
+    else:
+        logger.info(f"Parameter 'periode' satt til: {periode}")
+
+    gyldig_flagg = params.get("gyldig_flagg")
+    try:
+        # Konverterer til heltall hvis gyldig_flagg er satt
+        gyldig_flagg = int(gyldig_flagg) if gyldig_flagg is not None else 1
+        if gyldig_flagg != 1:
+            logger.info(f"Parameter 'gyldig_flagg' satt til: {gyldig_flagg}")
+        else:
+            logger.info("Parameter 'gyldig_flagg' er standardverdi 1.")
+    except ValueError:
+        logger.error(f"Ugyldig verdi for gyldig_flagg: {gyldig_flagg}. Bruker fallback til 1.")
+        gyldig_flagg = 1
+
+    return periode, gyldig_flagg
+
 with DAG(
     dag_id='ts_maanedsprosessering_v2',
     description='DAG som kjører insert i fag_ts_mottaker basert på periode',
@@ -40,34 +70,14 @@ with DAG(
     start_date=datetime(2024, 10, 4),
     schedule_interval='0 0 5 * *',  # Den 5. hvert måned
     catchup=False,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
-    # Legger til DAG-nivå parametere
     params={ 
-        "periode": "202412",  # Standardverdi er tom, vil bli satt dynamisk hvis tom
-        "gyldig_flagg": "0"  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+        "periode": None,  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+        "gyldig_flagg": 1  # Standardverdi er 1
     },   
 ) as dag:
 
-    # Debugging: Logg parametere
-    logger.info(f"Full dag.params: {dag.params}")
-    logger.info(f"Parameter 'periode' mottatt: {dag.params.get('periode')}")
-    logger.info(f"Parameter 'gyldig_flagg' mottatt: {dag.params.get('gyldig_flagg')}")
-
-    # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
-    periode = dag.params.get("periode")
-    if not periode:  # Sjekker om periode er None eller tom
-        logger.info("Parameter 'periode' er ikke satt eller tom. Bruker fallback til get_periode().")
-        periode = get_periode()  # Standardverdi
-
-    gyldig_flagg = dag.params.get("gyldig_flagg")
-    if not gyldig_flagg:  # Sjekker om gyldig_flagg er None eller tom
-        logger.info("Parameter 'gyldig_flagg' er ikke satt eller tom. Bruker fallback til 1.")
-        gyldig_flagg = 1  # Standardverdi
-    else:
-        try:
-            gyldig_flagg = int(gyldig_flagg)  # Konverterer til heltall
-        except ValueError:
-            logger.error(f"Ugyldig verdi for gyldig_flagg: {gyldig_flagg}. Bruker fallback til 1.")
-            gyldig_flagg = 1
+    # Prosesser parametere
+    periode, gyldig_flagg = process_params(dag.params)
 
     @task(
         executor_config={
@@ -108,4 +118,4 @@ with DAG(
 
     slutt_alert = notification_end()
 
-start_alert >> ts_dbt_insert >> slutt_alert
+    start_alert >> ts_dbt_insert >> slutt_alert
