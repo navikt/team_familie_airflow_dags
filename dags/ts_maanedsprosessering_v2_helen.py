@@ -71,6 +71,7 @@ with DAG(
     start_date=datetime(2025, 3, 31),
     schedule_interval=None,  # Den 5. hvert måned
     catchup=False,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
+    params={"periode": Param(6, type="integer"), "gyldig_flagg": Param(2, type="integer")}
 ) as dag:
 
 
@@ -82,8 +83,7 @@ with DAG(
         repo='navikt/dvh_fam_ts_dbt',
         script_path='airflow/dbt_run.py',
         branch=v_branch,
-        params={"periode": Param(6, type="integer"), "gyldig_flagg": Param(2, type="integer")},
-        dbt_command=f"""run --select TS_maanedsprosessering_v2.* --vars '{{"periode":"{periode}", "gyldig_flagg":{gyldig_flagg}}}' """,
+        dbt_command=f"""run --select TS_maanedsprosessering_v2.* --vars '{{"periode": {params['periode']}, "gyldig_flagg": {params['gyldig_flagg']}}}' """,
         allowlist=allowlist,
         db_schema=v_schema
     )
