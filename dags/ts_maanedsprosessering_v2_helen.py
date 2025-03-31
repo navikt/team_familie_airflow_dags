@@ -85,7 +85,7 @@ with DAG(
     )
     def show_params(**kwargs) -> None:
         params: ParamsDict = kwargs["params"]
-        print(f"This DAG was triggered with the following parameters:params['periode']")
+        print("This DAG was triggered with the following parameters:"+params['periode'])
 
     show_params=show_params()
 
