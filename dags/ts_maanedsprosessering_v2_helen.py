@@ -83,9 +83,9 @@ with DAG(
             )
         }
     )
-    def get_params(**kwargs) -> list[str]:
-        params: ParamsDict = kwargs["params"]
+    def get_params(params: dict):
         print(params['periode'])
+    get_params=get_params(params)
 
     ts_dbt_insert = create_dbt_operator(
         dag=dag,
