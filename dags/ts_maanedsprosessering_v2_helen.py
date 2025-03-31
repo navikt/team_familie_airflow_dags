@@ -100,4 +100,4 @@ with DAG(
         db_schema=v_schema
     )
 
-    show_params >> ts_dbt_insert
+    show_params
