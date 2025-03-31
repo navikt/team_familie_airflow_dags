@@ -29,7 +29,7 @@ default_args = {
     }
 
 # Bygger parameter med logging, modeller og miljø
-settings = Variable.get("dbt_ef_schema", deserialize_json=True)
+settings = Variable.get("dbt_ef_schema_v2", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
@@ -48,7 +48,9 @@ with DAG(
 ) as dag:
 
     # Debugging: Logg parametere
-    logger.info(f"dag.params mottatt: {dag.params}")
+    logger.info(f"Full dag.params: {dag.params}")
+    logger.info(f"Parameter 'periode' mottatt: {dag.params.get('periode')}")
+    logger.info(f"Parameter 'gyldig_flagg' mottatt: {dag.params.get('gyldig_flagg')}")
 
     # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
     periode = dag.params.get("periode")
