@@ -83,9 +83,11 @@ with DAG(
             )
         }
     )
-    def get_params(params: dict):
-        print(params['periode'])
-    get_params=get_params(params)
+    def show_params(**kwargs) -> None:
+        params: ParamsDict = kwargs["params"]
+        print(f"This DAG was triggered with the following parameters:\n\n{json.dumps(params, indent=4)}\n")
+
+    show_params=show_params()
 
     ts_dbt_insert = create_dbt_operator(
         dag=dag,
@@ -98,4 +100,4 @@ with DAG(
         db_schema=v_schema
     )
 
-    ts_dbt_insert
+    show_params >> ts_dbt_insert
