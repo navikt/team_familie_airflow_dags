@@ -6,6 +6,10 @@ from airflow.decorators import task
 from kubernetes import client
 from felles_metoder.felles_metoder import get_periode
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id, r_oracle_conn_id
+from airflow.utils.log.logging_mixin import LoggingMixin
+
+# Få tilgang til Airflows logger
+logger = LoggingMixin().log
 
 miljo = Variable.get('miljo')   
 allowlist = []
@@ -46,7 +50,7 @@ with DAG(
 ) as dag:
 
     # Debugging: Log the parameters
-    print(f"dag.params: {dag.params}")
+    logger.info(f"dag.params: {dag.params}")
 
     # Setter periode og gyldig_flagg basert på dag.params eller fallback-logikk
     periode = dag.params.get("periode")
