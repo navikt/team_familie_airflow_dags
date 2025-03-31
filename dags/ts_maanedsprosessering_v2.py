@@ -42,8 +42,8 @@ with DAG(
     catchup=False,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
     # Legger til DAG-nivå parametere
     params={ 
-        "periode": None,  # Standardverdi er tom, vil bli satt dynamisk hvis tom
-        "gyldig_flagg": None  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+        "periode": "202412",  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+        "gyldig_flagg": "0"  # Standardverdi er tom, vil bli satt dynamisk hvis tom
     },   
 ) as dag:
 
