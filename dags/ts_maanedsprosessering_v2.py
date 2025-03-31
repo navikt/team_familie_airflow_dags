@@ -28,13 +28,11 @@ default_args = {
 settings = Variable.get("dbt_ef_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
-#v_periode = settings["periode"]
-#v_gyldig_flagg = settings["gyldig_flagg"]
 
 # Definerer DAG-nivå standardverdier for periode og gyldig_flagg
 dag_params = {
-    "periode": "",  # Standardverdi er tom, vil bli satt dynamisk hvis tom
-    "gyldig_flagg": ""  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+    "periode": None,  # Standardverdi er tom, vil bli satt dynamisk hvis tom
+    "gyldig_flagg": None  # Standardverdi er tom, vil bli satt dynamisk hvis tom
 }
 
 with DAG(
@@ -42,8 +40,8 @@ with DAG(
     description='DAG som kjører insert i fag_ts_mottaker basert på periode',
     default_args=default_args,
     start_date=datetime(2024, 10, 4),
-    schedule_interval='0 0 5 * *',  # Den 5. hver måned
-    catchup=True,
+    schedule_interval='*/10 * * * *',  # Hvert 10. minutt for test av mangel på manuell parameter for automatisk kjøring
+    catchup=True,  # Endre til False hvis du ikke ønsker å kjøre oppsamlede kjøringer
     params=dag_params  # Legger til DAG-nivå parametere
 ) as dag:
 
@@ -56,8 +54,10 @@ with DAG(
         periode = get_periode()  # Standardverdi
 
     gyldig_flagg = dag.params.get("gyldig_flagg")
-    if gyldig_flagg is None:  # Sjekker eksplisitt for None
+    if not gyldig_flagg:  # Sjekker om gyldig_flagg er None eller tom
         gyldig_flagg = 1  # Standardverdi
+    else:
+        gyldig_flagg = int(gyldig_flagg)  # Konverterer til heltall
 
     @task(
         executor_config={
