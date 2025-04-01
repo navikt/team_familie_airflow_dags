@@ -15,8 +15,8 @@ allowlist = prod_oracle_conn_id + sftp_ip
 with DAG(
   dag_id = 'BB_historisk_data_sftp_oracle',
   description = 'Leser barnbidrag fil fra sfto server, transformerer data og så gjøre insert til en tabell i Oracle database',
-  start_date=datetime(2025, 3, 28),
-  schedule_interval= '0 0 2 * *',
+  start_date=datetime(2025, 4, 1),
+  schedule_interval= '0 0 3 * *',
   max_active_runs=1,
   catchup = False
 ) as dag:
@@ -30,25 +30,23 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = f'Lesing av barnbidrag data fra SFTP serveren til Oracle i {miljo} database starter nå! :rocket:'
+            message = f'Lesing av barnbidrag bis data fra SFTP serveren til Oracle i {miljo} database starter nå! :rocket:'
         )
 
     start_alert = notification_start()
 
-    bb_historisk_data = notebook_operator(
+    bb_bis_historisk_data = notebook_operator(
     dag = dag,
-    name = 'BB_historisk_data_kopiering',
+    name = 'BB_bis_historisk_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'BB/bb_bis_en_periode.ipynb',
     allowlist=allowlist,
     branch = branch,
-    #delete_on_finish= False,
     resources=client.V1ResourceRequirements(
         requests={'memory': '4G'},
         limits={'memory': '4G'}),
     slack_channel = Variable.get('slack_error_channel'),
     requirements_path="requirements.txt",
-    #image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
     log_output=False
     )
 
@@ -61,10 +59,10 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = f'Historisk barnbidrag data fra SFTP til Oracle i {miljo} database er vellykket! :tada: :tada:'
+            message = f'Historisk barnbidrag bis data fra SFTP til Oracle i {miljo} database er vellykket! :tada: :tada:'
         )
     slutt_alert = notification_end()
 
-start_alert >> bb_historisk_data >> slutt_alert
+start_alert >> bb_bis_historisk_data >> slutt_alert
 
 
