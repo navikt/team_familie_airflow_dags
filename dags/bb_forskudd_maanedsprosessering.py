@@ -5,11 +5,11 @@ from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from kubernetes import client
 from felles_metoder.felles_metoder import get_periode, get_siste_dag_i_forrige_maaned
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, sftp_ip
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id
 
 miljo = Variable.get('miljo')
 
-allowlist = prod_oracle_conn_id + sftp_ip
+allowlist = prod_oracle_conn_id 
 
 default_args = {
     'owner': 'Team-Familie', 
@@ -77,7 +77,7 @@ with DAG(
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
         dbt_command=f"""run --select BB_maanedsprosessering.*  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
-        allowlist=allowlist, 
+        allowlist=prod_oracle_conn_id, 
         db_schema=v_schema
     )
 

@@ -4,18 +4,13 @@ from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, sftp_ip
 
 miljo = Variable.get('miljo')
 branch = Variable.get("branch")
-allowlist = []
+allowlist = prod_oracle_conn_id + sftp_ip
 
-if miljo == 'Prod':
-    allowlist.extend(prod_oracle_conn_id)
-elif miljo == 'test_r':
-    allowlist.extend(r_oracle_conn_id)
-else:
-    allowlist.extend(dev_oracle_conn_id)
+
 
 with DAG(
   dag_id = 'BB_historisk_data_sftp_oracle',
