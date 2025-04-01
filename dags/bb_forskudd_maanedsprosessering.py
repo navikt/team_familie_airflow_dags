@@ -9,7 +9,7 @@ from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, sftp_ip
 
 miljo = Variable.get('miljo')
 
-allowlist = [prod_oracle_conn_id, sftp_ip]
+allowlist = prod_oracle_conn_id + sftp_ip
 
 default_args = {
     'owner': 'Team-Familie', 
