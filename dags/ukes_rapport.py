@@ -155,6 +155,10 @@ with DAG(
             from dvh_fam_pp.fam_pp_aktivitet_underkonto_mapping
         )
     """
+    # Antall TS meldinger patched siste uken
+    ts_md_ant_patchede_mldinger = """
+      SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE opprettet_tid != endret_tid AND endret_tid >= sysdate - 7
+    """
 
     with oracle_conn().cursor() as cur:
         kode67_soker_ant = cur.execute(kode67_soker).fetchone()[0]
@@ -163,9 +167,18 @@ with DAG(
         fp_ny_inntektskategori_ant = [str(x) for x in (cur.execute(fp_ny_inntektskategori).fetchone() or [])]
         fp_ny_aktivitet_ant = [str(x) for x in (cur.execute(fp_ny_aktivitet).fetchone() or [])]
         pp_nye_arbeidsforhold_ant = [str(x) for x in (cur.execute(pp_nye_arbeidsforhold).fetchone() or [])]
+        ts_md_ant_patchede_mldinger_ant = cur.execute(ts_md_ant_patchede_mldinger).fetchone()[0]
 
     # MÅ stå i riktig rekkefølge!
-    return [kode67_soker_ant,kode67_pleie_ant,fp_ikke_pakket_ut_ant,fp_ny_inntektskategori_ant,fp_ny_aktivitet_ant,pp_nye_arbeidsforhold_ant]
+    return [
+        kode67_soker_ant,
+        kode67_pleie_ant,
+        fp_ikke_pakket_ut_ant,
+        fp_ny_inntektskategori_ant,
+        fp_ny_aktivitet_ant,
+        pp_nye_arbeidsforhold_ant,
+        ts_md_ant_patchede_mldinger_ant,
+    ]
 
 
   @task(
@@ -186,6 +199,7 @@ with DAG(
       fp_ny_inntektskategori_ant,
       fp_ny_aktivitet_ant,
       pp_nye_arbeidsforhold_ant,
+      ts_md_ant_patchede_mldinger_ant,
     ] = kafka_last
     soker_antall_string = f"Antall kode67 søker PSB meldinger ikke pakket ut............{str(kode67_soker_ant)}"
     pleie_antall_string = f"Antall kode67 pleietrengende PSB meldinger ikke pakket ut...{str(kode67_pleie_ant)}"
@@ -193,6 +207,7 @@ with DAG(
     fp_ny_inntektskategori_string = f"FP ny inntektskategori......................................{str(fp_ny_inntektskategori_ant)}"
     fp_ny_aktivitet_string = f"FP ny aktivitet.............................................{str(fp_ny_aktivitet_ant)}"
     pp_nye_arbeidsforhold_string = f"PP nye arbeidsforhold.......................................{str(pp_nye_arbeidsforhold_ant)}"
+    ts_md_ant_patchede_mldinger_string = f"Antall TS meldinger patched siste døgn......................{str(ts_md_ant_patchede_mldinger_ant)}"
     konsumenter_summary = f"""
 *Ukesrapport*
 Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
@@ -204,6 +219,7 @@ Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
 {fp_ny_inntektskategori_string}
 {fp_ny_aktivitet_string}
 {pp_nye_arbeidsforhold_string}
+{ts_md_ant_patchede_mldinger_string}
 ```
 """
     # Slack melding med antall meldinger
@@ -211,7 +227,6 @@ Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
       message=f"{konsumenter_summary}",
       emoji=":newspaper:"
     )
-
 
   kafka_last = hent_kafka_last()
   post_til_info_slack = info_slack(kafka_last)
