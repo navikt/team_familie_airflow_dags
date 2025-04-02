@@ -3,12 +3,16 @@ from airflow.utils.dates import datetime
 from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
-from operators.slack_operator import slack_info
+from operators.slack_operator import slack_info, create_dbt_operator
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, sftp_ip
 
 miljo = Variable.get('miljo')
-branch = Variable.get("branch")
 allowlist = prod_oracle_conn_id + sftp_ip
+
+#Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_bb_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
 
 
 
@@ -41,7 +45,7 @@ with DAG(
     repo = 'navikt/dvh-fam-notebooks',
     nb_path = 'BB/bb_bis_en_periode.ipynb',
     allowlist=allowlist,
-    branch = branch,
+    branch = v_branch,
     resources=client.V1ResourceRequirements(
         requests={'memory': '4G'},
         limits={'memory': '4G'}),
@@ -49,6 +53,32 @@ with DAG(
     requirements_path="requirements.txt",
     log_output=False
     )
+
+    bb_berm_historisk_data = notebook_operator(
+    dag = dag,
+    name = 'BB_berm_historisk_data_kopiering',
+    repo = 'navikt/dvh-fam-notebooks',
+    nb_path = 'BB/bb_berm_en_periode.ipynb',
+    allowlist=allowlist,
+    branch = v_branch,
+    resources=client.V1ResourceRequirements(
+        requests={'memory': '4G'},
+        limits={'memory': '4G'}),
+    slack_channel = Variable.get('slack_error_channel'),
+    requirements_path="requirements.txt",
+    log_output=False
+    )
+
+    bb_historisk_data_wrangling = create_dbt_operator(
+     dag=dag,
+     name="historisk_bb_data_wrangling",
+     repo='navikt/dvh_fam_bb_dbt',
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select BB_historisk_data_trans.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
+ )
 
     @task(
         executor_config={
@@ -63,6 +93,6 @@ with DAG(
         )
     slutt_alert = notification_end()
 
-start_alert >> bb_bis_historisk_data >> slutt_alert
+start_alert >> bb_bis_historisk_data >> bb_berm_historisk_data >> bb_historisk_data_wrangling >> slutt_alert
 
 
