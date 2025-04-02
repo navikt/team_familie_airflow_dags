@@ -3,7 +3,8 @@ from airflow.utils.dates import datetime
 from dataverk_airflow import notebook_operator
 from airflow.decorators import task
 from kubernetes import client
-from operators.slack_operator import slack_info, create_dbt_operator
+from operators.slack_operator import slack_info
+from operators.dbt_operator import create_dbt_operator
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, sftp_ip
 
 miljo = Variable.get('miljo')
