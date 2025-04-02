@@ -40,8 +40,8 @@ with DAG(
             "bb_count": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1",
             "bt_count": "SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1",
             "ef_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1",
-            "ts_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE lastet_dato >= sysdate - 1",
-            "ts_fgsk_count": "SELECT COUNT(DISTINCT ekstern_behandling_id) FROM DVH_FAM_EF.fam_ts_fagsak WHERE lastet_dato >= sysdate - 1",
+            "ts_count_v2": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data_v2 WHERE lastet_dato >= sysdate - 1", #v2
+            "ts_fgsk_count_v2": "SELECT COUNT(DISTINCT ekstern_behandling_id) FROM DVH_FAM_EF.fam_ts_fagsak_v2 WHERE lastet_dato >= sysdate - 1", #v2
             "ks_count": "SELECT COUNT(*) FROM DVH_FAM_KS.fam_ks_meta_data WHERE lastet_dato >= sysdate - 1",
             "pp_count": "SELECT COUNT(*) FROM DVH_FAM_PP.fam_pp_meta_data WHERE lastet_dato >= sysdate - 1",
             "bs_count": "SELECT COUNT(*) FROM DVH_FAM_HM.brillestonad WHERE lastet_dato >= sysdate - 1",
@@ -151,17 +151,17 @@ with DAG(
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
-        bb_count_str = f"Antall mottatt {bb_grafana}............................{str(kafka_last['bb_count'])}" #TODO link
-        bs_count_str = f"Antall mottatt BS meldinger............................{str(kafka_last['bs_count'])}"
-        pp_count_str = f"Antall mottatt {pp_grafana}............................{str(kafka_last['pp_count'])}"
-        bt_count_str = f"Antall mottatt {bt_grafana}............................{str(kafka_last['bt_count'])}"
-        ef_count_str = f"Antall mottatt {ef_grafana}............................{str(kafka_last['ef_count'])}"
-        ts_count_math_str = f"Antall mottatt totale/pakket ut i fagsak TS meldinger..{str(kafka_last['ts_count'])}/{str(kafka_last['ts_fgsk_count'])}"
-        ks_count_str = f"Antall mottatt {ks_grafana}............................{str(kafka_last['ks_count'])}"
-        fp_sum_count_str = f"Antall mottatt summerte {fp_grafana}...................{str(kafka_last['fp_sum_count'])}"
-        fp_count_str = f"Antall mottatt FP meldinger............................{str(kafka_last['fp_count'])}" 
-        es_count_str = f"Antall mottatt ES meldinger............................{str(kafka_last['es_count'])}"
-        sp_count_str = f"Antall mottatt SP meldinger............................{str(kafka_last['sp_count'])}"
+        bb_count_str = f"Antall mottatt {bb_grafana}................................{str(kafka_last['bb_count'])}" #TODO link
+        bs_count_str = f"Antall mottatt BS meldinger................................{str(kafka_last['bs_count'])}"
+        pp_count_str = f"Antall mottatt {pp_grafana}................................{str(kafka_last['pp_count'])}"
+        bt_count_str = f"Antall mottatt {bt_grafana}................................{str(kafka_last['bt_count'])}"
+        ef_count_str = f"Antall mottatt {ef_grafana}................................{str(kafka_last['ef_count'])}"
+        ts_count_math_str = f"Antall mottatt totale/pakket ut i fagsak TS v2 meldinger...{str(kafka_last['ts_count_v2'])}/{str(kafka_last['ts_fgsk_count_v2'])}"
+        ks_count_str = f"Antall mottatt {ks_grafana}................................{str(kafka_last['ks_count'])}"
+        fp_sum_count_str = f"Antall mottatt summerte {fp_grafana}.......................{str(kafka_last['fp_sum_count'])}"
+        fp_count_str = f"Antall mottatt FP meldinger................................{str(kafka_last['fp_count'])}" 
+        es_count_str = f"Antall mottatt ES meldinger................................{str(kafka_last['es_count'])}"
+        sp_count_str = f"Antall mottatt SP meldinger................................{str(kafka_last['sp_count'])}"
 
         # Stringen må formateres sånn som dette for å se riktig ut, se bort fra merkelig tab indent i IDE
         konsumenter_summary = f"""
