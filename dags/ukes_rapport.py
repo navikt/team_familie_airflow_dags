@@ -157,7 +157,7 @@ with DAG(
     """
     # Antall TS meldinger patched siste uken
     ts_md_ant_patchede_mldinger = """
-      SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data WHERE opprettet_tid != endret_tid AND endret_tid >= sysdate - 7
+      SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data_v2 WHERE trunc(opprettet_tid,'Mi') != trunc(endret_tid,'Mi') AND endret_tid >= sysdate - 7
     """
 
     with oracle_conn().cursor() as cur:
@@ -207,7 +207,7 @@ with DAG(
     fp_ny_inntektskategori_string = f"FP ny inntektskategori......................................{str(fp_ny_inntektskategori_ant)}"
     fp_ny_aktivitet_string = f"FP ny aktivitet.............................................{str(fp_ny_aktivitet_ant)}"
     pp_nye_arbeidsforhold_string = f"PP nye arbeidsforhold.......................................{str(pp_nye_arbeidsforhold_ant)}"
-    ts_md_ant_patchede_mldinger_string = f"Antall TS meldinger patched siste døgn......................{str(ts_md_ant_patchede_mldinger_ant)}"
+    ts_md_ant_patchede_mldinger_string = f"Antall TS meldinger v2 patched..............................{str(ts_md_ant_patchede_mldinger_ant)}"
     konsumenter_summary = f"""
 *Ukesrapport*
 Leste {miljo} meldinger fra konsumenter siden {forrigeuke}:
