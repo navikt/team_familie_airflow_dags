@@ -1,5 +1,4 @@
 oracledb
 google-cloud-secret-manager
-dataverk-airflow==1.7.9
 pysftp>=0.2.9
 pandas==2.2.3
