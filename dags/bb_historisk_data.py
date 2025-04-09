@@ -21,7 +21,7 @@ with DAG(
   dag_id = 'BB_historisk_data_sftp_oracle',
   description = 'Leser barnbidrag fil fra sfto server, transformerer data og så gjøre insert til en tabell i Oracle database',
   start_date=datetime(2025, 4, 1),
-  schedule_interval= '0 0 3 * *',
+  schedule_interval= '0 0 5 * *',
   max_active_runs=1,
   catchup = False
 ) as dag:
