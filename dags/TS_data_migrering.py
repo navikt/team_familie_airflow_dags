@@ -94,7 +94,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
+            message = f'Kopiering av tilleggsstønader v2 data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
         )
     slutt_alert = notification_end()
 
@@ -110,6 +110,7 @@ with DAG(
     allowlist=allowlist
 )
 
-start_alert >> [ts_data_kopiering, ts_data_kopiering_v2] >> ts_utpakking_dbt >> slutt_alert
+#start_alert >> [ts_data_kopiering, ts_data_kopiering_v2] >> ts_utpakking_dbt >> slutt_alert
+start_alert >> ts_data_kopiering_v2 >> ts_utpakking_dbt >> slutt_alert
 
 
