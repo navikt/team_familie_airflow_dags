@@ -30,7 +30,7 @@ v_schema = settings["schema"]
 
 
 with DAG(
-  dag_id = 'kopier_TS_data_fra_BigQuery_til_Oracle',
+  dag_id = 'kopier_TS_v2_data_fra_BigQuery_til_Oracle',
   description = 'kopierer tilleggsstonader data fra en tabell i BigQuery til en tabell i Oracle database',
   start_date=datetime(2024, 5, 29), 
   schedule_interval= '0 6 * * *', #06:00 om morgenen
@@ -47,26 +47,10 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
+            message = f'Kopiering av tilleggsstønader v2 data fra BigQuery til Oracle i {miljo} database starter nå! :rocket:'
         )
 
     start_alert = notification_start()
-
-    ts_data_kopiering = notebook_operator(
-    dag = dag,
-    name = 'TS_data_kopiering',
-    repo = 'navikt/dvh-fam-notebooks',
-    nb_path = 'TS/kopiere_ts_data_fra_bq_til_oracle.ipynb',
-    allowlist=allowlist,
-    branch = v_branch,
-    #delete_on_finish= False,
-    resources=client.V1ResourceRequirements(
-        requests={'memory': '4G'},
-        limits={'memory': '4G'}),
-    slack_channel = Variable.get('slack_error_channel'),
-    requirements_path="requirements.txt",
-    log_output=False
-    )
     
     # v2
     ts_data_kopiering_v2 = notebook_operator(
@@ -110,7 +94,6 @@ with DAG(
     allowlist=allowlist
 )
 
-#start_alert >> [ts_data_kopiering, ts_data_kopiering_v2] >> ts_utpakking_dbt >> slutt_alert
 start_alert >> ts_data_kopiering_v2 >> ts_utpakking_dbt >> slutt_alert
 
 
