@@ -51,22 +51,6 @@ with DAG(
         )
 
     start_alert = notification_start()
-
-    ts_data_kopiering = notebook_operator(
-    dag = dag,
-    name = 'TS_data_kopiering',
-    repo = 'navikt/dvh-fam-notebooks',
-    nb_path = 'TS/kopiere_ts_data_fra_bq_til_oracle.ipynb',
-    allowlist=allowlist,
-    branch = v_branch,
-    #delete_on_finish= False,
-    resources=client.V1ResourceRequirements(
-        requests={'memory': '4G'},
-        limits={'memory': '4G'}),
-    slack_channel = Variable.get('slack_error_channel'),
-    requirements_path="requirements.txt",
-    log_output=False
-    )
     
     # v2
     ts_data_kopiering_v2 = notebook_operator(
@@ -94,7 +78,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = f'Kopiering av tilleggsstønader data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
+            message = f'Kopiering av tilleggsstønader v2 data fra BigQuery til Oracle i {miljo} database er vellykket! :tada: :tada:'
         )
     slutt_alert = notification_end()
 
