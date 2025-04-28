@@ -110,6 +110,6 @@ with DAG(
     allowlist=allowlist
 )
 
-start_alert >> [ts_data_kopiering, ts_data_kopiering_v2] >> ts_utpakking_dbt >> slutt_alert
+start_alert >> ts_data_kopiering_v2 >> ts_utpakking_dbt >> slutt_alert
 
 
