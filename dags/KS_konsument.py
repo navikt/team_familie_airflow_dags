@@ -50,7 +50,7 @@ with DAG(
   ks_utpakking_dbt = create_dbt_operator(
     dag=dag,
     name="utpakking_ks",
-    repo='navikt/dvh_familie_dbt',
+    repo='navikt/dvh_fam_ks_dbt',
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
     dbt_command= """run --select KS_utpakking.*""",
