@@ -48,7 +48,7 @@ with DAG(
   pp_omp_manedsprosessering_dbt = create_dbt_operator(
       dag=dag,
       name="pp_omp_manedsprosessering",
-      repo='navikt/dvh_familie_dbt',
+      repo='navikt/dvh_fam_pp_dbt',
       script_path = 'airflow/dbt_run.py',
       branch=v_branch,
       dbt_command= """run --select PP_manedsprosessering.* --vars '{pp_omp_periode: v_pp_omp_periode, pp_omp_max_vedtaksperiode: v_pp_omp_max_vedtaksperiode}'""",
