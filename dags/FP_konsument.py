@@ -2,13 +2,10 @@ from datetime import datetime
 from airflow.models import DAG
 from airflow.models import Variable
 from kosument_config import fp
-import os
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
-from airflow.operators.email import EmailOperator
-from kubernetes import client as k8s
+from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
 
 miljo = Variable.get('miljo')
 allowlist = []
@@ -53,7 +50,7 @@ with DAG(
   fp_utpakking_dbt = create_dbt_operator(
      dag=dag,
      name="utpakking_fp",
-     repo='navikt/dvh_familie_dbt',
+     repo='navikt/dvh_fam_fp_dbt',
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
      dbt_command= """run --select FP_utpakking.*""",
