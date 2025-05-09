@@ -31,6 +31,7 @@ def oracle_secrets():
     password=getenv("DBT_ORCL_PASS"),
     host = getenv("DBT_ORCL_HOST"),
     service = getenv("DBT_ORCL_SERVICE"),
+    ghcr_token = getenv("ghcr_token"),
     encoding="UTF-8",
     nencoding="UTF-8"
     )
