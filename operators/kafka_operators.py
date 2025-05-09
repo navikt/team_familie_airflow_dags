@@ -1,4 +1,4 @@
-import os, requests
+import os
 from datetime import timedelta
 from kubernetes import client
 from airflow import DAG
@@ -7,19 +7,11 @@ import kubernetes.client as k8s
 from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
-from allowlists.allowlist import dev_kafka, prod_kafka
+from allowlists.allowlist import dev_kafka, prod_kafka, r_kafka
+from siste_image_versjon import get_latest_ghcr_tag
 
-
-def get_latest_image_tag():
-    registry_url = "https://ghcr.io/v2/navikt/dvh-airflow-kafka/tags/list"
-    response = requests.get(registry_url)
-    tags = response.json().get('tags', [])
-    tags.sort()  # Sort tags if they follow a versioning scheme
-    return tags[-1] if tags else "latest"
-
-#kafka_consumer_image = f"ghcr.io/navikt/dvh-airflow-kafka:{get_latest_image_tag()}"
-#kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:latest"
-kafka_consumer_image = "ghcr.io/navikt/dvh-airflow-kafka:2024-12-02-d2d37db"
+repo = "dvh-airflow-kafka" #"dvh-images/airflow-dbt"
+siste_image_versjon = get_latest_ghcr_tag(repo)
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
@@ -28,7 +20,7 @@ def kafka_consumer_kubernetes_pod_operator(
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
     data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = kafka_consumer_image,					
+    kafka_consumer_image: str = f"ghcr.io/navikt/dvh-airflow-kafka:{siste_image_versjon}",			
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
@@ -77,6 +69,8 @@ def kafka_consumer_kubernetes_pod_operator(
     miljo = Variable.get('miljo')   
     if miljo == 'Prod':
         allowlist.extend(prod_kafka)
+    elif miljo == 'R':
+        allowlist.extend(r_kafka)
     else:
         allowlist.extend(dev_kafka)
 
@@ -102,8 +96,8 @@ def kafka_consumer_kubernetes_pod_operator(
         volume_mounts=[vault_volume_mount()],
         service_account_name=os.getenv('TEAM'),
         container_resources=client.V1ResourceRequirements(
-            requests={"memory": "8G"},
-            limits={"memory": "8G"}
+            requests={"memory": "16G"},
+            limits={"memory": "16G"}
         ),
         retries=retries,
         retry_delay=retry_delay,
