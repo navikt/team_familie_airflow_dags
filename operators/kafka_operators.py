@@ -8,19 +8,15 @@ from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
 from airflow.models.variable import Variable
 from allowlists.allowlist import dev_kafka, prod_kafka, r_kafka
-from siste_image_versjon import get_latest_ghcr_tag
-
-repo = "dvh-airflow-kafka" #"dvh-images/airflow-dbt"
-siste_image_versjon = get_latest_ghcr_tag(repo)
 
 def kafka_consumer_kubernetes_pod_operator(
     task_id: str,
     config: str,
+    kafka_consumer_image: str ,	
     dag: DAG = None,
     application_name: str = "dvh-airflow-kafka-consumer",
     data_interval_start_timestamp_milli: str = "{{ data_interval_start.int_timestamp * 1000 }}",
-    data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",
-    kafka_consumer_image: str = f"ghcr.io/navikt/dvh-airflow-kafka:{siste_image_versjon}",			
+    data_interval_end_timestamp_milli: str = "{{ data_interval_end.int_timestamp * 1000 }}",		
     namespace: str = os.getenv('NAMESPACE'),
     email: str = None,
     slack_channel: str = None,
