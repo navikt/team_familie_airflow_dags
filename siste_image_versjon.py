@@ -8,7 +8,7 @@ def get_latest_ghcr_tag(repo: str) -> str:
     token = secret['ghcr_token']
 
     url = f"https://ghcr.io/v2/navikt/{repo}/tags/list" 
-    auth = HTTPBasicAuth(username='AArafaR', password=token)
+    auth = HTTPBasicAuth(username='MoArafa', password=token)
 
     response = requests.get(url, auth=auth)
     response.raise_for_status()
