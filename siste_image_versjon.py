@@ -7,6 +7,9 @@ def get_latest_ghcr_tag(repo: str) -> str:
     secret = oracle_secrets() # legg til PAT (token) i gsm 
     token = secret['ghcr_token']
 
+    if "ghp" in token:
+        print("token is found!")
+
     url = f"https://ghcr.io/v2/navikt/{repo}/tags/list" 
     auth = HTTPBasicAuth(username='MoArafa', password=token)
 
