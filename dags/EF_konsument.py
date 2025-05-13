@@ -45,7 +45,7 @@ with DAG(
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "ensligforsorger_hent_kafka_data",
     config = ef.config.format(topic),
-    kafka_consumer_image=parse_task_image("dvh-airflow-kafka")
+    kafka_consumer_image=parse_task_image("dvh-airflow-kafka"),
     #data_interval_start_timestamp_milli="1712916000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
     #data_interval_end_timestamp_milli="1713448800000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
