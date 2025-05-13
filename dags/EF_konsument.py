@@ -6,17 +6,19 @@ from kosument_config import ef
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
-from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
-from siste_image_versjon import get_latest_ghcr_tag
+from allowlists.allowlist import prod_oracle_conn_id, r_oracle_conn_id, dev_oracle_conn_id
+from siste_image_versjon import get_latest_ghcr_tag, parse_task_image
 
 
 miljo = Variable.get('miljo')
-
 allowlist = []
+
 if miljo == 'Prod':
-  allowlist.extend(prod_oracle_conn_id)
+    allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'test_r':
+    allowlist.extend(r_oracle_conn_id)
 else:
-  allowlist.extend(dev_oracle_conn_id)
+    allowlist.extend(dev_oracle_conn_id)
 
 default_args = {
     'owner': 'Team-Familie',
@@ -30,59 +32,35 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 topic = Variable.get("EF_topic") # topic navn hentes foreløpig fra airflow variabler "teamfamilie.aapen-ensligforsorger-vedtak-test" 
-slack_channel = Variable.get("slack_error_channel")
-
-
-def siste_image_versjon(ti):
-  repo = "dvh-airflow-kafka" #"dvh-images/airflow-dbt"
-  siste_image_versjon = get_latest_ghcr_tag(repo)
-  ti.xcom_push(key='siste_versjon', value = siste_image_versjon)
-
-
-def fetch_latest_image_version(ti):
-    #Fetches the latest GHCR tag and pushes to XCom.
-    repo = "dvh-airflow-kafka"
-    siste_image_versjon = get_latest_ghcr_tag(repo)
-    ti.xcom_push(key='siste_versjon', value=siste_image_versjon)
-
-def build_kafka_task(ti):
-    #Builds the Kafka consumer task using the latest image version.
-    latest_version = ti.xcom_pull(task_ids='fetch_image_version', key='siste_versjon')
-    return kafka_consumer_kubernetes_pod_operator(
-        task_id="consume_kafka_data",
-        config=ef.config.format(topic),
-        image=f"ghcr.io/navikt/dvh-airflow-kafka:{latest_version}",
-        slack_channel=slack_channel
-    )
-
 
 with DAG(
   dag_id="EF_konsument",
-  start_date=datetime(2023, 8, 7),
+  start_date=datetime(2024, 4, 18, 12),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
   catchup = True
 ) as dag:
-  
-  fetch_image_version = PythonOperator(
-      task_id="fetch_image_version",
-      python_callable=fetch_latest_image_version,
+
+  consumer = kafka_consumer_kubernetes_pod_operator(
+    task_id = "ensligforsorger_hent_kafka_data",
+    config = ef.config.format(topic),
+    kafka_consumer_image=parse_task_image("dvh-airflow-kafka")
+    #data_interval_start_timestamp_milli="1712916000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    #data_interval_end_timestamp_milli="1713448800000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    slack_channel = Variable.get("slack_error_channel")
   )
 
-  kafka_consumer = PythonOperator(
-      task_id="build_kafka_consumer",
-      python_callable=build_kafka_task,
-  )
+  ef_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_ef",
+     repo='navikt/dvh_fam_ef_dbt',
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select EF_utpakking.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
 
-  run_dbt = create_dbt_operator(
-      dag=dag,
-      name="run_ef_utpakking",
-      script_path='airflow/dbt_run.py',
-      branch=v_branch,
-      dbt_command="run --select EF_utpakking.*",
-      db_schema=v_schema,
-      allowlist=allowlist
-  )
+ )
 
-  fetch_image_version >> kafka_consumer >> run_dbt
+consumer >> ef_utpakking_dbt
