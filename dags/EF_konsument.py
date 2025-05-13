@@ -7,7 +7,7 @@ from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
 from allowlists.allowlist import prod_oracle_conn_id, r_oracle_conn_id, dev_oracle_conn_id
-from siste_image_versjon import get_latest_ghcr_tag, parse_task_image
+from felles_metoder.felles_metoder import parse_task_image
 
 
 miljo = Variable.get('miljo')
