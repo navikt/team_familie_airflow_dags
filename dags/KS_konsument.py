@@ -6,6 +6,7 @@ from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
 from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
+from felles_metoder.felles_metoder import parse_task_image
 
 miljo = Variable.get('miljo')
 
@@ -40,6 +41,7 @@ with DAG(
   consumer = kafka_consumer_kubernetes_pod_operator(
     task_id = "kontantstotte_hent_kafka_data",
     config = ks.config.format(topic),
+    kafka_consumer_image=parse_task_image("dvh-airflow-kafka"),
     #data_interval_start_timestamp_milli="1659312000000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
     #data_interval_end_timestamp_milli="1675209600000",   # from first day we got data until 15.11.2022 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
