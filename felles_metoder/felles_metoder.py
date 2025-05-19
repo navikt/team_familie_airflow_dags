@@ -37,6 +37,13 @@ def oracle_secrets():
     nencoding="UTF-8"
     )
 
+def get_siste_dag_i_forrige_maaned():
+    today = datetime.datetime.now()
+    first_day_of_this_month = today.replace(day=1)
+    last_day_of_last_month = first_day_of_this_month - datetime.timedelta(days=1)
+    last_day = last_day_of_last_month.day
+    return last_day_of_last_month.replace(day=last_day, hour=0, minute=0, second=0).strftime('%Y%m%d')
+
 def parse_task_image(name: str) -> str:
     """This function parses the Dockerfile of a task image and returns the image reference.
 
