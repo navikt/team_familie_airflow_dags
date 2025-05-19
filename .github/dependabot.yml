@@ -1,0 +1,40 @@
+version: 2
+
+registries:
+  ghcr:
+    type: docker-registry
+    url: ghcr.io
+    username: user
+    password: ${{ secrets.READER_TOKEN }}
+
+updates:
+  - package-ecosystem: "docker"
+    registries:
+      - ghcr
+    directories:
+      - "/dags/task_images/*/*"
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Oslo"
+    groups:
+      docker-task-images:
+        patterns:
+          - '*'
+  - package-ecosystem: "docker"
+    registries:
+      - ghcr
+    directories:
+      - "/dags/task_images/*/*"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Oslo"
+    groups:
+      docker-task-images:
+        patterns:
+          - '*'
