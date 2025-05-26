@@ -57,4 +57,4 @@ with DAG(
       db_schema=v_schema
   )
 
-consumer >> pp_utpakking_dbt
+consumer # >> pp_utpakking_dbt
