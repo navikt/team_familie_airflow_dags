@@ -46,15 +46,15 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-  # pp_utpakking_dbt = create_dbt_operator(
-  #     dag=dag,
-  #     name="utpakking_pp",
-  #     repo='navikt/dvh_fam_pp_dbt',
-  #     script_path = 'airflow/dbt_run.py',
-  #     branch=v_branch,
-  #     dbt_command= "run --select PP_utpakking.*",
-  #     allowlist=allowlist,
-  #     db_schema=v_schema
-  # )
+  pp_utpakking_dbt = create_dbt_operator(
+      dag=dag,
+      name="utpakking_pp",
+      repo='navikt/dvh_fam_pp_dbt',
+      script_path = 'airflow/dbt_run.py',
+      branch=v_branch,
+      dbt_command= "run --select PP_utpakking.*",
+      allowlist=allowlist,
+      db_schema=v_schema
+  )
 
-consumer # >> pp_utpakking_dbt
+consumer  >> pp_utpakking_dbt
