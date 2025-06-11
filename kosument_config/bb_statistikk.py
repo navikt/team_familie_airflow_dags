@@ -1,7 +1,7 @@
 config="""
 source:
   type: kafka
-  batch-size: 1000
+  batch-size: 5000
   batch-interval: 5
   topic: {}
   group-id: dvh_familie_konsument
@@ -16,7 +16,7 @@ target:
   skip-duplicates-with: 
     - kafka_offset
     - kafka_topic
-  table: DVH_FAM_BT.FAM_BT_META_DATA
+  table: DVH_FAM_BB.FAM_BB_META_DATA_ORD
 transform:
   - src: kafka_message
     dst: melding
@@ -32,5 +32,3 @@ transform:
   - src: $$$BATCH_TIME
     dst: lastet_dato
 """
-
-

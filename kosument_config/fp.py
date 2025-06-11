@@ -1,7 +1,7 @@
 config="""
 source:
   type: kafka
-  batch-size: 50000
+  batch-size: 10000
   batch-interval: 5
   topic: {}
   group-id: dvh_familie_konsument
@@ -13,6 +13,10 @@ target:
     - method: oracledb.Cursor.setinputsizes
       name: melding
       value: oracledb.DB_TYPE_CLOB
+  skip-duplicates-with: 
+    - kafka_offset
+    - kafka_topic
+    - kafka_partition
   table: DVH_FAM_FP.FAM_FP_META_DATA
 transform:
   - src: kafka_message
@@ -28,4 +32,6 @@ transform:
     dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
+  - src: ytelseType
+    dst: ytelse_type
 """
