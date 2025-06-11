@@ -41,7 +41,7 @@ with DAG(
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
-    task_id = "BB_ordinær_hent_kafka_data",
+    task_id = "BB_ordinaer_hent_kafka_data",
     config = bb.config.format(topic),
     kafka_consumer_image=parse_task_image("dvh-airflow-kafka"),
     #data_interval_start_timestamp_milli="1738281600000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
