@@ -33,7 +33,7 @@ topic = Variable.get("BB_topic_ord") # topic navn hentes foreløpig fra airflow 
 
 with DAG(
   dag_id="BB_ord_konsument",
-  start_date=datetime(2025, 6, 11, 6),
+  start_date=datetime(2025, 6, 11, 18),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
