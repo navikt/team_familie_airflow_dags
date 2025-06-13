@@ -35,7 +35,7 @@ with DAG(
   dag_id="BB_ord_konsument",
   start_date=datetime(2025, 6, 11, 18),
   default_args = default_args,
-  schedule_interval= "@hourly",
+  schedule_interval= None,#"@hourly",
   max_active_runs=1,
   catchup = True
 ) as dag:
@@ -44,8 +44,8 @@ with DAG(
     task_id = "BB_ordinaer_hent_kafka_data",
     config = bb.config.format(topic),
     kafka_consumer_image=parse_task_image("dvh-airflow-kafka"),
-    #data_interval_start_timestamp_milli="1738281600000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    #data_interval_end_timestamp_milli="1738587540000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    data_interval_start_timestamp_milli="1749722400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    data_interval_end_timestamp_milli="1749808800000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
