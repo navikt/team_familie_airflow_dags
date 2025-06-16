@@ -31,7 +31,7 @@ transform:
     dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
-  - src: kafka_topic
+  - src: constant
     dst: stonadstype
-    fun: "match -> {{\\"bidrag.statistikk-bidrag-q2\\": \\"BIDRAG\\"}}"
+    value: BIDRAG
 """
