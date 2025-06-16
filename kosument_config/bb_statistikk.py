@@ -34,6 +34,6 @@ transform:
   - src: kafka_topic
   - dst: stonadstype
     fun: match -> {
-      {}: "BIDRAG"
+      "bidrag.statistikk-bidrag-q2": "BIDRAG"
     }
 """
