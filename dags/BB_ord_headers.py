@@ -1,14 +1,13 @@
 from datetime import datetime
 from airflow.models import DAG
 from airflow.models import Variable
-from kosument_config import bb
-from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
-from operators.dbt_operator import create_dbt_operator
+from kubernetes import client
 from operators.slack_operator import slack_error
 from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
-from felles_metoder.felles_metoder import parse_task_image
 
+from dataverk_airflow import python_operator
 from kafka import KafkaConsumer
+from confluent_kafka import Consumer
 
 miljo = Variable.get('miljo')
 
@@ -26,6 +25,11 @@ default_args = {
     'on_failure_callback': slack_error
 }
 
+#Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_bb_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
+
 topic = Variable.get("BB_topic_ord") # topic navn hentes foreløpig fra airflow variabler "teamfamilie.aapen-ensligforsorger-vedtak-test" 
 
 with DAG(
@@ -37,6 +41,17 @@ with DAG(
   catchup = False
 ) as dag:
 
+    python_requirement = python_operator(
+        dag=dag,
+        name="installasjon_requirement",
+        repo="navikt/team_familie_airflow_dags",
+        script_path="Oracle_python/bb_headers_requirement.py",
+        branch=v_branch,
+        resources=client.V1ResourceRequirements(
+            requests={"memory": "4G"},
+            limits={"memory": "4G"}),
+        slack_channel=Variable.get("slack_error_channel")
+    )
 
     consumer = KafkaConsumer(
         topic,
@@ -50,4 +65,4 @@ with DAG(
         for header in headers:
             print(f"Header Key: {header.key}, Header Value: {header.value}")
 
-consumer
+python_requirement >> consumer
