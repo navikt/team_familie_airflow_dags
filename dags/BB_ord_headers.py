@@ -53,16 +53,16 @@ with DAG(
         slack_channel=Variable.get("slack_error_channel")
     )
 
-    consumer = KafkaConsumer(
-        topic,
-        bootstrap_servers=['nav-dev-kafka-139'],
-        group_id='dvh_familie_konsument',
-        # Add other necessary configurations (e.g., security, deserializers)
-    )
+    #consumer = KafkaConsumer(
+    #    topic,
+    #    bootstrap_servers=['nav-dev-kafka-139'],
+    #    group_id='dvh_familie_konsument',
+    #    # Add other necessary configurations (e.g., security, deserializers)
+    #)
 
-    for message in consumer:
-        headers = message.headers
-        for header in headers:
-            print(f"Header Key: {header.key}, Header Value: {header.value}")
+    #for message in consumer:
+    #    headers = message.headers
+    #    for header in headers:
+    #        print(f"Header Key: {header.key}, Header Value: {header.value}")
 
-python_requirement >> consumer
+python_requirement #>> consumer
