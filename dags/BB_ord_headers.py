@@ -65,4 +65,4 @@ with DAG(
         for header in headers:
             print(f"Header Key: {header.key}, Header Value: {header.value}")
 
-consumer
+python_requirement >> consumer
