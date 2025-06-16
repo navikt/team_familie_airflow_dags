@@ -32,7 +32,7 @@ transform:
   - src: $$$BATCH_TIME
     dst: lastet_dato
   - src: kafka_topic
-  - dst: stonadstype
+    dst: stonadstype
     fun:
       match:
         bidrag.statistikk-bidrag-q2: BIDRAG
