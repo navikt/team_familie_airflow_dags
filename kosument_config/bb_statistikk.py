@@ -31,7 +31,6 @@ transform:
     dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
-  - src: kafka_topic
+  - src: kafka_headers
     dst: stonadstype
-    fun: "-> 'BIDRAG'"
 """
