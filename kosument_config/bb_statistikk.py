@@ -33,7 +33,5 @@ transform:
     dst: lastet_dato
   - src: kafka_topic
     dst: stonadstype
-    fun:
-      match:
-        bidrag.statistikk-bidrag-q2: BIDRAG
+    fun: "match -> {{\"bidrag.statistikk-bidrag-q2\": \"BIDRAG\"}}"
 """
