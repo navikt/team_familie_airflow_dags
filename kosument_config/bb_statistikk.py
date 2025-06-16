@@ -31,6 +31,6 @@ transform:
     dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
-  - src: kafka_headers.stønadstype
+  - src: kafka_message.Headers["stønadstype"]
     dst: stonadstype
 """
