@@ -6,7 +6,7 @@ from operators.slack_operator import slack_error
 from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
 
 from dataverk_airflow import python_operator
-from confluent_kafka import Consumer
+from kafka import KafkaConsumer
 
 miljo = Variable.get('miljo')
 
@@ -53,16 +53,16 @@ with DAG(
         requirements_path="Oracle_python/requirements.txt"
     )
 
-    #consumer = KafkaConsumer(
-    #    topic,
-    #    bootstrap_servers=['nav-dev-kafka-139'],
-    #    group_id='dvh_familie_konsument',
-    #    # Add other necessary configurations (e.g., security, deserializers)
-    #)
+    consumer = KafkaConsumer(
+        topic,
+        bootstrap_servers=['nav-dev-kafka-139'],
+        group_id='dvh_familie_konsument',
+        # Add other necessary configurations (e.g., security, deserializers)
+    )
 
     #for message in consumer:
     #    headers = message.bb
     #    for header in headers:
     #        print(f"Header Key: {header.key}, Header Value: {header.value}")
 
-python_requirement #>> consumer
+python_requirement >> consumer
