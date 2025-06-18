@@ -4,7 +4,7 @@ print("Hello World")
 from kafka import KafkaConsumer
 
 consumer = KafkaConsumer(
-        topic,
+        topic='bidrag.statistikk-bidrag-q2',
         bootstrap_servers=['nav-dev-kafka-139'],
         group_id='dvh_familie_konsument',
         # Add other necessary configurations (e.g., security, deserializers)
