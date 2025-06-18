@@ -1,2 +1,4 @@
 oracledb
 google-cloud-secret-manager
+
+kafka-python
