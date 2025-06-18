@@ -50,7 +50,7 @@ with DAG(
             requests={"memory": "4G"},
             limits={"memory": "4G"}),
         slack_channel=Variable.get("slack_error_channel"),
-        requirements_path="Oracle_python/requirement.txt"
+        requirements_path="Oracle_python/requirements.txt"
     )
 
     #consumer = KafkaConsumer(
