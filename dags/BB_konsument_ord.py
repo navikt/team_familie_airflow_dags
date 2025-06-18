@@ -31,9 +31,9 @@ topic = Variable.get("BB_topic_ord") # topic navn hentes foreløpig fra airflow 
 
 with DAG(
   dag_id="BB_ord_konsument",
-  start_date=datetime(2025, 6, 16, 7),
+  start_date=datetime(2025, 6, 18, 9),
   default_args = default_args,
-  schedule_interval= None,#"@hourly",
+  schedule_interval= "@hourly",
   max_active_runs=1,
   catchup = True
 ) as dag:
@@ -47,15 +47,15 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-#   bb_ord_utpakking_dbt = create_dbt_operator(
-#      dag=dag,
-#      name="utpakking_bb",
-#      repo='navikt/dvh_fam_bb_dbt',
-#      script_path = 'airflow/dbt_run.py',
-#      branch=v_branch,
-#      dbt_command= """run --select BB_utpakking_ord.*""",
-#      db_schema=v_schema,
-#      allowlist=allowlist
-#  )
+  bb_ord_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_bb",
+     repo='navikt/dvh_fam_bb_dbt',
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select BB_utpakking_ord.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
+ )
 
-consumer #>> bb_ord_utpakking_dbt
+consumer >> bb_ord_utpakking_dbt
