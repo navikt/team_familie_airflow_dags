@@ -55,7 +55,7 @@ with DAG(
      repo='navikt/dvh_fam_bb_dbt',
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
-     dbt_command= """run --select BB_utpakking.*""",
+     dbt_command= """run""",
      db_schema=v_schema,
      allowlist=allowlist
  )
