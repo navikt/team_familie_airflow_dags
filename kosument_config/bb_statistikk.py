@@ -13,10 +13,7 @@ target:
     - method: oracledb.Cursor.setinputsizes
       name: melding
       value: oracledb.DB_TYPE_CLOB
-  skip-duplicates-with: 
-    - kafka_offset
-    - kafka_topic
-  table: DVH_FAM_BB.FAM_BB_META_DATA_ORD
+  table: DVH_FAM_BB.FAM_BB_META_DATA
 transform:
   - src: kafka_message
     dst: melding
@@ -31,4 +28,6 @@ transform:
     dst: kafka_partition
   - src: $$$BATCH_TIME
     dst: lastet_dato
+  - src: $BIDRAG
+    dst: stonadstype
 """
