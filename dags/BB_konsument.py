@@ -22,10 +22,10 @@ default_args = {
     'on_failure_callback': slack_error
 }
 
-# Bygger parameter med logging, modeller og miljø
-#settings = Variable.get("dbt_bb_schema", deserialize_json=True)
-#v_branch = settings["branch"]
-#v_schema = settings["schema"]
+#Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_bb_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
 
 topic = Variable.get("BB_topic") # topic navn hentes foreløpig fra airflow variabler "teamfamilie.aapen-ensligforsorger-vedtak-test" 
 
@@ -47,14 +47,15 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-#   bb_utpakking_dbt = create_dbt_operator(
-#      dag=dag,
-#      name="utpakking_bb",
-#      script_path = 'airflow/dbt_run.py',
-#      branch=v_branch,
-#      dbt_command= """run --select BB_utpakking.*""",
-#      db_schema=v_schema,
-#      allowlist=allowlist
-#  )
+  bb_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_bb",
+     repo='navikt/dvh_fam_bb_dbt',
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select BB_utpakking.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
+ )
 
-consumer #>> bb_utpakking_dbt
+consumer >> bb_utpakking_dbt
