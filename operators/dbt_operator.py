@@ -10,6 +10,7 @@ def create_dbt_operator(
   name: str,
   branch: str,
   dbt_command: str,
+  repo:str,
   db_schema: str,
   script_path:str,
   allowlist: list = [],
@@ -20,7 +21,7 @@ def create_dbt_operator(
   return python_operator(
     dag=dag,
     name=name,
-    repo='navikt/dvh_familie_dbt',
+    repo=repo, #'navikt/dvh_familie_dbt',
     script_path=script_path,#'airflow/dbt_run_test.py',
     branch=branch,
     do_xcom_push=True,
@@ -36,8 +37,7 @@ def create_dbt_operator(
       "ORA_PYTHON_DRIVER_TYPE": "thin"
     },
     slack_channel=Variable.get("slack_error_channel"),
-    requirements_path="requirements.txt",
-    #image='ghcr.io/navikt/dvh_familie_image:2023-11-27-eccc5e8-main',
+    #requirements_path="requirements.txt",
+    image='ghcr.io/navikt/dvh-images/airflow-dbt:20250502-073831', 
     allowlist = allowlist
   )
-
