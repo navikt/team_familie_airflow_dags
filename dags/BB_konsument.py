@@ -5,16 +5,18 @@ from kosument_config import bb
 from operators.kafka_operators import kafka_consumer_kubernetes_pod_operator
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_error
-from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id
+from allowlists.allowlist import prod_oracle_conn_id, dev_oracle_conn_id,r_oracle_conn_id
 from felles_metoder.felles_metoder import parse_task_image
 
 miljo = Variable.get('miljo')
 
 allowlist = []
 if miljo == 'Prod':
-  allowlist.extend(prod_oracle_conn_id)
+    allowlist.extend(prod_oracle_conn_id)
+elif miljo == 'test_r':
+    allowlist.extend(r_oracle_conn_id)
 else:
-  allowlist.extend(dev_oracle_conn_id)
+    allowlist.extend(dev_oracle_conn_id)
 
 default_args = {
     'owner': 'Team-Familie',
@@ -31,7 +33,7 @@ topic = Variable.get("BB_topic") # topic navn hentes foreløpig fra airflow vari
 
 with DAG(
   dag_id="BB_konsument",
-  start_date=datetime(2024, 12, 20),
+  start_date=datetime(2025, 1, 31, 10),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
@@ -42,8 +44,8 @@ with DAG(
     task_id = "barnebidrag_hent_kafka_data",
     config = bb.config.format(topic),
     kafka_consumer_image=parse_task_image("dvh-airflow-kafka"),
-    #data_interval_start_timestamp_milli="1734595200000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    #data_interval_end_timestamp_milli="1734616800000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    #data_interval_start_timestamp_milli="1738281600000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    #data_interval_end_timestamp_milli="1738587540000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
