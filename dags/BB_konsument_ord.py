@@ -42,14 +42,14 @@ with DAG(
     task_id = "BB_ordinaer_hent_kafka_data",
     config = bb_statistikk.config.format(topic),
     kafka_consumer_image=parse_task_image("dvh-airflow-kafka"),
-    data_interval_start_timestamp_milli="1749722400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
-    data_interval_end_timestamp_milli="1750237020000",   # from first day we got data until 29.05.2023 (todays before todays date)
+    #data_interval_start_timestamp_milli="1749722400000", # gir oss alle data som ligger på topicen fra og til (intial last alt på en gang)
+    #data_interval_end_timestamp_milli="1750237020000",   # from first day we got data until 29.05.2023 (todays before todays date)
     slack_channel = Variable.get("slack_error_channel")
   )
 
   bb_ord_utpakking_dbt = create_dbt_operator(
      dag=dag,
-     name="utpakking_bb",
+     name="utpakking_bb_ord",
      repo='navikt/dvh_fam_bb_dbt',
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
