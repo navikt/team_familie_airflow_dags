@@ -37,7 +37,8 @@ with DAG(
     # Husk å grante rettigheter ved bruk av nye konsumenter, e.g. "GRANT SELECT ON DVH_FAM_BB.fam_bb_meta_data TO DVH_FAM_Airflow;"
     def fetch_kafka_counts():
         count_queries = {
-            "bb_count": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1",
+            "bb_count_md": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1",
+            "bb_count_fg": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_FAGSAK_ORD WHERE lastet_dato >= sysdate - 1",
             "bt_count": "SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1",
             "ef_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1",
             "ts_count_v2": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data_v2 WHERE lastet_dato >= sysdate - 1", #v2
@@ -67,14 +68,25 @@ with DAG(
     )
     def check_for_gaps():
         gap_queries = {
-            "sjekk_hull_i_BB_meta_data": """
+            "sjekk_hull_i_BB_meta_data_forskudd": """
                 SELECT * FROM
                     (SELECT lastet_dato, kafka_topic, kafka_offset,
                         LEAD(kafka_offset) 
                         OVER(PARTITION BY kafka_topic
                         ORDER BY kafka_offset) neste
-                    FROM DVH_FAM_BB.fam_bb_meta_data)
+                    FROM DVH_FAM_BB.fam_bb_meta_data
+                    WHERE STONADSTYPE = 'FORSKUDD')
                 WHERE neste - kafka_offset > 1
+            """, 
+            "sjekk_hull_i_BB_meta_data_bidrag": """
+                SELECT * FROM
+                    (SELECT lastet_dato, kafka_topic, kafka_offset,
+                        LEAD(kafka_offset) 
+                        OVER(PARTITION BY kafka_topic
+                        ORDER BY kafka_offset) neste
+                    FROM DVH_FAM_BB.fam_bb_meta_data
+                    WHERE STONADSTYPE = 'BIDRAG')
+                WHERE neste - kafka_offset > 1 AND kafka_offset > 1650726
             """, 
             "sjekk_hull_i_BT_meta_data": """
                 SELECT * FROM
@@ -151,7 +163,7 @@ with DAG(
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
-        bb_count_str = f"Antall mottatt {bb_grafana}................................{str(kafka_last['bb_count'])}" #TODO link
+        bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak ord.........{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}" #TODO link
         bs_count_str = f"Antall mottatt BS meldinger................................{str(kafka_last['bs_count'])}"
         pp_count_str = f"Antall mottatt {pp_grafana}................................{str(kafka_last['pp_count'])}"
         bt_count_str = f"Antall mottatt {bt_grafana}................................{str(kafka_last['bt_count'])}"
@@ -190,7 +202,8 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         )
 
         # Sjekker etter hull
-        bb_hull = gaps.get("sjekk_hull_i_BB_meta_data")
+        bb_hull_forskudd = gaps.get("sjekk_hull_i_BB_meta_data_forskudd")
+        bb_hull_bidrag = gaps.get("sjekk_hull_i_BB_meta_data_bidrag")
         bt_hull = gaps.get("sjekk_hull_i_BT_meta_data")
         ef_hull = gaps.get("sjekk_hull_i_EF_meta_data")
         ks_hull = gaps.get("sjekk_hull_i_KS_meta_data")
@@ -198,12 +211,12 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         fp_hull = gaps.get("sjekk_hull_i_FP_meta_data")
 
         # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
-        topics_med_hull = ", ".join(str(sublist) for sublist in [bb_hull, bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
+        topics_med_hull = ", ".join(str(sublist) for sublist in [bb_hull_forskudd, bb_hull_bidrag, bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
 
         # Sjekker om noe ble lagt til i string, hvis ikke sendes annen string
         if topics_med_hull:
             # Høy prioritering hvis hull oppdages, ønsker å gjøre alle oppmerk på dette med "!channel"
-            notification_summary = (f"```<!channel> Hull oppdaget i topic {topics_med_hull}!```")
+            notification_summary = (f"```<!channel> Minst ett hull oppdaget i topic {topics_med_hull}, sjekk manuelt for flere!```")
             slack_info(
                 message=notification_summary,
                 emoji=":newspaper:"
