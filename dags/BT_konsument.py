@@ -35,7 +35,7 @@ with DAG(
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
-  catchup = True
+  catchup = False
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
