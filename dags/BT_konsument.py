@@ -50,6 +50,7 @@ with DAG(
   bt_utpakking_dbt = create_dbt_operator(
       dag=dag,
       name="utpakking_bt",
+      repo='navikt/dvh_fam_bt_dbt',
       script_path = 'airflow/dbt_run.py',
       branch=v_branch,
       dbt_command= """run --select BT_utpakking.*""",
@@ -58,4 +59,7 @@ with DAG(
   )
 
 consumer >> bt_utpakking_dbt
+
+
+
 
