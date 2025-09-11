@@ -33,4 +33,3 @@ transform:
     dst: lastet_dato
   - src: $FORSKUDD
     dst: type_stonad
-"""
