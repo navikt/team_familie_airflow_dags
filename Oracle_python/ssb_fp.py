@@ -8,7 +8,6 @@ def hent_data_fra_oracle():
     oracle_info = oracle_secrets()
 
     user = oracle_info['user'] + '[DVH_FAM_FP]'
-    print(user) #Test
     dsn_tns = oracledb.makedsn(oracle_info['host'], 1521, service_name = oracle_info['service'])
 
     with oracledb.connect(user=user, password = oracle_info['password'], dsn=dsn_tns) as conn:
