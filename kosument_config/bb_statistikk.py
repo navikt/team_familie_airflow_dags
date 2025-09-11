@@ -32,5 +32,5 @@ transform:
   - src: $$$BATCH_TIME
     dst: lastet_dato
   - src: $BIDRAG
-    dst: stonadstype
+    dst: type_stonad
 """
