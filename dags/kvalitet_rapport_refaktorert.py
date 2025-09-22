@@ -75,7 +75,7 @@ with DAG(
                         OVER(PARTITION BY kafka_topic
                         ORDER BY kafka_offset) neste
                     FROM DVH_FAM_BB.fam_bb_meta_data
-                    WHERE STONADSTYPE = 'FORSKUDD')
+                    WHERE TYPE_STONAD = 'FORSKUDD')
                 WHERE neste - kafka_offset > 1
             """, 
             "sjekk_hull_i_BB_meta_data_bidrag": """
@@ -85,7 +85,7 @@ with DAG(
                         OVER(PARTITION BY kafka_topic
                         ORDER BY kafka_offset) neste
                     FROM DVH_FAM_BB.fam_bb_meta_data
-                    WHERE STONADSTYPE = 'BIDRAG')
+                    WHERE TYPE_STONAD = 'BIDRAG')
                 WHERE neste - kafka_offset > 1 AND kafka_offset > 1650726
             """, 
             "sjekk_hull_i_BT_meta_data": """
