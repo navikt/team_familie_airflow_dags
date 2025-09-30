@@ -19,7 +19,7 @@ default_args = {
     }
 
 # Bygger parameter med logging, modeller og miljø
-settings = Variable.get("bb_forskudd_variabler", deserialize_json=True)
+settings = Variable.get("bb_bidrag_variabler", deserialize_json=True)
 v_periode_fom = settings["periode_fom"]
 v_periode_tom = settings["periode_tom"]
 v_max_vedtaksdato = settings["max_vedtaksdato"]
@@ -41,10 +41,10 @@ v_branch = settings["branch"]
 v_schema = settings["schema"]
 
 with DAG(
-    dag_id = 'forskudd_maanedsprosessering', 
-    description = 'Automatiserer månedlig prosessering av forskudsdata ved å kjøre dbt-prosjektet bb_forskud_maanedsprosessering og oppdatere relevante perioder i databasen.',
+    dag_id = 'bidrag_maanedsprosessering', 
+    description = 'Automatiserer månedlig prosessering av bidragsdata ved å kjøre dbt-prosjektet bb_bidrag_maanedsprosessering og oppdatere relevante perioder i databasen.',
     default_args = default_args,
-    start_date = datetime(2025, 3, 12), # start date for the dag
+    start_date = datetime(2025, 9, 30), # start date for the dag
     schedule_interval = '0 0 1 * *' , #timedelta(days=1), schedule_interval='*/5 * * * *',
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
@@ -58,18 +58,18 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = f"Inserting perioden {periode_fom} til periode {periode_tom} med max_vedtaks_dato {max_vedtaksdato} av forskudd maanedsprosesserings data starter nå! :rocket:"
+            message = f"Inserting perioden {periode_fom} til periode {periode_tom} med max_vedtaks_dato {max_vedtaksdato} av bidrag maanedsprosesserings data starter nå! :rocket:"
         )
 
     start_alert = notification_start()
 
     dbt_run_stonad_arena = create_dbt_operator(
         dag=dag,
-        name="dbt-run_forskudd_maanedsprosessering",
+        name="dbt-run_bidrag_maanedsprosessering",
         repo='navikt/dvh_fam_bb_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select BB_maanedsprosessering.fam_bb_forskudd  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
+        dbt_command=f"""run --select BB_ord_maanedsprosessering.fam_bb_bidrag  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
         allowlist=prod_oracle_conn_id, 
         db_schema=v_schema
     )
