@@ -23,7 +23,7 @@ with DAG(
     dag_id='dagsrapport_v2',
     default_args={'on_failure_callback': slack_error},
     start_date=datetime(2024, 10, 9),
-    schedule_interval="0 5 * * *", # 6 CET
+    schedule_interval="0 0 * * *", # 0 CET
     catchup=False,
 ) as dag:
 
@@ -163,7 +163,7 @@ with DAG(
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
-        bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak ord.........{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}" #TODO link
+        bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak ord.........{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}"
         bs_count_str = f"Antall mottatt BS meldinger................................{str(kafka_last['bs_count'])}"
         pp_count_str = f"Antall mottatt {pp_grafana}................................{str(kafka_last['pp_count'])}"
         bt_count_str = f"Antall mottatt {bt_grafana}................................{str(kafka_last['bt_count'])}"
