@@ -23,7 +23,7 @@ with DAG(
     dag_id='dagsrapport_v2',
     default_args={'on_failure_callback': slack_error},
     start_date=datetime(2024, 10, 9),
-    schedule_interval="0 22 * * *", # 0 CET
+    schedule_interval="0 22 * * *", # 0 CEST
     catchup=False,
 ) as dag:
 
