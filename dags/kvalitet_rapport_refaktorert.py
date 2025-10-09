@@ -38,7 +38,8 @@ with DAG(
     def fetch_kafka_counts():
         count_queries = {
             "bb_count_md": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1",
-            "bb_count_fg": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_FAGSAK_ORD WHERE lastet_dato >= sysdate - 1",
+            "bb_count_fg": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_FAGSAK WHERE lastet_dato >= sysdate - 1",
+            "bb_count_fg_ord": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_FAGSAK_ORD WHERE lastet_dato >= sysdate - 1",
             "bt_count": "SELECT COUNT(*) FROM DVH_FAM_BT.fam_bt_meta_data WHERE lastet_dato >= sysdate - 1",
             "ef_count": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ef_meta_data WHERE lastet_dato >= sysdate - 1",
             "ts_count_v2": "SELECT COUNT(*) FROM DVH_FAM_EF.fam_ts_meta_data_v2 WHERE lastet_dato >= sysdate - 1", #v2
@@ -163,7 +164,7 @@ with DAG(
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
-        bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak ord.........{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}"
+        bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak + ord.......{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}/{str(kafka_last['bb_count_fg_ord'])}"
         bs_count_str = f"Antall mottatt BS meldinger................................{str(kafka_last['bs_count'])}"
         pp_count_str = f"Antall mottatt {pp_grafana}................................{str(kafka_last['pp_count'])}"
         bt_count_str = f"Antall mottatt {bt_grafana}................................{str(kafka_last['bt_count'])}"
