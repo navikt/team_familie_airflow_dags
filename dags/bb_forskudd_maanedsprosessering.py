@@ -57,8 +57,9 @@ with DAG(
         }
     )
     def notification_start():
+        periode_status = f"perioden {periode_fom}" if periode_fom == periode_tom else f"periodene {periode_fom} til og med {periode_tom}" # Ønsker å gjøre meldingen mer lesbar ved én periode
         slack_info(
-            message = f"Inserting perioden {periode_fom} til periode {periode_tom} med max_vedtaks_dato {max_vedtaksdato} av forskudd maanedsprosesserings data starter nå! :rocket:"
+            message = f"Starter månedlig prosessering av forskudd for {periode_status}. Max vedtaksdato={max_vedtaksdato}, Gyldig flagg={gyldig_flagg} :rocket:"
         )
 
     start_alert = notification_start()
