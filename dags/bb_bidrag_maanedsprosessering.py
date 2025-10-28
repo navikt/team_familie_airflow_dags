@@ -86,7 +86,7 @@ with DAG(
         repo='navikt/dvh_fam_bb_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select BB_ord_maanedsprosessering.fam_bb_bidrag  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
+        dbt_command=f"""run --select BB_ord_maanedsprosessering.*  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
         allowlist=prod_oracle_conn_id, 
         db_schema=v_schema
     )
