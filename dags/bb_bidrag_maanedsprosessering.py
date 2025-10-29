@@ -4,12 +4,13 @@ from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_info, slack_error
 from airflow.decorators import task
 from kubernetes import client
+from dataverk_airflow import notebook_operator
 from felles_metoder.felles_metoder import get_periode, get_siste_dag_i_forrige_maaned
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id, nb_api
 
 miljo = Variable.get('miljo')
 
-allowlist = prod_oracle_conn_id 
+allowlist = prod_oracle_conn_id + nb_api
 
 default_args = {
     'owner': 'Team-Familie', 
@@ -64,13 +65,28 @@ with DAG(
 
     start_alert = notification_start()
 
+    nb_valuta = notebook_operator(
+    dag = dag,
+    name = 'Henting_av_valuta_nb',
+    repo = 'navikt/dvh-fam-notebooks',
+    nb_path = 'BB/hent_valuta_nb.ipynb',
+    allowlist=allowlist,
+    branch = v_branch,
+    resources=client.V1ResourceRequirements(
+        requests={'memory': '4G'},
+        limits={'memory': '4G'}),
+    slack_channel = Variable.get('slack_error_channel'),
+    requirements_path="requirements.txt",
+    log_output=False
+    )
+
     dbt_run_stonad_arena = create_dbt_operator(
         dag=dag,
         name="dbt-run_bidrag_maanedsprosessering",
         repo='navikt/dvh_fam_bb_dbt',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select BB_ord_maanedsprosessering.fam_bb_bidrag  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
+        dbt_command=f"""run --select BB_ord_maanedsprosessering.*  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,
         allowlist=prod_oracle_conn_id, 
         db_schema=v_schema
     )
@@ -89,4 +105,4 @@ with DAG(
 
     slutt_alert = notification_end()
    
-start_alert >> dbt_run_stonad_arena >> slutt_alert
+start_alert >> nb_valuta >> dbt_run_stonad_arena >> slutt_alert
