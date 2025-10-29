@@ -39,7 +39,7 @@ with DAG(
     default_args=default_args,
     description='Count the number of successful DAG runs for each DAG',
     start_date=datetime(2024, 6, 5),
-    schedule_interval= "0 11 * * *", # Kjører kl 13:00 CEST hver dag
+    schedule_interval= "0 11 * * *", # Kjører kl 12:00 CET hver dag
     catchup=False
     
 ) as dag:
@@ -63,7 +63,9 @@ with DAG(
         # 10:00:00+00:00 til 10:00:00+00:00 UTC (12:00 CEST, DAG kjører 13:00 CEST)
         yesterday = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0) - dt.timedelta(days=1)
         today = dt.datetime.now(dt.timezone.utc).replace(hour = 10, minute = 0, second = 0, microsecond = 0)
-        print(str(today) + " & " + str(yesterday))
+        #gaarsdagensdato = dt.datetime.now(pytz.timezone("Europe/Oslo")) - dt.timedelta(days=1) # Henter gårsdagen i Oslo tidssone, automatisk sommertidshåndtering
+        #gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
+        #print(str(today) + " & " + str(yesterday))
 
         try:
             # Query for tellingen av suksessfulle DAG-kjøringer
@@ -105,7 +107,7 @@ with DAG(
         yesterday = date.today() - timedelta(days = 1)
         # Hardkodet noe av string
         report_summary = f"""
-*Antall suksesfulle {miljo} DAG runs, som har kjørt mellom {yesterday} og {today} kl 12:00 CEST:*
+*Antall suksesfulle {miljo} DAG runs, som har kjørt mellom {yesterday} og {today} kl 12:00 CET:*
 ```
 {string_of_successful_runs}
 ```
