@@ -21,10 +21,11 @@ else:
     miljo = 'dev'  # For formateringsformål
 
 with DAG(
-    dag_id='dagsrapport_v2',
+    dag_id='Dagsrapport v2',
+    description = 'Daglig rapport over meldingsantall fra konsumenter i Team Familie DVH',
     default_args={'on_failure_callback': slack_error},
     start_date=datetime(2024, 10, 9),
-    schedule_interval="0 22 * * *", # 0 CEST
+    schedule_interval="0 23 * * *", # 0 CET
     catchup=False,
 ) as dag:
 

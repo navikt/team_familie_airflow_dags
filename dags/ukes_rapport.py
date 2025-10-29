@@ -1,7 +1,6 @@
-from datetime import datetime
-from datetime import date
-from datetime import timedelta
+from datetime import datetime, timedelta
 import datetime as dt
+import pytz
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
@@ -22,11 +21,11 @@ else:
     miljo = 'dev' # Miljø er aldri dev, men ønsker å sette verdi for å bruke direkte i string i rapport
 
 with DAG(
-  dag_id='ukesrapport',
-  description = 'Ukentlig rapport av verdier TF DVH ikke trenger å sjekke daglig',
+  dag_id='Ukesrapport',
+  description = 'Ukentlig rapport av verdier Team Familie DVH ikke trenger å sjekke daglig',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2024, 9, 2),
-  schedule_interval= "30 5 * * 1", # kl 06:30 mandag CET hver uke, 30 min før dagsrapport for å være først
+  schedule_interval= "0 8 * * 1", # kl 09:00 mandag CET hver uke
   catchup=False
 ) as dag:
 
@@ -190,8 +189,12 @@ with DAG(
     )
   def info_slack(kafka_last):
     # Dato for nøyaktig tidspunkt en uke siden
-    forrigeuke = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=7)
+    forrigeuke = dt.datetime.now(pytz.timezone("Europe/Oslo")) - dt.timedelta(days=7)
+    #forrigeuke = dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=2) - dt.timedelta(days=7)
     forrigeuke = forrigeuke.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund, blir for mye informasjon i rapporten
+    
+    #gaarsdagensdato = dt.datetime.now(pytz.timezone("Europe/Oslo")) - dt.timedelta(days=1) # Henter gårsdagen i Oslo tidssone, automatisk sommertidshåndtering
+    #gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
     [
       kode67_soker_ant,
       kode67_pleie_ant,
