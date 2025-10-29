@@ -21,7 +21,7 @@ else:
     miljo = 'dev'  # For formateringsformål
 
 with DAG(
-    dag_id='Dagsrapport v2',
+    dag_id='Dagsrapport_v2',
     description = 'Daglig rapport over meldingsantall fra konsumenter i Team Familie DVH',
     default_args={'on_failure_callback': slack_error},
     start_date=datetime(2024, 10, 9),
