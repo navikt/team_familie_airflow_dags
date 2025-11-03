@@ -20,6 +20,45 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev'  # For formateringsformål
 
+# Definer ansvarlige per uke
+uke = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]
+ansvarlig = [
+    "Arafa",
+    "Gard",
+    "Hans",
+    "Helen",
+    "Arafa",
+    "Gard",
+    "Hans",
+    "Helen",
+    "Arafa",
+    "Gard",
+    "Hans",
+    "Helen",
+    "Arafa",
+    "Gard",
+    "Helen",
+    "Hans",
+    "Arafa",
+    "Gard",
+    "Hans",
+    "Helen",
+    "Arafa",
+    "Gard",
+    "Hans",
+    "Helen",
+    "Arafa",
+    "Gard",
+    "Hans",
+    "Helen",
+    "Arafa",
+]
+ansvarlig_per_uke = dict(zip(uke, ansvarlig))
+
+def hent_ansvarlig_per_uke(uke):
+    """Return ansvarlig for gitt uke eller None hvis ikke definert."""
+    return ansvarlig_per_uke.get(uke)
+
 with DAG(
     dag_id='Dagsrapport_v2',
     description = 'Daglig rapport over meldingsantall fra konsumenter i Team Familie DVH',
@@ -162,8 +201,11 @@ with DAG(
         ks_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-kontantstotte-vedtak-v1%5C%22%7D+%3E+0+%22%2C%22refId%22%3A%22A%22%2C%22editorMode%22%3A%22code%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*KS meldinger*>"
         fp_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22bmi%22:%7B%22datasource%22:%22000000021%22,%22queries%22:%5B%7B%22exemplar%22:true,%22expr%22:%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamforeldrepenger.fpsak-dvh-stonadsstatistikk-v1%5C%22%7D%20%3E%200%20%22,%22refId%22:%22A%22,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22000000021%22%7D%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1|*FP meldinger*>"
         
-        gaarsdagensdato = dt.datetime.now(pytz.timezone("Europe/Oslo")) - dt.timedelta(days=1) # Henter gårsdagen i Oslo tidssone, automatisk sommertidshåndtering
+        dagensdato = dt.datetime.now(pytz.timezone("Europe/Oslo")) # Henter dagens dato i Oslo tidssone, automatisk sommertidshåndtering
+        gaarsdagensdato = dagensdato - dt.timedelta(days=1) # Trekker fra en dag for å få gårsdagens dato
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
+        hentet_uke = dagensdato.isocalendar()[1]  # Henter uke nummer (fikset veriabel)
+        hentet_ansvarlig = hent_ansvarlig_per_uke(uke) or "Ukjent"
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
         bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak + ord.......{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}/{str(kafka_last['bb_count_fg_ord'])}"
@@ -181,6 +223,7 @@ with DAG(
         # Stringen må formateres sånn som dette for å se riktig ut, se bort fra merkelig tab indent i IDE
         konsumenter_summary = f"""
 *Dagsrapport*
+Ansvarlig denne uken (uke {hentet_uke}): {hentet_ansvarlig}
 Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
 
 ```
