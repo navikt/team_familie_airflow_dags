@@ -205,7 +205,7 @@ with DAG(
         gaarsdagensdato = dagensdato - dt.timedelta(days=1) # Trekker fra en dag for å få gårsdagens dato
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
         hentet_uke = dagensdato.isocalendar()[1]  # Henter uke nummer (fikset veriabel)
-        hentet_ansvarlig = hent_ansvarlig_per_uke(uke) or "Ukjent"
+        hentet_ansvarlig = hent_ansvarlig_per_uke(hentet_uke) or "Ukjent"
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
         bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak + ord.......{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}/{str(kafka_last['bb_count_fg_ord'])}"
