@@ -29,7 +29,7 @@ settings = Variable.get("dbt_ks_schema", deserialize_json=True)
 v_branch = settings["branch"]
 v_schema = settings["schema"]
 
-topic = "teamfamilie.aapen-kontantstotte-vedtak-v1 "#Variable.get("KS_topic") 
+topic = Variable.get("KS_topic") 
 
 with DAG(
   dag_id="KS_konsument",
