@@ -25,7 +25,7 @@ with DAG(
   description = 'Ukentlig rapport av verdier Team Familie DVH ikke trenger å sjekke daglig',
   default_args={'on_failure_callback': slack_error},
   start_date=datetime(2024, 9, 2),
-  schedule_interval= "0 8 * * 1", # kl 09:00 mandag CET hver uke
+  schedule_interval="30 23 * * 1", # 00:30 CET, hver mandag. Pass på å ikke kjøre samtidig med noen konsumenter, vil rapportere upakkede meldinger
   catchup=False
 ) as dag:
 
