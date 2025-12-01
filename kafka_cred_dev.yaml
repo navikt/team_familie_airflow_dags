@@ -7,5 +7,5 @@ metadata:
 spec:
   kafka:
     pool: nav-dev
-  secretName: dvh-familie-konsument-creds-2025 # dvh-familie-konsument-creds
+    secretName: dvh-familie-konsument-creds # dvh-familie-konsument-creds
   protected: true
