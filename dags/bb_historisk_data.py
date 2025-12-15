@@ -73,7 +73,7 @@ with DAG(
     bb_historisk_data_wrangling = create_dbt_operator(
      dag=dag,
      name="historisk_bb_data_wrangling",
-     repo='navikt/dvh_fam_bb_dbt',
+     repo='navikt/dvh_fam_bb',
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
      dbt_command= """run --select BB_historisk_data_trans.*""",

@@ -67,7 +67,7 @@ with DAG(
     dbt_run_stonad_arena = create_dbt_operator(
         dag=dag,
         name="dbt-run_forskudd_maanedsprosessering",
-        repo='navikt/dvh_fam_bb_dbt',
+        repo='navikt/dvh_fam_bb',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
         dbt_command=f"""run --select BB_maanedsprosessering.fam_bb_forskudd  --vars '{{"periode_fom":{periode_fom}, "periode_tom":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}' """,

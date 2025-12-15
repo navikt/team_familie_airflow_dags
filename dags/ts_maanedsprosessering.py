@@ -66,7 +66,7 @@ with DAG(
     ts_dbt_insert = create_dbt_operator(
         dag=dag,
         name="insert_mottaker_data",
-        repo='navikt/dvh_fam_ts_dbt',
+        repo='navikt/dvh_fam_ef',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
         dbt_command=f"""run --select TS_maanedsprosessering_v2.*  --vars '{{"periode":{periode}, "gyldig_flagg":{gyldig_flagg}}}' """,
