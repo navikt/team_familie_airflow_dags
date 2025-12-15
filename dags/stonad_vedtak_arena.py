@@ -57,7 +57,7 @@ with DAG(
         repo='navikt/dvh_fam_ef',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select EF_arena.*  --vars '{{"periode":{periode}}}' """,
+        dbt_command=f"""run --select EF/EF_arena.*  --vars '{{"periode":{periode}}}' """,
         allowlist=allowlist, 
         db_schema=v_schema
     )
