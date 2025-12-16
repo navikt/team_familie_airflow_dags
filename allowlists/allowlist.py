@@ -1,6 +1,6 @@
 slack_allowlist = ['slack.com','hooks.slack.com']
 
-prod_oracle_conn_id = ['dmv09-scan.adeo.no:1521'] + ['hub.getdbt.com']
+prod_oracle_conn_id = ['dmv03-scan.adeo.no:1521'] + ['hub.getdbt.com']
 r_oracle_conn_id = ['dm07-scan.adeo.no:1521'] + ['hub.getdbt.com']
 dev_oracle_conn_id = ['dmv07-scan.adeo.no:1521'] + ['hub.getdbt.com']
 
