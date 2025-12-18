@@ -55,7 +55,7 @@ with DAG(
      repo='navikt/dvh_fam_ef',
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
-     dbt_command= """run --select EF/EF_utpakking.*""",
+     dbt_command= """run --select EF.EF_utpakking.*""",
      db_schema=v_schema,
      allowlist=allowlist
 
