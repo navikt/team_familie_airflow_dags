@@ -20,39 +20,14 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev'  # For formateringsformål
 
-# Definer ansvarlige per uke
-uke = [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]
-ansvarlig = [
-    "Arafa",
-    "Gard",
-    "Hans",
-    "Helen",
-    "Arafa",
-    "Gard",
-    "Hans",
-    "Helen",
-    "Arafa",
-    "Gard",
-    "Hans",
-    "Helen",
-    "Arafa",
-    "Gard",
-    "Helen",
-    "Hans",
-    "Arafa",
-    "Gard",
-    "Hans",
-    "Helen",
-    "Arafa",
-    "Gard",
-    "Hans",
-    "Helen",
-    "Arafa",
-    "Gard",
-    "Hans",
-    "Helen",
-    "Arafa",
-]
+#TODO: Dette kan forenkles i fremtiden, eller legges i en funksjon
+# Definer ansvarlige per uke for 2026
+uke = [i for i in range(1, 54)]
+ansvarlig = ["Arafa", "Gard", "Hans", "Helen/Gard"]
+# Lag ansvarlig-listen ved å repetere ansvarlig-listen og stoppe etter 53 elementer (tilsvarende uker i året)
+antall_uker = len(uke)
+gjentatt = (ansvarlig * ((antall_uker // len(ansvarlig)) + 1))[:antall_uker]
+ansvarlig = gjentatt
 ansvarlig_per_uke = dict(zip(uke, ansvarlig))
 
 def hent_ansvarlig_per_uke(uke):
@@ -205,7 +180,7 @@ with DAG(
         gaarsdagensdato = dagensdato - dt.timedelta(days=1) # Trekker fra en dag for å få gårsdagens dato
         gaarsdagensdato = gaarsdagensdato.strftime("%Y-%m-%d %H:%M:%S") # Formaterer vekk millisekund
         hentet_uke = dagensdato.isocalendar()[1]  # Henter uke nummer (fikset veriabel)
-        hentet_ansvarlig = hent_ansvarlig_per_uke(hentet_uke) or "Ukjent"
+        hentet_ansvarlig = hent_ansvarlig_per_uke(hentet_uke) or "Ukjent" #Hent ansvarlig per uke
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
         bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak + ord.......{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}/{str(kafka_last['bb_count_fg_ord'])}"
