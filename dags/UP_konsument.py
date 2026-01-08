@@ -16,7 +16,7 @@ if miljo == 'Prod':
 elif miljo == 'test_r':
     allowlist.extend(r_oracle_conn_id)
 else:
-    allowlist.extend(dev_oracle_conn_id)
+    allowlist.extend(dev_oracle_conn_id) #dev
 
 default_args = {
     'owner': 'Team-Familie',
@@ -33,7 +33,7 @@ topic = Variable.get("UP_topic")
 
 with DAG(
   dag_id="UP_konsument",
-  start_date=datetime(2025, 12, 3),
+  start_date=datetime(2025, 1, 7),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
@@ -49,4 +49,15 @@ with DAG(
     slack_channel = Variable.get("slack_error_channel")
   )
 
-consumer
+  up_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_up",
+     repo='navikt/dvh_fam_ef',
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select UP_utpakking.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
+ )
+
+consumer >> up_utpakking_dbt
