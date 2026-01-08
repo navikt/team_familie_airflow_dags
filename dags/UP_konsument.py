@@ -35,7 +35,7 @@ with DAG(
   dag_id="UP_konsument",
   start_date=datetime(2025, 12, 6),
   default_args = default_args,
-  schedule_interval= "@hourly",
+  schedule_interval= "@monthly",
   max_active_runs=1,
   catchup = True
 ) as dag:
