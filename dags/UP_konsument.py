@@ -16,7 +16,7 @@ if miljo == 'Prod':
 elif miljo == 'test_r':
     allowlist.extend(r_oracle_conn_id)
 else:
-    allowlist.extend(dev_oracle_conn_id)
+    allowlist.extend(dev_oracle_conn_id) #dev
 
 default_args = {
     'owner': 'Team-Familie',
@@ -33,7 +33,7 @@ topic = Variable.get("UP_topic")
 
 with DAG(
   dag_id="UP_konsument",
-  start_date=datetime(2025, 12, 18),
+  start_date=datetime(2025, 1, 7),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
@@ -58,7 +58,6 @@ with DAG(
      dbt_command= """run --select UP_utpakking.*""",
      db_schema=v_schema,
      allowlist=allowlist
-
  )
 
 consumer >> up_utpakking_dbt
