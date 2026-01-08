@@ -33,7 +33,7 @@ topic = Variable.get("UP_topic")
 
 with DAG(
   dag_id="UP_konsument",
-  start_date=datetime(2025, 1, 7),
+  start_date=datetime(2026, 1, 6),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
