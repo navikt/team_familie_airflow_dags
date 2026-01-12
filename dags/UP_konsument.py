@@ -52,7 +52,7 @@ with DAG(
   up_utpakking_dbt = create_dbt_operator(
      dag=dag,
      name="utpakking_up",
-     repo='navikt/dvh_fam_ef',
+     repo='navikt/dvh_fam_ungdom',
      script_path = 'airflow/dbt_run.py',
      branch=v_branch,
      dbt_command= """run --select UP_utpakking.*""",
