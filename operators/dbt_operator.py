@@ -34,7 +34,7 @@ def create_dbt_operator(
         "limits": {
             "memory": "100Mi"
         }
-    }
+    },
     extra_envs={
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
