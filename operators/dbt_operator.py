@@ -25,10 +25,16 @@ def create_dbt_operator(
     script_path=script_path,#'airflow/dbt_run_test.py',
     branch=branch,
     do_xcom_push=True,
-    resources=client.V1ResourceRequirements(
-        requests={"memory": "6G"},
-        limits={"memory": "6G"}
-        ),
+    resources={
+        "requests": {
+            "memory": "50Mi",
+            "cpu": "100m",
+            "ephemeral-storage": "1Gi"
+        },
+        "limits": {
+            "memory": "100Mi"
+        }
+    }
     extra_envs={
       'DBT_COMMAND': dbt_command,
       'LOG_LEVEL': 'DEBUG',
