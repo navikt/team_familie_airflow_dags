@@ -1,5 +1,5 @@
 """
-Dagsrapport_v2
+Dagsrapport_v3
 ---------------
 Daglig rapport over meldingsantall fra konsumenter i Team Familie DVH til meta data.
 - Henter aggregerte antall siste døgn.
@@ -10,16 +10,13 @@ NB:
  - Husk å gi nødvendige database-rettigheter ved nye konsumenter, f.eks.:
    GRANT SELECT ON DVH_FAM_BB.fam_bb_meta_data TO DVH_FAM_AIRFLOW;
 """
-
 from datetime import timedelta
 import pendulum
 from typing import Dict, List, Optional
-
 from airflow import DAG
 from airflow.models import Variable
 from airflow.decorators import task
 from kubernetes import client
-
 from operators.slack_operator import slack_error, slack_info
 from utils.db.oracle_conn import oracle_conn
 from allowlists.allowlist import prod_oracle_slack, dev_oracle_slack, r_oracle_slack
@@ -45,7 +42,7 @@ def hent_ansvarlig_per_uke(uke: int) -> Optional[str]:
     Returnerer ansvarlig for gitt uke eller None hvis ikke definert.
     """
     uke_liste = list(range(1, 54))  # 53 uker er maks for ISO-uker
-    ansvarlige = ["Arafa", "Gard", "Hans", "Helen/Gard"]
+    ansvarlige = ["Arafa", "Gard", "Hans", "Helen/Gard"] # Gard tar over for Helen inntil videre
     gjentatt = (ansvarlige * ((len(uke_liste) // len(ansvarlige)) + 1))[: len(uke_liste)]
     ansvarlig_per_uke = dict(zip(uke_liste, gjentatt))
     return ansvarlig_per_uke.get(uke)
@@ -212,7 +209,7 @@ with DAG(
         pp_count_str = f"Antall mottatt PP meldinger................................{kafka_last['pp_count']}"
         bt_count_str = f"Antall mottatt BT meldinger................................{kafka_last['bt_count']}"
         ef_count_str = f"Antall mottatt EF meldinger................................{kafka_last['ef_count']}"
-        ts_count_math_str = f"Antall mottatt TS v2 total/fagsak.........................{kafka_last['ts_count_v2']}/{kafka_last['ts_fgsk_count_v2']}"
+        ts_count_math_str = f"Antall mottatt TS v2 total/fagsak..........................{kafka_last['ts_count_v2']}/{kafka_last['ts_fgsk_count_v2']}"
         ks_count_str = f"Antall mottatt KS meldinger................................{kafka_last['ks_count']}"
         fp_sum_count_str = f"Antall mottatt summerte FP meldinger.......................{kafka_last['fp_sum_count']}"
         fp_count_str = f"Antall mottatt FP meldinger................................{kafka_last['fp_count']}"
@@ -248,13 +245,13 @@ Leste {miljo} meldinger siden {yesterday.to_datetime_string()}:
         # Sjekker om noe ble lagt til i string, hvis ikke sendes else string
         if topics_med_hull:
             slack_info(
-                message=f"<!channel> Det er oppdaget hull i følgende: {', '.join(topics_med_hull)}. Sjekk manuelt for flere! :rotating_light:",
+                message=f"<!channel> Det er oppdaget hull i følgende: {', '.join(topics_med_hull)}. Sjekk manuelt for å finne hullene! :rotating_light:",
                 emoji=":rotating_light:",
             )
         else:
             slack_info(
-                message="Ingen hull oppdaget i noen topics. :green_check_mark:",
-                emoji=":green_check_mark:",
+                message="Ingen hull oppdaget i noen topics. :white_check_mark:",
+                emoji=":white_check_mark:",
             )
 
     kafka_last = fetch_kafka_counts()
