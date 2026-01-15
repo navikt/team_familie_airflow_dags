@@ -59,7 +59,7 @@ with DAG(
         "retries": 1,
         "retry_delay": timedelta(minutes=5),
     },
-    start_date=pendulum.datetime(2026, 15, 1, tz=OSLO_TZ),
+    start_date=pendulum.datetime(2026, 1, 15, tz=OSLO_TZ),
     schedule="0 0 * * *",  # Lokal midnatt i Oslo
     catchup=False,
 ) as dag:
