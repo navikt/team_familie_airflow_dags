@@ -20,18 +20,16 @@ else:
     allowlist.extend(dev_oracle_slack)
     miljo = 'dev'  # For formateringsformål
 
-#TODO: Dette kan forenkles i fremtiden, eller legges i en funksjon
-# Definer ansvarlige per uke for 2026
-uke = [i for i in range(1, 54)]
-ansvarlig = ["Arafa", "Gard", "Hans", "Helen/Gard"]
-# Lag ansvarlig-listen ved å repetere ansvarlig-listen og stoppe etter 53 elementer (tilsvarende uker i året)
-antall_uker = len(uke)
-gjentatt = (ansvarlig * ((antall_uker // len(ansvarlig)) + 1))[:antall_uker]
-ansvarlig = gjentatt
-ansvarlig_per_uke = dict(zip(uke, ansvarlig))
-
 def hent_ansvarlig_per_uke(uke):
     """Return ansvarlig for gitt uke eller None hvis ikke definert."""
+    # Definer ansvarlige per uke for 2026
+    uke_liste = [i for i in range(1, 54)]
+    ansvarlig = ["Arafa", "Gard", "Hans", "Helen/Gard"]
+    # Lag ansvarlig-listen ved å repetere ansvarlig-listen og stoppe etter 53 elementer (tilsvarende uker i året)
+    antall_uker = len(uke_liste)
+    gjentatt = (ansvarlig * ((antall_uker // len(ansvarlig)) + 1))[:antall_uker]
+    ansvarlig = gjentatt
+    ansvarlig_per_uke = dict(zip(uke_liste, ansvarlig))
     return ansvarlig_per_uke.get(uke)
 
 with DAG(
@@ -53,6 +51,7 @@ with DAG(
     # Husk å grante rettigheter ved bruk av nye konsumenter, e.g. "GRANT SELECT ON DVH_FAM_BB.fam_bb_meta_data TO DVH_FAM_Airflow;"
     def fetch_kafka_counts():
         count_queries = {
+            "up_count": "SELECT COUNT(*) FROM DVH_FAM_UNGDOM.fam_UP_meta_data WHERE lastet_dato >= sysdate - 1",
             "bb_count_md": "SELECT COUNT(*) FROM DVH_FAM_BB.fam_bb_meta_data WHERE lastet_dato >= sysdate - 1",
             "bb_count_fg": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_FAGSAK WHERE lastet_dato >= sysdate - 1",
             "bb_count_fg_ord": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_FAGSAK_ORD WHERE lastet_dato >= sysdate - 1",
@@ -85,6 +84,16 @@ with DAG(
     )
     def check_for_gaps():
         gap_queries = {
+            # kafka_offset > 1059 pga slettede duplikater
+            "sjekk_hull_i_UP_meta_data": """
+                SELECT * FROM
+                    (SELECT lastet_dato, kafka_topic, kafka_offset,
+                        LEAD(kafka_offset) 
+                        OVER(PARTITION BY kafka_topic
+                        ORDER BY kafka_offset) neste
+                    FROM DVH_FAM_UNGDOM.fam_up_meta_data)
+                WHERE neste - kafka_offset > 1 AND kafka_offset > 1059
+            """,
             "sjekk_hull_i_BB_meta_data_forskudd": """
                 SELECT * FROM
                     (SELECT lastet_dato, kafka_topic, kafka_offset,
@@ -169,6 +178,7 @@ with DAG(
     )
     def info_slack(kafka_last, gaps):
         # Hardkodede Grafana-lenker
+        up_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%2237b%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22k9saksbehandling.aapen-ung-stonadstatistikk-v1%5C%22%7D+%3E+0+%22%2C%22refId%22%3A%22A%22%2C%22editorMode%22%3A%22code%22%2C%22range%22%3Atrue%2C%22instant%22%3Atrue%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*UP meldinger*>"
         bb_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%226xn%22:%7B%22datasource%22:%22000000021%22,%22queries%22:%5B%7B%22exemplar%22:true,%22expr%22:%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22bidrag.statistikk%5C%22%7D%20%3E%200%22,%22refId%22:%22A%22,%22datasource%22:%7B%22type%22:%22prometheus%22,%22uid%22:%22000000021%22%7D,%22editorMode%22:%22code%22,%22range%22:true,%22instant%22:true%7D%5D,%22range%22:%7B%22from%22:%22now-1h%22,%22to%22:%22now%22%7D%7D%7D&orgId=1|*BB meldinger*>"
         bt_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22fll%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-barnetrygd-vedtak-v2%5C%22%7D+%3E+0+%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*BT meldinger*>"
         ef_grafana = "<https://grafana.nav.cloud.nais.io/explore?schemaVersion=1&panes=%7B%22od5%22%3A%7B%22datasource%22%3A%22000000021%22%2C%22queries%22%3A%5B%7B%22exemplar%22%3Atrue%2C%22expr%22%3A%22kafka_log_Log_LogEndOffset_Value%7Btopic%3D%5C%22teamfamilie.aapen-ensligforsorger-vedtak-v1%5C%22%7D%22%2C%22refId%22%3A%22A%22%2C%22datasource%22%3A%7B%22type%22%3A%22prometheus%22%2C%22uid%22%3A%22000000021%22%7D%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1|*EF meldinger*>"
@@ -183,6 +193,7 @@ with DAG(
         hentet_ansvarlig = hent_ansvarlig_per_uke(hentet_uke) or "Ukjent" #Hent ansvarlig per uke
 
         # Hver linje statisk opprettet, letteste løsning når det er flere forskjeller i hver string
+        up_count_str = f"Antall mottatt {up_grafana}................................{str(kafka_last['up_count'])}"
         bb_count_str = f"Antall mottatt {bb_grafana} i meta data/fagsak + ord.......{str(kafka_last['bb_count_md'])}/{str(kafka_last['bb_count_fg'])}/{str(kafka_last['bb_count_fg_ord'])}"
         bs_count_str = f"Antall mottatt BS meldinger................................{str(kafka_last['bs_count'])}"
         pp_count_str = f"Antall mottatt {pp_grafana}................................{str(kafka_last['pp_count'])}"
@@ -202,6 +213,7 @@ Ansvarlig denne uken (uke {hentet_uke}): {hentet_ansvarlig}
 Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
 
 ```
+{up_count_str}
 {bb_count_str}
 {bs_count_str}
 {pp_count_str}
@@ -223,6 +235,7 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         )
 
         # Sjekker etter hull
+        up_hull_forskudd = gaps.get("sjekk_hull_i_UP_meta_data")
         bb_hull_forskudd = gaps.get("sjekk_hull_i_BB_meta_data_forskudd")
         bb_hull_bidrag = gaps.get("sjekk_hull_i_BB_meta_data_bidrag")
         bt_hull = gaps.get("sjekk_hull_i_BT_meta_data")
@@ -232,7 +245,7 @@ Leste {miljo} meldinger fra konsumenter siden {gaarsdagensdato}:
         fp_hull = gaps.get("sjekk_hull_i_FP_meta_data")
 
         # Hvis noen topics inneholder hull, konkatineres navn på topic med komma mellomrom hvert navn
-        topics_med_hull = ", ".join(str(sublist) for sublist in [bb_hull_forskudd, bb_hull_bidrag, bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
+        topics_med_hull = ", ".join(str(sublist) for sublist in [up_hull_forskudd, bb_hull_forskudd, bb_hull_bidrag, bt_hull, ef_hull, ks_hull, pp_hull, fp_hull] if sublist)
 
         # Sjekker om noe ble lagt til i string, hvis ikke sendes annen string
         if topics_med_hull:
