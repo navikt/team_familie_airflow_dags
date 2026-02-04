@@ -55,8 +55,8 @@ with DAG(
         branch=branch,
         allowlist=allowlist,
         resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
+            requests={"memory": "8G"},
+            limits={"memory": "10G"}),
         requirements_path="Oracle_python/requirements.txt",
         slack_channel=Variable.get("slack_error_channel")
     )
