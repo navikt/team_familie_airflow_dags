@@ -13,10 +13,16 @@ def create_dbt_operator(
   repo:str,
   db_schema: str,
   script_path:str,
-  allowlist: list = [],
+  allowlist: list | None = None,
+  execution_timeout =None,
   *args,
   **kwargs):
+  
+  if allowlist is None:
+      allowlist = []
 
+  if execution_timeout is not None:
+      kwargs["execution_timeout"] = execution_timeout
 
   return python_operator(
     dag=dag,
@@ -26,8 +32,8 @@ def create_dbt_operator(
     branch=branch,
     do_xcom_push=True,
     resources=client.V1ResourceRequirements(
-        requests={"memory": "6G", "cpu": "5",},
-        limits={"memory": "6G"}
+        requests={"memory": "6G", "cpu": "5"},
+        limits={"memory": "6G", "cpu": "5"}
         ),
     extra_envs={
       'DBT_COMMAND': dbt_command,
@@ -39,6 +45,7 @@ def create_dbt_operator(
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
     image='ghcr.io/navikt/dvh-images/airflow-dbt:20250502-073831', 
-    allowlist = allowlist
+    allowlist = allowlist,
+    **kwargs
   )
 
