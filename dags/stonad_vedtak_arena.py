@@ -46,7 +46,7 @@ with DAG(
     )
     def notification_start():
         slack_info(
-            message = "Lasting av data til både fam_ef_arena_stonad og fam_ef_arena_vedtak starter nå ved hjelp av Airflow! :rocket:"
+            message = f"Starter lasting av data til fam_ef_arena_stonad og fam_ef_arena_vedtak på periode {periode}! :rocket:"
         )
 
     start_alert = notification_start()
@@ -71,7 +71,7 @@ with DAG(
     )
     def notification_end():
         slack_info(
-            message = "Data er feridg lastet til fam_ef_arena_stonad og fam_ef_arena_vedtak! :tada: :tada:"
+            message = "Data er ferdig lastet til fam_ef_arena_stonad og fam_ef_arena_vedtak! :tada: :tada:"
         )
 
     slutt_alert = notification_end()
