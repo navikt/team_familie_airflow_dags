@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import pendulum
 from airflow.models import DAG, Variable
 from airflow.decorators import task
 from kubernetes import client
@@ -18,10 +19,14 @@ def get_or_default(value, fallback, cast=str):
 # Hent alle miljøvariabler og konfigurasjon
 miljo = Variable.get("miljo")
 
+OSLO_TZ = pendulum.timezone("Europe/Oslo")
+now_oslo = pendulum.now(OSLO_TZ)
+tomorrow = now_oslo.add(days=1).replace(microsecond=0)
+
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
 periode_fom      = get_or_default(up_variabler["periode_fom"], get_periode)
 periode_tom      = get_or_default(up_variabler["periode_tom"], get_periode)
-max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], get_siste_dag_i_forrige_maaned) # Skal være dagens dato + 1
+max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], tomorrow) # For UP skal være dagens dato + 1
 periode_type     = get_or_default(up_variabler["periode_type"], lambda: "M")
 gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], lambda: 1, cast=int)
 
@@ -52,11 +57,13 @@ with DAG(
     dag_id="up_maanedsprosessering",
     description="Kjører månedlig prosessering og DBT-modeller for UP.",
     default_args=default_args,
-    start_date=datetime(2025, 1, 1),  # TODO: sett start
+    start_date=pendulum.datetime(2026, 2, 10, tz=OSLO_TZ),
     schedule_interval="0 0 17 * *", # Kjører hver dag kl. 17:00
     catchup=False,
 ) as dag:
 
+
+    # ** pakker ut dictionaryen pod_slack_allowlist, sendes som argumenter til @task-dekoratøren. Prøver å unngå repiterende kode
     @task(**pod_slack_allowlist)
     def notification_start():
         if periode_fom == periode_tom: # Velger melding som passer grammatisk med perioder gitt som variabel
@@ -72,7 +79,7 @@ with DAG(
 
     start_alert = notification_start()
 
-    # Hentet ut av dbt_command for økt leselighet
+    # Hentet ut av dbt_command for å øke lesbarheten 
     dbt_vars = (
         '{'
         f'"periode_fom": "{periode_fom}", '
