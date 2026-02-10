@@ -5,7 +5,6 @@ from airflow.decorators import task
 from kubernetes import client
 from operators.dbt_operator import create_dbt_operator
 from operators.slack_operator import slack_info, slack_error
-from felles_metoder.felles_metoder import get_periode, get_siste_dag_i_forrige_maaned
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id
 
 
@@ -24,10 +23,10 @@ now_oslo = pendulum.now(OSLO_TZ)
 tomorrow = now_oslo.add(days=1).replace(microsecond=0)
 
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
-periode_fom      = get_or_default(up_variabler["periode_fom"], get_periode)
-periode_tom      = get_or_default(up_variabler["periode_tom"], get_periode)
+periode_fom      = get_or_default(up_variabler["periode_fom"], None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
+periode_tom      = get_or_default(up_variabler["periode_tom"], None)
 max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], tomorrow) # For UP skal være dagens dato + 1
-periode_type     = get_or_default(up_variabler["periode_type"], lambda: "M")
+#periode_type     = get_or_default(up_variabler["periode_type"], lambda: "M")
 gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], lambda: 1, cast=int)
 
 dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
@@ -82,10 +81,10 @@ with DAG(
     # Hentet ut av dbt_command for å øke lesbarheten 
     dbt_vars = (
         '{'
-        f'"periode_fom": "{periode_fom}", '
-        f'"periode_tom": "{periode_tom}", '
+        f'"periode_fra": "{periode_fom}", '
+        f'"periode_til": "{periode_tom}", '
         f'"max_vedtaksdato": "{max_vedtaksdato}", '
-        f'"periode_type": "{periode_type}", '
+        #f'"periode_type": "{periode_type}", ' # Ikke implementert ennå, kommentert ut
         f'"gyldig_flagg": {gyldig_flagg}'
         '}'
     )
