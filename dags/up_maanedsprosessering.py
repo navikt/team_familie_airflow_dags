@@ -23,10 +23,10 @@ now_oslo = pendulum.now(OSLO_TZ)
 tomorrow = now_oslo.add(days=1).replace(microsecond=0)
 
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
-periode_fom      = get_or_default(up_variabler["periode_fra"], None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
-periode_tom      = get_or_default(up_variabler["periode_til"], None)
-max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], tomorrow) # For UP skal være dagens dato + 1
-#periode_type     = get_or_default(up_variabler["periode_type"], lambda: "M")
+periode_fom      = get_or_default(up_variabler["periode_fra"], lambda: None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
+periode_tom      = get_or_default(up_variabler["periode_til"], lambda: None)
+max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], lambda: tomorrow) # For UP skal være dagens dato + 1
+#periode_type     = get_or_default(up_variabler["periode_type"], lambda: "D")
 gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], lambda: 1, cast=int)
 
 dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
@@ -56,8 +56,8 @@ with DAG(
     dag_id="up_maanedsprosessering",
     description="Kjører månedlig prosessering og DBT-modeller for UP.",
     default_args=default_args,
-    start_date=pendulum.datetime(2026, 2, 10, tz=OSLO_TZ),
-    schedule_interval="0 0 17 * *", # Kjører hver dag kl. 17:00
+    start_date=pendulum.datetime(2026, 2, 11, tz=OSLO_TZ),
+    schedule_interval="0 17 * * *", # Kjører hver dag kl. 17:00 CET
     catchup=False,
 ) as dag:
 
