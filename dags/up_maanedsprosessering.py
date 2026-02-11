@@ -9,9 +9,14 @@ from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id
 
 
 def get_or_default(value, fallback, cast=str):
-    """Returner verdi hvis satt, ellers fallback()."""
+    """
+    Returner cast(value) hvis value er satt (ikke "" eller None).
+    Ellers:
+      - hvis fallback er kallbar: returner fallback()
+      - ellers: returner fallback (som verdi)
+    """
     if value in ("", None):
-        return fallback()
+        return fallback() if callable(fallback) else fallback
     return cast(value)
 
 
@@ -20,14 +25,14 @@ miljo = Variable.get("miljo")
 
 OSLO_TZ = pendulum.timezone("Europe/Oslo")
 now_oslo = pendulum.now(OSLO_TZ)
-tomorrow = now_oslo.add(days=1).replace(microsecond=0)
+tomorrow_date = now_oslo.add(days=1).to_date_string()   # "YYYY-MM-DD"
 
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
 periode_fom      = get_or_default(up_variabler["periode_fra"], lambda: None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
 periode_tom      = get_or_default(up_variabler["periode_til"], lambda: None)
-max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], lambda: tomorrow) # For UP skal være dagens dato + 1
+max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], lambda: tomorrow_date) # For UP skal være dagens dato + 1
 #periode_type     = get_or_default(up_variabler["periode_type"], lambda: "D")
-gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], lambda: 1, cast=int)
+gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], 1, cast=int)
 
 dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
 v_branch = dbt_settings["branch"]
@@ -54,7 +59,7 @@ pod_slack_allowlist = {
 
 with DAG(
     dag_id="up_maanedsprosessering",
-    description="Kjører månedlig prosessering og DBT-modeller for UP.",
+    description="Kjører dagelig månedsprosessering for Ungdomsprogrammet.",
     default_args=default_args,
     start_date=pendulum.datetime(2026, 2, 11, tz=OSLO_TZ),
     schedule_interval="0 17 * * *", # Kjører hver dag kl. 17:00 CET
@@ -72,22 +77,11 @@ with DAG(
         
         slack_info(
             message=(
-                f"Starter månedlig prosessering for {periode_status}. Max vedtaksdato={max_vedtaksdato}, gyldig_flagg={gyldig_flagg} :rocket:"
+                f"Starter dagelig månedsprosessering for {periode_status}. Max vedtaksdato={max_vedtaksdato}, gyldig_flagg={gyldig_flagg} :rocket:"
             )
         )
 
     start_alert = notification_start()
-
-    # Hentet ut av dbt_command for å øke lesbarheten 
-    dbt_vars = (
-        '{'
-        f'"periode_fra": "{periode_fom}", '
-        f'"periode_til": "{periode_tom}", '
-        f'"max_vedtaksdato": "{max_vedtaksdato}", '
-        #f'"periode_type": "{periode_type}", ' # Ikke implementert ennå, kommentert ut
-        f'"gyldig_flagg": {gyldig_flagg}'
-        '}'
-    )
 
     dbt_run = create_dbt_operator(
         dag=dag,
@@ -95,14 +89,14 @@ with DAG(
         repo="navikt/dvh_fam_ungdom",
         script_path="airflow/dbt_run.py",
         branch=v_branch,
-        dbt_command=f"run --select UP_maanedsprosessering.* --vars '{dbt_vars}'",
+        dbt_command=f"""run --select UP_maanedsprosessering.* --vars '{{"periode_fra":{periode_fom}, "periode_til":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type}, "gyldig_flagg":{gyldig_flagg}}}'""",
         allowlist=prod_oracle_conn_id,
         db_schema=v_schema,
     )
 
     @task(**pod_slack_allowlist)
     def notification_end():
-        slack_info(message="Månedlig prosessering av Ungdomsprogram er ferdig! :tada:")
+        slack_info(message="Daglig månedsprosessering av Ungdomsprogram er ferdig! :tada:")
 
     end_alert = notification_end()
 
