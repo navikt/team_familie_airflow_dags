@@ -23,8 +23,8 @@ now_oslo = pendulum.now(OSLO_TZ)
 tomorrow = now_oslo.add(days=1).replace(microsecond=0)
 
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
-periode_fom      = get_or_default(up_variabler["periode_fom"], None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
-periode_tom      = get_or_default(up_variabler["periode_tom"], None)
+periode_fom      = get_or_default(up_variabler["periode_fra"], None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
+periode_tom      = get_or_default(up_variabler["periode_til"], None)
 max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], tomorrow) # For UP skal være dagens dato + 1
 #periode_type     = get_or_default(up_variabler["periode_type"], lambda: "M")
 gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], lambda: 1, cast=int)
