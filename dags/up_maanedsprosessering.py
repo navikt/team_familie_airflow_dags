@@ -40,7 +40,7 @@ max_vedtaksdato  = get_or_default(up_variabler.get("max_vedtaksdato"), lambda: d
 # K = Kvartal
 # H = Halvår
 # A = År
-periode_type     = get_or_default(up_variabler.get("periode_type"), lambda: "D")
+periode_type     = get_or_default(up_variabler.get("periode_type"), lambda: 'D')
 gyldig_flagg     = get_or_default(up_variabler.get("gyldig_flagg"), 1, cast=int)
 
 dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
