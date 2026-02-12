@@ -25,14 +25,23 @@ miljo = Variable.get("miljo")
 
 OSLO_TZ = pendulum.timezone("Europe/Oslo")
 now_oslo = pendulum.now(OSLO_TZ)
-tomorrow_date = now_oslo.add(days=1).to_date_string()   # "YYYY-MM-DD"
+default_max_vedtaksdato = now_oslo.add(days=1).to_date_string()   # "YYYY-MM-DD"
+# Defaults tilsvarende intermediate-logikken, gjør ikke noe at det settes begge steder. Betyr at hvis man kjører DBT lokalt vil du fortsatt ha default der også
+default_periode_fom = now_oslo.subtract(months=5).format("YYYYMM")
+default_periode_tom = now_oslo.add(months=14).format("YYYYMM")
 
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
-periode_fom      = get_or_default(up_variabler["periode_fra"], lambda: None) # Fallback skal være None, da håndteres det i intermediate-delen av mndprosesseringen 
-periode_tom      = get_or_default(up_variabler["periode_til"], lambda: None)
-max_vedtaksdato  = get_or_default(up_variabler["max_vedtaksdato"], lambda: tomorrow_date) # For UP skal være dagens dato + 1
-#periode_type     = get_or_default(up_variabler["periode_type"], lambda: "D")
-gyldig_flagg     = get_or_default(up_variabler["gyldig_flagg"], 1, cast=int)
+periode_fom      = get_or_default(up_variabler.get("periode_fra"), lambda: default_periode_fom)
+periode_tom      = get_or_default(up_variabler.get("periode_til"), lambda: default_periode_tom)
+max_vedtaksdato  = get_or_default(up_variabler.get("max_vedtaksdato"), lambda: default_max_vedtaksdato) # For UP skal være dagens dato + 1
+# Periode_type:
+# D = Daglig (default)
+# M = Månedlig
+# K = Kvartal
+# H = Halvår
+# A = År
+periode_type     = get_or_default(up_variabler.get("periode_type"), lambda: "D")
+gyldig_flagg     = get_or_default(up_variabler.get("gyldig_flagg"), 1, cast=int)
 
 dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
 v_branch = dbt_settings["branch"]
@@ -61,23 +70,23 @@ with DAG(
     dag_id="up_maanedsprosessering",
     description="Kjører dagelig månedsprosessering for Ungdomsprogrammet.",
     default_args=default_args,
-    start_date=pendulum.datetime(2026, 2, 11, tz=OSLO_TZ),
+    start_date=pendulum.datetime(2026, 2, 12, tz=OSLO_TZ),
     schedule_interval="0 17 * * *", # Kjører hver dag kl. 17:00 CET
     catchup=False,
 ) as dag:
 
 
-    # ** pakker ut dictionaryen pod_slack_allowlist, sendes som argumenter til @task-dekoratøren. Prøver å unngå repiterende kode
+    # ** pakker ut dictionaryen pod_slack_allowlist, sendes som argumenter til @task-dekoratøren. Forsøker å abstrahere kode for renere lesbarhet
     @task(**pod_slack_allowlist)
     def notification_start():
-        if periode_fom == periode_tom: # Velger melding som passer grammatisk med perioder gitt som variabel
+        if periode_fom == periode_tom: # Velger melding som passer grammatisk med antall perioder gitt som variabel
             periode_status = f"perioden {periode_fom}"
         else:
             periode_status = f"periodene {periode_fom} til og med {periode_tom}"
         
         slack_info(
             message=(
-                f"Starter dagelig månedsprosessering for {periode_status}. Max vedtaksdato={max_vedtaksdato}, gyldig_flagg={gyldig_flagg} :rocket:"
+                f"Starter dagelig månedsprosessering for {periode_status}. Max vedtaksdato={max_vedtaksdato}, periode_type={periode_type}, gyldig_flagg={gyldig_flagg} :rocket:"
             )
         )
 
@@ -89,7 +98,7 @@ with DAG(
         repo="navikt/dvh_fam_ungdom",
         script_path="airflow/dbt_run.py",
         branch=v_branch,
-        dbt_command=f"""run --select UP_maanedsprosessering.* --vars '{{"periode_fra":{periode_fom}, "periode_til":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "gyldig_flagg":{gyldig_flagg}}}'""",
+        dbt_command=f"""run --select UP_maanedsprosessering.* --vars '{{"periode_fra":{periode_fom}, "periode_til":{periode_tom}, "max_vedtaksdato":{max_vedtaksdato}, "periode_type":{periode_type},"gyldig_flagg":{gyldig_flagg}}}'""",
         allowlist=prod_oracle_conn_id,
         db_schema=v_schema,
     )
