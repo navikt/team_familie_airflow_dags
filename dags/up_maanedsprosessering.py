@@ -25,7 +25,7 @@ miljo = Variable.get("miljo")
 
 OSLO_TZ = pendulum.timezone("Europe/Oslo")
 now_oslo = pendulum.now(OSLO_TZ)
-default_max_vedtaksdato = now_oslo.add(days=1).to_date_string()   # "YYYY-MM-DD"
+default_max_vedtaksdato = now_oslo.add(days=1).format("YYYYMMDD")
 # Defaults tilsvarende intermediate-logikken, gjør ikke noe at det settes begge steder. Betyr at hvis man kjører DBT lokalt vil du fortsatt ha default der også
 default_periode_fom = now_oslo.subtract(months=5).format("YYYYMM")
 default_periode_tom = now_oslo.add(months=14).format("YYYYMM")
