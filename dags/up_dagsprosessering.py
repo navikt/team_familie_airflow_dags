@@ -67,8 +67,8 @@ pod_slack_allowlist = {
 
 
 with DAG(
-    dag_id="up_maanedsprosessering",
-    description="Kjører dagelig månedsprosessering for Ungdomsprogrammet.",
+    dag_id="up_dagsprosessering",
+    description="Kjører daglig prosessering for Ungdomsprogrammet.",
     default_args=default_args,
     start_date=pendulum.datetime(2026, 2, 12, tz=OSLO_TZ),
     schedule_interval="0 17 * * *", # Kjører hver dag kl. 17:00 CET
@@ -86,7 +86,7 @@ with DAG(
         
         slack_info(
             message=(
-                f"Starter dagelig månedsprosessering for {periode_status}. Max vedtaksdato={max_vedtaksdato}, periode_type={periode_type}, gyldig_flagg={gyldig_flagg} :rocket:"
+                f"Starter daglig prosessering for {periode_status}. Max vedtaksdato={max_vedtaksdato}, periode_type={periode_type}, gyldig_flagg={gyldig_flagg} :rocket:"
             )
         )
 
@@ -94,7 +94,7 @@ with DAG(
 
     dbt_run = create_dbt_operator(
         dag=dag,
-        name="dbt_run_maanedsprosessering_up",
+        name="dbt_run_daglig_prosessering_up",
         repo="navikt/dvh_fam_ungdom",
         script_path="airflow/dbt_run.py",
         branch=v_branch,
@@ -105,7 +105,7 @@ with DAG(
 
     @task(**pod_slack_allowlist)
     def notification_end():
-        slack_info(message="Daglig månedsprosessering av Ungdomsprogram er ferdig! :tada:")
+        slack_info(message="Daglig prosessering av Ungdomsprogram er ferdig! :tada:")
 
     end_alert = notification_end()
 
