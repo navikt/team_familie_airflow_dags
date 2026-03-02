@@ -113,10 +113,10 @@ with DAG(
     catchup=False,
 ) as dag:
 
-    @task.short_circuit
+    @task.short_circuit(**pod_slack_allowlist)
     def should_run() -> bool:
         """
-        Stopper DAG-kjøring hvis dato ikke matcher periodetype. Dette er for å forhindre at månedsprosesseringen ikke kjører på feil tidspunkt, da tidspunktene må være nøyaktige
+        Stopper DAG-kjøring hvis dato ikke matcher periodetype ved hjelp av short_circuit. Dette er for å forhindre at månedsprosesseringen ikke kjører på feil tidspunkt, da tidspunktene må være nøyaktige
         """
         periode_type = detect_period_type(now_oslo) # Kjører først en gang bare for å identifisere om dato passer
         if periode_type is None:
