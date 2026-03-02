@@ -18,7 +18,7 @@ def detect_period_type(now: pendulum.DateTime) -> str | None:
     - 1. jan  -> A, Årskjøring
     - 1. apr  -> K, Kvartalskjøring
     - 1. jul  -> H, Halvårskjøring
-    - 1. okt  -> S
+    - 1. okt  -> S (ukjent betydning)
     """
     day = now.day
     month = now.month
@@ -34,17 +34,12 @@ def detect_period_type(now: pendulum.DateTime) -> str | None:
 
     return None
 
-
-def compute_period_bounds(
-    periode_type: str,
-    now_oslo: pendulum.DateTime,
-    forskyvningsdager: int
-) -> tuple[str, str, str, str]:
+def initialize_variables(periode_type: str, now_oslo: pendulum.DateTime, forskyvningsdager: int) -> tuple[str, str, str, str]:
     """
-    Beregner FOM, TOM, MAX_VEDTAKSDATO og ferdig periode_type-format.
+    Returnerer FOM, TOM, MAX_VEDTAKSDATO og ferdig periode_type-format basert på parametere. 
     """
     max_vedtaksdato = now_oslo.add(days=forskyvningsdager).format("YYYYMMDD")
-    periode_tom = now_oslo.subtract(months=1).format("YYYYMM")
+    periode_tom = now_oslo.subtract(months=1).format("YYYYMM") # Alltid det samme, uansett periode_type. Kan derfor hardkodes
     periode_fom = None
 
     if periode_type == "A":
@@ -73,31 +68,22 @@ OSLO_TZ = pendulum.timezone("Europe/Oslo")
 now_oslo = pendulum.now(OSLO_TZ)
 
 # Henter parametere
-up_variabler_mnd = Variable.get("up_variabler_mnd", deserialize_json=True)
+dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
+v_branch = dbt_settings["branch"]
+v_schema = dbt_settings["schema"]
 
-DEFAULT_FORSKYVNING = 1
-DEFAULT_GYLDIG_FLAGG = 1
+up_variabler = Variable.get("up_variabler_mnd", deserialize_json=True)
+forskyvningsdager = up_variabler.get("forskyvningsdager") or 1 # Default hardkodet
+gyldig_flagg = up_variabler.get("gyldig_flagg") or 1
 
-forskyvningsdager = up_variabler_mnd.get("forskyvningsdager") or DEFAULT_FORSKYVNING
-gyldig_flagg = up_variabler_mnd.get("gyldig_flagg") or DEFAULT_GYLDIG_FLAGG
-
-# Finn periode_type basert på dagens dato. Blir None om ikke matcher med noen ønskede datoer.
+# Finn periode_type basert på dagens dato. Blir None om ikke matcher med noen ønskede datoer
 periode_type = detect_period_type(now_oslo)
-
-if periode_type is None:
-    raise AirflowSkipException(
-        f"Ingen periodetype treffer i dag. Denne DAGen kjører kun 1. jan., 1. apr., 1. jul. eller 1. okt. Skipper DAG! :tada:"
-    )
-
-periode_fom, periode_tom, max_vedtaksdato, periode_type = compute_period_bounds(
+periode_fom, periode_tom, max_vedtaksdato, periode_type = initialize_variables(
     periode_type,
     now_oslo,
     forskyvningsdager
 )
 
-dbt_settings = Variable.get("dbt_up_schema", deserialize_json=True)
-v_branch = dbt_settings["branch"]
-v_schema = dbt_settings["schema"]
 
 # DAG-konfigurasjoner
 default_args = {
@@ -123,10 +109,22 @@ with DAG(
     description="Kjører automatisk prosessering for Ungdomsprogrammet.",
     default_args=default_args,
     start_date=pendulum.datetime(2026, 3, 1, tz=OSLO_TZ),
-    schedule_interval="0 1 * * *", # Like etter midnatt, så vi er sikre på at det skjer riktig dag
+    schedule_interval="0 0 1 */3 *", # 1. dag i hver 3. måned (jan, apr, jul, okt)
     catchup=False,
 ) as dag:
 
+    @task.short_circuit
+    def should_run() -> bool:
+        """
+        Stopper DAG-kjøring hvis dato ikke matcher periodetype. Dette er for å forhindre at månedsprosesseringen ikke kjører på feil tidspunkt, da tidspunktene må være nøyaktige
+        """
+        periode_type = detect_period_type(now_oslo) # Kjører først en gang bare for å identifisere om dato passer
+        if periode_type is None:
+            slack_info(
+                message=(f"Denne DAGen skal kun kjøre 1. jan., 1. apr., 1. jul. eller 1. okt. Skipper derfor DAG! :tada:")
+            )
+            return False
+        return True   
 
     # ** pakker ut dictionaryen pod_slack_allowlist, sendes som argumenter til @task-dekoratøren. Forsøker å abstrahere kode for renere lesbarhet
     @task(**pod_slack_allowlist)
@@ -156,4 +154,4 @@ with DAG(
 
     end_alert = notification_end()
 
-    start_alert >> dbt_run >> end_alert
+    should_run() >> start_alert >> dbt_run >> end_alert
