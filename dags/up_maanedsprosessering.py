@@ -73,8 +73,8 @@ v_branch = dbt_settings["branch"]
 v_schema = dbt_settings["schema"]
 
 up_variabler = Variable.get("up_variabler_mnd", deserialize_json=True)
-forskyvningsdager = up_variabler.get("forskyvningsdager") or 1 # Default hardkodet
-gyldig_flagg = up_variabler.get("gyldig_flagg") or 1
+forskyvningsdager = int(up_variabler.get("forskyvningsdager") or 1) # Default hardkodet
+gyldig_flagg = int(up_variabler.get("gyldig_flagg") or 1)
 
 # Finn periode_type basert på dagens dato. Blir None om ikke matcher med noen ønskede datoer
 periode_type = detect_period_type(now_oslo)
