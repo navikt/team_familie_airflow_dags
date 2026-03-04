@@ -3,6 +3,7 @@ from datetime import timedelta
 from kubernetes import client
 from airflow import DAG
 from airflow.contrib.operators.kubernetes_pod_operator import KubernetesPodOperator
+from airflow.providers.cncf.kubernetes.utils.pod_manager import OnFinishAction
 import kubernetes.client as k8s
 from operators.vault import vault_volume, vault_volume_mount
 import operators.slack_operator as slack_operator
@@ -62,6 +63,8 @@ def kafka_consumer_kubernetes_pod_operator(
         "DATA_INTERVAL_END":data_interval_end_timestamp_milli 						   
     }
 
+    on_finish_action = OnFinishAction.DELETE_POD if delete_on_finish else OnFinishAction.KEEP_POD
+
     miljo = Variable.get('miljo')   
     if miljo == 'Prod':
         allowlist.extend(prod_kafka)
@@ -84,7 +87,7 @@ def kafka_consumer_kubernetes_pod_operator(
         name=task_id,
         namespace=namespace,
         task_id=task_id,
-        is_delete_operator_pod=delete_on_finish,
+        on_finish_action=on_finish_action,
         image=kafka_consumer_image,
         image_pull_secrets=[k8s.V1LocalObjectReference('ghcr-credentials')],
         env_vars=env_vars,
