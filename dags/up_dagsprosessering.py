@@ -27,7 +27,7 @@ OSLO_TZ = pendulum.timezone("Europe/Oslo")
 now_oslo = pendulum.now(OSLO_TZ)
 default_max_vedtaksdato = now_oslo.add(days=1).format("YYYYMMDD")
 # Defaults tilsvarende intermediate-logikken, gjør ikke noe at det settes begge steder. Betyr at hvis man kjører DBT lokalt vil du fortsatt ha default der også
-default_periode_fom = now_oslo.subtract(months=5).format("YYYYMM")
+default_periode_fom = now_oslo.subtract(months=4).format("YYYYMM")
 default_periode_tom = now_oslo.add(months=14).format("YYYYMM")
 
 up_variabler = Variable.get("up_variabler", deserialize_json=True)
@@ -68,13 +68,12 @@ pod_slack_allowlist = {
 
 with DAG(
     dag_id="up_dagsprosessering",
-    description="Kjører daglig prosessering for Ungdomsprogrammet.",
+    description="Kjører daglig prosessering for Ungdomsprogrammet. Inneholder variabler for parametere i Admin/Variables under navnet up_variabler.",
     default_args=default_args,
     start_date=pendulum.datetime(2026, 2, 12, tz=OSLO_TZ),
     schedule_interval="0 17 * * *", # Kjører hver dag kl. 17:00 CET
     catchup=False,
 ) as dag:
-
 
     # ** pakker ut dictionaryen pod_slack_allowlist, sendes som argumenter til @task-dekoratøren. Forsøker å abstrahere kode for renere lesbarhet
     @task(**pod_slack_allowlist)
