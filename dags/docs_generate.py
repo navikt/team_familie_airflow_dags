@@ -8,7 +8,7 @@ from operators.slack_operator import slack_info
 from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id,dbt_docs_nav_server
 
 
-allowlist = [prod_oracle_conn_id, dbt_docs_nav_server]
+allowlist = prod_oracle_conn_id + dbt_docs_nav_server
 
 OSLO = pendulum.timezone("Europe/Oslo")
 
