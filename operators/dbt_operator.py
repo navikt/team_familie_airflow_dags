@@ -1,5 +1,5 @@
 import os
-
+import logging
 from airflow.models import Variable
 from kubernetes import client
 from airflow import DAG

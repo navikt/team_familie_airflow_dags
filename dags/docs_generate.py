@@ -57,6 +57,7 @@ with DAG(
             db_schema=schema,
             repo=repo,
             script_path=script_path,
+            allowlist=allowlist,
             publish_docs=True,
         )
         tasks.append(t)
