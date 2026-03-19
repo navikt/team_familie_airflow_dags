@@ -15,8 +15,10 @@ def fam_skedulering():
     send_context_sql = '''
         BEGIN
             dbms_application_info.set_client_info( client_info => 'Klient_info Familie-Airflow');
-            dbms_application_info.set_module(module_name => 'Kjører Team-familie Airflow applikasjon',
-                action_name => 'Skedulere familie pakke som ligger i oracle');
+            dbms_application_info.set_module(
+                module_name => 'Kjører Team-familie Airflow applikasjon',
+                action_name => 'Skedulere familie pakke som ligger i oracle'
+            );
         END;
     '''
 

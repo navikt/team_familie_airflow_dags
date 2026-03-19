@@ -15,6 +15,7 @@ def create_dbt_operator(
   script_path:str,
   allowlist: list | None = None,
   execution_timeout =None,
+  publish_docs: bool = False,
   *args,
   **kwargs):
   
@@ -23,6 +24,17 @@ def create_dbt_operator(
 
   if execution_timeout is not None:
       kwargs["execution_timeout"] = execution_timeout
+
+  env_vars = {
+      'DBT_COMMAND': dbt_command,
+      'LOG_LEVEL': 'DEBUG',
+      'DB_SCHEMA': db_schema,
+      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
+      "ORA_PYTHON_DRIVER_TYPE": "thin"
+    }
+    
+  if publish_docs:
+    env_vars["DBT_DOCS_URL"] = Variable.get("DBT_DOCS_URL")  
 
   return python_operator(
     dag=dag,
@@ -35,16 +47,10 @@ def create_dbt_operator(
         requests={"memory": "10G", "cpu": "8"},
         limits={"memory": "10G", "cpu": "8"}
         ),
-    extra_envs={
-      'DBT_COMMAND': dbt_command,
-      'LOG_LEVEL': 'DEBUG',
-      'DB_SCHEMA': db_schema,
-      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
-      "ORA_PYTHON_DRIVER_TYPE": "thin"
-    },
+    extra_envs=env_vars,
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
-    image='ghcr.io/navikt/dvh-images/airflow-dbt:20251023-122903', 
+    image='ghcr.io/navikt/dvh-images/airflow-dbt:20260318-153644', 
     allowlist = allowlist,
     **kwargs
   )
