@@ -10,6 +10,8 @@ dev_aiven_conn_ip = ['nav-dev-kafka-nav-dev.aivencloud.com:26484', 'nav-dev-kafk
 
 sftp_ip = ['a01drvl099.adeo.no:22']
 
+dbt_docs_nav_server = ['dbt.intern.nav.no']
+
 nb_api = ['data.norges-bank.no:443']
 
 prod_kafka = prod_oracle_conn_id + prod_aiven_conn_ip

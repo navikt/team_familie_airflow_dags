@@ -5,10 +5,10 @@ from airflow.models import DAG
 from airflow.decorators import task
 from kubernetes import client
 from operators.slack_operator import slack_info
-from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id
+from allowlists.allowlist import slack_allowlist, prod_oracle_conn_id,dbt_docs_nav_server
 
 
-allowlist = list(prod_oracle_conn_id)
+allowlist = [prod_oracle_conn_id, dbt_docs_nav_server]
 
 OSLO = pendulum.timezone("Europe/Oslo")
 
@@ -40,7 +40,7 @@ with DAG(
         ("bt", "dvh_fam_bt",      "navikt/dvh_fam_bt",      "airflow/dbt_run.py"),
         ("ks", "dvh_fam_ks",      "navikt/dvh_fam_ks",      "airflow/dbt_run.py"),
         #("ef", "dvh_fam_ef",      "navikt/dvh_fam_ef",      "airflow/dbt_run.py"),
-        ("pp", "dvh_fam_pp",      "navikt/dvh_fam_pp",      "airflow/dbt_run.py"),
+        #("pp", "dvh_fam_pp",      "navikt/dvh_fam_pp",      "airflow/dbt_run.py"),
         ("fp", "dvh_fam_fp",      "navikt/dvh_fam_fp",      "airflow/dbt_run.py"),
         #("bb", "dvh_fam_bb",      "navikt/dvh_fam_bb",      "airflow/dbt_run.py"),
         #("up", "dvh_fam_ungdom",  "navikt/dvh_fam_ungdom",  "airflow/dbt_run.py"),
