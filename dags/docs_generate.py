@@ -39,11 +39,11 @@ with DAG(
         # navn,       skjema,          repo,                   path_til_dbt_run_i_repo
         ("bt", "dvh_fam_bt",      "navikt/dvh_fam_bt",      "airflow/dbt_run.py"),
         ("ks", "dvh_fam_ks",      "navikt/dvh_fam_ks",      "airflow/dbt_run.py"),
-        #("ef", "dvh_fam_ef",      "navikt/dvh_fam_ef",      "airflow/dbt_run.py"),
-        #("pp", "dvh_fam_pp",      "navikt/dvh_fam_pp",      "airflow/dbt_run.py"),
+        ("ef", "dvh_fam_ef",      "navikt/dvh_fam_ef",      "airflow/dbt_run.py"),
+        ("pp", "dvh_fam_pp",      "navikt/dvh_fam_pp",      "airflow/dbt_run.py"),
         ("fp", "dvh_fam_fp",      "navikt/dvh_fam_fp",      "airflow/dbt_run.py"),
-        #("bb", "dvh_fam_bb",      "navikt/dvh_fam_bb",      "airflow/dbt_run.py"),
-        #("up", "dvh_fam_ungdom",  "navikt/dvh_fam_ungdom",  "airflow/dbt_run.py"),
+        ("bb", "dvh_fam_bb",      "navikt/dvh_fam_bb",      "airflow/dbt_run.py"),
+        ("up", "dvh_fam_ungdom",  "navikt/dvh_fam_ungdom",  "airflow/dbt_run.py"),
     ]
 
     tasks = []
