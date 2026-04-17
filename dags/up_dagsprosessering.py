@@ -71,7 +71,7 @@ with DAG(
     description="Kjører daglig prosessering for Ungdomsprogrammet. Inneholder variabler for parametere i Admin/Variables under navnet up_variabler.",
     default_args=default_args,
     start_date=pendulum.datetime(2026, 2, 12, tz=OSLO_TZ),
-    schedule_interval="0 17 * * *", # Kjører hver dag kl. 17:00 CET
+    schedule_interval="0 19 * * *", # Kjører hver dag kl. 19:00 CET/CEST, ønsker å kjøre etter arbeidstid. 
     catchup=False,
 ) as dag:
 
