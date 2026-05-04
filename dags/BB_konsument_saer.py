@@ -27,7 +27,7 @@ topic = Variable.get("BB_saer_topic") # topic navn hentes fra airflow variabler
 
 with DAG(
   dag_id="BB_konsument_saer",
-  start_date=datetime(2026, 4, 20),
+  start_date=datetime(2026, 5, 4),
   default_args = default_args,
   schedule_interval= "@hourly",
   max_active_runs=1,
