@@ -119,6 +119,7 @@ with DAG(
                     WHERE TYPE_STONAD = 'FORSKUDD'
                 )
                 WHERE neste - kafka_offset > 1
+                AND kafka_offset >3092927
             """,
             "BB meta_data (bidrag)": """
                 SELECT COUNT(*) FROM (
@@ -128,7 +129,7 @@ with DAG(
                     WHERE TYPE_STONAD = 'BIDRAG'
                 )
                 WHERE neste - kafka_offset > 1
-                  AND kafka_offset > 1650726
+                AND kafka_offset > 3057839
             """,
             "BT meta_data": """
                 SELECT COUNT(*) FROM (
