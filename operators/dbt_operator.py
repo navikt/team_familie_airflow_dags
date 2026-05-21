@@ -50,7 +50,7 @@ def create_dbt_operator(
     extra_envs=env_vars,
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
-    image='ghcr.io/navikt/dvh-images/airflow-dbt:20260318-153644', 
+    image='ghcr.io/navikt/dvh-images/airflow-dbt:20260513-162609', 
     allowlist = allowlist,
     **kwargs
   )

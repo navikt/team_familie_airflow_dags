@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow.models import DAG
 from airflow.models import Variable
 from kosument_config import fp
@@ -51,14 +51,14 @@ with DAG(
   )
 
   fp_utpakking_dbt = create_dbt_operator(
-     dag=dag,
-     name="utpakking_fp",
-     repo='navikt/dvh_fam_fp',
-     script_path = 'airflow/dbt_run.py',
-     branch=v_branch,
-     dbt_command= """run --select FP_utpakking.*""",
-     db_schema=v_schema,
-     allowlist=allowlist
+      dag=dag,
+      name="utpakking_fp",
+      repo='navikt/dvh_fam_fp',
+      script_path = 'airflow/dbt_run.py',
+      branch=v_branch,
+      dbt_command= """run --select FP_utpakking.*""",
+      db_schema=v_schema,
+      allowlist=allowlist,
   )
 
 consumer >> fp_utpakking_dbt
