@@ -158,7 +158,7 @@ with DAG(
                         ORDER BY kafka_offset) neste
                     FROM DVH_FAM_FP.fam_fp_meta_data
                     WHERE kafka_mottatt_dato > TO_DATE('16.04.2024','dd.mm.yyyy'))
-                WHERE neste - kafka_offset > 1
+                WHERE neste - kafka_offset > 913331
             """
         }
 
