@@ -44,7 +44,7 @@ with DAG(
     dag = dag,
     name = 'BS_data_kopiering',
     repo = 'navikt/dvh-fam-notebooks',
-    nb_path = 'HM/kopier_BS_data_til_oracle.ipynb',
+    nb_path = 'HM/BS_pipline.ipynb',
     allowlist=allowlist,
     branch = branch,
     #delete_on_finish= False,
