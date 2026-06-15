@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from airflow.models import DAG
 from airflow.models import Variable
 from kosument_config import pp
@@ -54,7 +54,8 @@ with DAG(
       branch=v_branch,
       dbt_command= "run --select PP_utpakking.*",
       allowlist=allowlist,
-      db_schema=v_schema
+      db_schema=v_schema,
+      execution_timeout=timedelta(minutes=15)
   )
 
 consumer  >> pp_utpakking_dbt

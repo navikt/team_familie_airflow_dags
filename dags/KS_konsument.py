@@ -55,10 +55,11 @@ with DAG(
     repo='navikt/dvh_fam_ks',
     script_path = 'airflow/dbt_run.py',
     branch=v_branch,
-    dbt_command= """run --select KS_utpakking.*""",
+    dbt_command= """build --select KS_utpakking.*""",
     db_schema=v_schema,
     allowlist=allowlist
 )
+  
 
 consumer >> ks_utpakking_dbt
 

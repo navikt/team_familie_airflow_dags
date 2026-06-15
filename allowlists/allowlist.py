@@ -1,14 +1,16 @@
 slack_allowlist = ['slack.com','hooks.slack.com']
 
 prod_oracle_conn_id = ['dmv03-scan.adeo.no:1521'] + ['hub.getdbt.com']
-r_oracle_conn_id = ['dm07-scan.adeo.no:1521'] + ['hub.getdbt.com']
-dev_oracle_conn_id = ['dmv07-scan.adeo.no:1521'] + ['hub.getdbt.com']
+r_oracle_conn_id = ['dmv04-scan.adeo.no:1521'] + ['hub.getdbt.com']
+dev_oracle_conn_id = ['dmv04-scan.adeo.no:1521'] + ['hub.getdbt.com']
 
 prod_aiven_conn_ip = ['nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-kafka-nav-prod.aivencloud.com:26487']
 r_aiven_conn_ip = ['nav-prod-kafka-nav-prod.aivencloud.com:26484', 'nav-prod-kafka-nav-prod.aivencloud.com:26487']
 dev_aiven_conn_ip = ['nav-dev-kafka-nav-dev.aivencloud.com:26484', 'nav-dev-kafka-nav-dev.aivencloud.com:26487']
 
 sftp_ip = ['a01drvl099.adeo.no:22']
+
+dbt_docs_nav_server = ['dbt.intern.nav.no']
 
 nb_api = ['data.norges-bank.no:443']
 

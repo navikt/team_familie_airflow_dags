@@ -29,7 +29,7 @@ with DAG(
     description = 'Familie felles skedulering som kaller plsql',
     default_args = default_args,
     start_date = datetime(2024, 9, 10), # start date for the dag
-    schedule_interval = '0 2 * * *',#'@daily', # 5te hver måned,
+    schedule_interval = '15 2 * * *',#'@daily', # 5te hver måned,
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
@@ -55,8 +55,8 @@ with DAG(
         branch=branch,
         allowlist=allowlist,
         resources=client.V1ResourceRequirements(
-            requests={"memory": "4G"},
-            limits={"memory": "4G"}),
+            requests={"memory": "8G"},
+            limits={"memory": "10G"}),
         requirements_path="Oracle_python/requirements.txt",
         slack_channel=Variable.get("slack_error_channel")
     )

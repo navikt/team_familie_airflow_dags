@@ -42,7 +42,7 @@ def hent_ansvarlig_per_uke(uke: int) -> Optional[str]:
     Returnerer ansvarlig for gitt uke eller None hvis ikke definert.
     """
     uke_liste = list(range(1, 54))  # 53 uker er maks for ISO-uker
-    ansvarlige = ["Arafa", "Gard", "Hans", "Helen/Gard"] # Gard tar over for Helen inntil videre
+    ansvarlige = ["Arafa", "Gard", "Hans", "Marte/Gard"]
     gjentatt = (ansvarlige * ((len(uke_liste) // len(ansvarlige)) + 1))[: len(uke_liste)]
     ansvarlig_per_uke = dict(zip(uke_liste, gjentatt))
     return ansvarlig_per_uke.get(uke)
@@ -119,6 +119,7 @@ with DAG(
                     WHERE TYPE_STONAD = 'FORSKUDD'
                 )
                 WHERE neste - kafka_offset > 1
+                AND kafka_offset >3092927
             """,
             "BB meta_data (bidrag)": """
                 SELECT COUNT(*) FROM (
@@ -128,7 +129,7 @@ with DAG(
                     WHERE TYPE_STONAD = 'BIDRAG'
                 )
                 WHERE neste - kafka_offset > 1
-                  AND kafka_offset > 1650726
+                AND kafka_offset > 3057839
             """,
             "BT meta_data": """
                 SELECT COUNT(*) FROM (
@@ -173,7 +174,7 @@ with DAG(
                     FROM DVH_FAM_FP.fam_fp_meta_data
                     WHERE kafka_mottatt_dato > TO_DATE('16.04.2024','dd.mm.yyyy')
                 )
-                WHERE neste - kafka_offset > 1
+                WHERE neste - kafka_offset > 913331
             """,
         }
 

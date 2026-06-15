@@ -1,5 +1,5 @@
 import os
-
+import logging
 from airflow.models import Variable
 from kubernetes import client
 from airflow import DAG
@@ -13,10 +13,28 @@ def create_dbt_operator(
   repo:str,
   db_schema: str,
   script_path:str,
-  allowlist: list = [],
+  allowlist: list | None = None,
+  execution_timeout =None,
+  publish_docs: bool = False,
   *args,
   **kwargs):
+  
+  if allowlist is None:
+      allowlist = []
 
+  if execution_timeout is not None:
+      kwargs["execution_timeout"] = execution_timeout
+
+  env_vars = {
+      'DBT_COMMAND': dbt_command,
+      'LOG_LEVEL': 'DEBUG',
+      'DB_SCHEMA': db_schema,
+      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
+      "ORA_PYTHON_DRIVER_TYPE": "thin"
+    }
+    
+  if publish_docs:
+    env_vars["DBT_DOCS_URL"] = Variable.get("DBT_DOCS_URL")  
 
   return python_operator(
     dag=dag,
@@ -26,19 +44,14 @@ def create_dbt_operator(
     branch=branch,
     do_xcom_push=True,
     resources=client.V1ResourceRequirements(
-        requests={"memory": "6G", "cpu": "5",},
-        limits={"memory": "6G"}
+        requests={"memory": "10G", "cpu": "8"},
+        limits={"memory": "10G", "cpu": "8"}
         ),
-    extra_envs={
-      'DBT_COMMAND': dbt_command,
-      'LOG_LEVEL': 'DEBUG',
-      'DB_SCHEMA': db_schema,
-      'KNADA_TEAM_SECRET': os.getenv('KNADA_TEAM_SECRET'),
-      "ORA_PYTHON_DRIVER_TYPE": "thin"
-    },
+    extra_envs=env_vars,
     slack_channel=Variable.get("slack_error_channel"),
     #requirements_path="requirements.txt",
-    image='ghcr.io/navikt/dvh-images/airflow-dbt:20250502-073831', 
-    allowlist = allowlist
+    image='ghcr.io/navikt/dvh-images/airflow-dbt:20260527-121839', 
+    allowlist = allowlist,
+    **kwargs
   )
 
