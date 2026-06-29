@@ -42,7 +42,7 @@ def hent_ansvarlig_per_uke(uke: int) -> Optional[str]:
     Returnerer ansvarlig for gitt uke eller None hvis ikke definert.
     """
     uke_liste = list(range(1, 54))  # 53 uker er maks for ISO-uker
-    ansvarlige = ["Arafa", "Gard", "Hans", "Marte/Gard"]
+    ansvarlige = ["Arafa", "Gard", "Hans", "Marte"]
     gjentatt = (ansvarlige * ((len(uke_liste) // len(ansvarlige)) + 1))[: len(uke_liste)]
     ansvarlig_per_uke = dict(zip(uke_liste, gjentatt))
     return ansvarlig_per_uke.get(uke)
