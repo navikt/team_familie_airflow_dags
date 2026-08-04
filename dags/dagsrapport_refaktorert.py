@@ -88,6 +88,7 @@ with DAG(
             "fp_count": "SELECT COUNT(*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE lastet_dato >= sysdate - 1 AND ytelse_type = 'FORELDREPENGER'",
             "es_count": "SELECT COUNT(*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE lastet_dato >= sysdate - 1 AND ytelse_type = 'ENGANGSSTØNAD'",
             "sp_count": "SELECT COUNT(*) FROM DVH_FAM_FP.FAM_FP_META_DATA WHERE lastet_dato >= sysdate - 1 AND ytelse_type = 'SVANGERSKAPSPENGER'",
+            "saer_count": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_META_DATA WHERE lastet_dato >= sysdate - 1 AND type_stonad = 'SÆRBIDRAG'",
         }
 
         result: Dict[str, int] = {}
@@ -176,6 +177,15 @@ with DAG(
                 )
                 WHERE neste - kafka_offset > 913331
             """,
+            "BB meta_data (særbidrag)": """
+                SELECT COUNT(*) FROM (
+                    SELECT kafka_offset,
+                           LEAD(kafka_offset) OVER (PARTITION BY kafka_topic ORDER BY kafka_offset) AS neste
+                    FROM DVH_FAM_BB.fam_bb_meta_data
+                    WHERE TYPE_STONAD = 'SÆRBIDRAG'
+                )
+                WHERE neste - kafka_offset > 1
+            """,
         }
 
         result: Dict[str, int] = {}
@@ -206,6 +216,7 @@ with DAG(
         # Linjer i rapporten, statisk opprettet
         up_count_str = f"Antall mottatt UP meldinger................................{kafka_last['up_count']}"
         bb_count_str = f"Antall mottatt BB meldinger i meta/fagsak/ord..............{kafka_last['bb_count_md']}/{kafka_last['bb_count_fg']}/{kafka_last['bb_count_fg_ord']}"
+        saer_count_str = f"Antall mottatt Sær meldinger...............................{kafka_last['saer_count']}"          
         bs_count_str = f"Antall mottatt BS meldinger................................{kafka_last['bs_count']}"
         pp_count_str = f"Antall mottatt PP meldinger................................{kafka_last['pp_count']}"
         bt_count_str = f"Antall mottatt BT meldinger................................{kafka_last['bt_count']}"
@@ -217,6 +228,7 @@ with DAG(
         es_count_str = f"Antall mottatt ES meldinger................................{kafka_last['es_count']}"
         sp_count_str = f"Antall mottatt SP meldinger................................{kafka_last['sp_count']}"
 
+
         # Se bort fra merkelig tab ident i IDE, må formateres slik for å se riktig ut
         konsumenter_summary = f"""
 *Dagsrapport*
@@ -225,6 +237,7 @@ Leste {miljo} meldinger siden {yesterday.to_datetime_string()}:
 ```
 {up_count_str}
 {bb_count_str}
+{saer_count_str}
 {bs_count_str}
 {pp_count_str}
 {bt_count_str}
