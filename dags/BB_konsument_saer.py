@@ -25,6 +25,11 @@ default_args = {
 
 topic = Variable.get("BB_saer_topic") # topic navn hentes fra airflow variabler 
 
+#Bygger parameter med logging, modeller og miljø
+settings = Variable.get("dbt_bb_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
+
 with DAG(
   dag_id="BB_konsument_saer",
   start_date=datetime(2026, 5, 4),
