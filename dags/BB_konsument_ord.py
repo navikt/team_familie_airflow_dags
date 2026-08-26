@@ -60,4 +60,4 @@ with DAG(
      allowlist=allowlist
  )
 
-consumer >> bb_ord_utpakking_dbt
+consumer #>> bb_ord_utpakking_dbt
