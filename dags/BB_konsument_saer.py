@@ -49,15 +49,15 @@ with DAG(
   )
 
 
-  bb_saer_utpakking_dbt = create_dbt_operator(
-     dag=dag,
-     name="utpakking_bb_saer",
-     repo='navikt/dvh_fam_bb',
-     script_path = 'airflow/dbt_run.py',
-     branch=v_branch,
-     dbt_command= """run --select BB_utpakking_saerbidrag.*""",
-     db_schema=v_schema,
-     allowlist=allowlist
- )
+#   bb_saer_utpakking_dbt = create_dbt_operator(
+#      dag=dag,
+#      name="utpakking_bb_saer",
+#      repo='navikt/dvh_fam_bb',
+#      script_path = 'airflow/dbt_run.py',
+#      branch=v_branch,
+#      dbt_command= """run --select BB_utpakking_saerbidrag.*""",
+#      db_schema=v_schema,
+#      allowlist=allowlist
+#  )
 
 consumer #>> bb_saer_utpakking_dbt
