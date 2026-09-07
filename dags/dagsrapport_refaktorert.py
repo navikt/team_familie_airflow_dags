@@ -120,7 +120,7 @@ with DAG(
                     WHERE TYPE_STONAD = 'FORSKUDD'
                 )
                 WHERE neste - kafka_offset > 1
-                AND kafka_offset >3092927
+                AND kafka_offset > 4880252
             """,
             "BB meta_data (bidrag)": """
                 SELECT COUNT(*) FROM (
@@ -130,7 +130,17 @@ with DAG(
                     WHERE TYPE_STONAD = 'BIDRAG'
                 )
                 WHERE neste - kafka_offset > 1
-                AND kafka_offset > 3057839
+                AND kafka_offset > 4836245
+            """,
+            "BB meta_data (særbidrag)": """
+                SELECT COUNT(*) FROM (
+                    SELECT kafka_offset,
+                           LEAD(kafka_offset) OVER (PARTITION BY kafka_topic ORDER BY kafka_offset) AS neste
+                    FROM DVH_FAM_BB.fam_bb_meta_data
+                    WHERE TYPE_STONAD = 'SÆRBIDRAG'
+                )
+                WHERE neste - kafka_offset > 1
+                AND kafka_offset > 91481
             """,
             "BT meta_data": """
                 SELECT COUNT(*) FROM (
@@ -176,15 +186,6 @@ with DAG(
                     WHERE kafka_mottatt_dato > TO_DATE('16.04.2024','dd.mm.yyyy')
                 )
                 WHERE neste - kafka_offset > 913331
-            """,
-            "BB meta_data (særbidrag)": """
-                SELECT COUNT(*) FROM (
-                    SELECT kafka_offset,
-                           LEAD(kafka_offset) OVER (PARTITION BY kafka_topic ORDER BY kafka_offset) AS neste
-                    FROM DVH_FAM_BB.fam_bb_meta_data
-                    WHERE TYPE_STONAD = 'SÆRBIDRAG'
-                )
-                WHERE neste - kafka_offset > 1
             """,
         }
 
@@ -259,7 +260,9 @@ Leste {miljo} meldinger siden {yesterday.to_datetime_string()}:
         # Sjekker om noe ble lagt til i string, hvis ikke sendes else string
         if topics_med_hull:
             slack_info(
-                message=f"<!channel> Det er oppdaget hull i følgende: {', '.join(topics_med_hull)}. Sjekk manuelt for å finne hullene! :rotating_light:",
+                message=f"""<!channel> Det er oppdaget hull i følgende: {', '.join(topics_med_hull)}. 
+                Koden for å sjekke hver stønad etter hull finnes i dags/dagsrapport_refaktorert eller Confluence under Team Familie. 
+                Denne feilmeldingen oppgir ikke hullene fordi det potensielt kan være svært mange. :rotating_light:""",
                 emoji=":rotating_light:",
             )
         else:
