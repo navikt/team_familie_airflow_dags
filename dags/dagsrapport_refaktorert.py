@@ -91,10 +91,16 @@ with DAG(
             "saer_count": "SELECT COUNT(*) FROM DVH_FAM_BB.FAM_BB_META_DATA WHERE lastet_dato >= sysdate - 1 AND type_stonad = 'SÆRBIDRAG'",
         }
 
+        # denne koden brukes flere ganger, kan sikkert ekstraheres
         result: Dict[str, int] = {}
         with oracle_conn().cursor() as cur:
             for key, query in count_queries.items():
-                result[key] = int(cur.execute(query).fetchone()[0])
+                try:
+                    print(f"Kjører {key}")
+                    result[key] = int(cur.execute(query).fetchone()[0])
+                except Exception as e:
+                    print(f"Feil i {key}: {query}")
+                    raise
         return result
 
     @task(executor_config=common_executor_config)
@@ -192,7 +198,12 @@ with DAG(
         result: Dict[str, int] = {}
         with oracle_conn().cursor() as cur:
             for key, query in gap_queries.items():
-                result[key] = int(cur.execute(query).fetchone()[0])
+                try:
+                    print(f"Kjører {key}")
+                    result[key] = int(cur.execute(query).fetchone()[0])
+                except Exception as e:
+                    print(f"Feil i {key}: {query}")
+                    raise
         return result
 
     @task(executor_config=common_executor_config)
