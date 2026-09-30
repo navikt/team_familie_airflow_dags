@@ -40,7 +40,7 @@ with DAG(
     description = 'Automatiserer månedlig prosessering av særbidragsdata ved å kjøre dbt-prosjektet bb_saerbidrag_mnd og oppdatere relevante perioder i databasen.',
     default_args = default_args,
     start_date = datetime(2026, 9, 30), # start date for the dag
-    schedule_interval = '0 0 1 * *' , #timedelta(days=1), schedule_interval='*/5 * * * *',
+    schedule_interval = '0 0 2 * *' , #timedelta(days=1), schedule_interval='*/5 * * * *',
     catchup = False # makes only the latest non-triggered dag runs by airflow (avoid having all dags between start_date and current date running
 ) as dag:
 
