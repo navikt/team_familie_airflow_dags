@@ -51,7 +51,6 @@ with DAG(
         }
     )
     def notification_start():
-        periode_status = f"perioden {periode_fom}" if periode_fom == periode_tom else f"periodene {periode_fom} til og med {periode_tom}" # Ønsker å gjøre meldingen mer lesbar ved én periode
         slack_info(
             message = f"Starter månedlig prosessering av kontantstøtte. Max vedtaksdato={max_vedtaksdato}, Gyldig flagg={gyldig_flagg} :rocket:"
         )
@@ -64,7 +63,8 @@ with DAG(
         repo='navikt/dvh_fam_ks',
         script_path = 'airflow/dbt_run.py',
         branch=v_branch,
-        dbt_command=f"""run --select KS_maanedsprosessering.fam_ks_mnd_vedtak --vars '{{"max_vedtaksdato":{max_vedtaksdato}, "gyldig_flagg":{gyldig_flagg}}}' """,
+        #dbt_command=f"""run --select KS_maanedsprosessering.fam_ks_mnd_vedtak --vars '{{"max_vedtaksdato":{max_vedtaksdato}, "gyldig_flagg":{gyldig_flagg}}}' """,
+        dbt_command=f"""dbt run --select path:models/KS_maanedsprosessering/marts --vars '{{"max_vedtaksdato": "{max_vedtaksdato}", "gyldig_flagg":"{gyldig_flagg}"}}'"""
         allowlist=prod_oracle_conn_id, 
         db_schema=v_schema
     )
