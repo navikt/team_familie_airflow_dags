@@ -34,7 +34,7 @@ with DAG(
   start_date=datetime(2024, 4, 18, 12),
   schedule_interval= "@hourly",
   max_active_runs=1,
-  catchup = True
+  catchup = False
 ) as dag:
 
   consumer = kafka_consumer_kubernetes_pod_operator(
