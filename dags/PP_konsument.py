@@ -58,4 +58,4 @@ with DAG(
       execution_timeout=timedelta(minutes=15)
   )
 
-consumer  >> pp_utpakking_dbt
+consumer  #>> pp_utpakking_dbt
