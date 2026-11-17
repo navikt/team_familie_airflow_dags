@@ -54,8 +54,8 @@ with DAG(
       branch=v_branch,
       dbt_command= "run --select PP_utpakking.*",
       allowlist=allowlist,
-      db_schema=v_schema,
-      execution_timeout=timedelta(minutes=50)
+      db_schema=v_schema#,
+      #execution_timeout=timedelta(minutes=50)
   )
 
 consumer  >> pp_utpakking_dbt
