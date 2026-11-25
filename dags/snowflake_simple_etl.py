@@ -58,7 +58,7 @@ else:
             dag=dag,
             name="select_one",
             repo="navikt/vdl-regnskapsdata",
-            branch=Variable.get("git_branch"),
+            branch='dev'#Variable.get("git_branch"),
             script_path="dags/test_snowflake_wif.py",
             requirements_path="orchestrator/snowflake_wif/requirements.txt",
             slack_channel=Variable.get("slack_error_channel"),
