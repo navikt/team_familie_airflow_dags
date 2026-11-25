@@ -13,7 +13,7 @@ from kubernetes import client as k8s
             "pod_override": k8s.V1Pod(
                 metadata=k8s.V1ObjectMeta(
                     annotations={
-                        "allowlist": "qqhhrqv-dv_team_familie.snowflakecomputing.com"
+                        "allowlist": "wx23413.europe-west4.gcp.snowflakecomputing.com"
                     }
                 ),
                 spec=k8s.V1PodSpec(containers=[k8s.V1Container(name="base")]),
