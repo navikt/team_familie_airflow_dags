@@ -25,6 +25,10 @@ default_args = {
 
 topic = Variable.get("BB_saer_topic") # topic navn hentes fra airflow variabler 
 
+settings = Variable.get("dbt_bb_schema", deserialize_json=True)
+v_branch = settings["branch"]
+v_schema = settings["schema"]
+
 with DAG(
   dag_id="BB_konsument_saer",
   start_date=datetime(2026, 5, 4),
@@ -44,4 +48,16 @@ with DAG(
   )
 
 
-consumer
+  bb_saer_utpakking_dbt = create_dbt_operator(
+     dag=dag,
+     name="utpakking_bb_saer",
+     repo='navikt/dvh_fam_bb',
+     script_path = 'airflow/dbt_run.py',
+     branch=v_branch,
+     dbt_command= """run --select BB_utpakking_saer.*""",
+     db_schema=v_schema,
+     allowlist=allowlist
+ )
+
+
+consumer >> bb_saer_utpakking_dbt
