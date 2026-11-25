@@ -4,7 +4,17 @@ from datetime import datetime
 from airflow.decorators import dag, task
 from kubernetes import client as k8s
  
-from orchestrator.operators.allowlists import SNOWFLAKE
+#from orchestrator.operators.allowlists import SNOWFLAKE
+
+
+SNOWFLAKE = [
+    "wx23413.europe-west4.gcp.snowflakecomputing.com",
+    "ocsp.snowflakecomputing.com",
+    "ocsp.digicert.com:80",
+    "o.pki.goog:80",
+    "ocsp.pki.goo:80",
+    "storage.googleapis.com",
+]
  
  
 @dag(
