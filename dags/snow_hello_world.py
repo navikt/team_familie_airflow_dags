@@ -34,3 +34,5 @@ with DAG(
         use_uv_pip_install=True,
         python_version="3.13",
     )
+
+    hello
