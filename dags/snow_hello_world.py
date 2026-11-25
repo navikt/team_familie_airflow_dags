@@ -7,15 +7,14 @@ from dataverk_airflow import python_operator
 
 snowflake_conn = Variable.get("conn_snowflake_wif", deserialize_json=True)
 
-SNOW_ALLOW = [    
-    "qqhhrqv-dv_team_familie.snowflakecomputing.com",
+snow_allow = [    
+    #"qqhhrqv-dv_team_familie.snowflakecomputing.com",
     "ocsp.snowflakecomputing.com",
     "ocsp.digicert.com:80",
     "o.pki.goog:80",
     "ocsp.pki.goo:80",
     "storage.googleapis.com"
 ]
-
 
 with DAG(
     dag_id="snow_hello_world",
@@ -31,7 +30,7 @@ with DAG(
         script_path="snow_script.py",
         requirements_path="requirements.txt",
         #extra_envs={},
-        allowlist=SNOW_ALLOW,
+        allowlist=snow_allow,
         use_uv_pip_install=True,
         python_version="3.13"
     )
