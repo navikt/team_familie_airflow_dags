@@ -31,6 +31,6 @@ def test_wif_subject():
       claims = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
       print(f"WIF subject (sub): {claims['sub']}")
 
-    print_wif_subject()
+  print_wif_subject()
 
 test_wif_subject()
