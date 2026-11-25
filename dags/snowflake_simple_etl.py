@@ -45,7 +45,7 @@ else:
     from airflow.models import Variable
     from dataverk_airflow import python_operator
  
-    from orchestrator.operators.allowlists import SNOWFLAKE
+    #from orchestrator.operators.allowlists import SNOWFLAKE
  
     with DAG(
         "test_snowflake_wif",
