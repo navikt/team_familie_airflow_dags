@@ -2,10 +2,10 @@ from datetime import datetime
 
 from airflow import DAG
 #from airflow.datasets import Dataset
-#from airflow.models import Variable
+from airflow.models import Variable
 from dataverk_airflow import python_operator
 
-#snowflake_conn = Variable.get("conn_snowflake_wif", deserialize_json=True)
+snowflake_conn = Variable.get("conn_snowflake_wif", deserialize_json=True)
 
 # SNOW_ALLOW = [    
 #     "QQHHRQV-DV_TEAM_FAMILIE.snowflakecomputing.com",
