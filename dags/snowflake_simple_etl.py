@@ -8,7 +8,7 @@ from kubernetes import client as k8s
 
 
 SNOWFLAKE = [
-    "wx23413.europe-west4.gcp.snowflakecomputing.com",
+    "QQHHRQV-DV_TEAM_FAMILIE.snowflakecomputing.com",
     "ocsp.snowflakecomputing.com",
     "ocsp.digicert.com:80",
     "o.pki.goog:80",
